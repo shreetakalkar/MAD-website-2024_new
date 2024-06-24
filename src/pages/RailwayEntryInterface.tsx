@@ -1,12 +1,7 @@
-// import { Input } from "@/components/ui/input";
-// import * as React from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -29,10 +24,192 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/firebase";
 
 const RailwayEntryInterface = () => {
   const [date, setDate] = React.useState<Date>();
+  const [gradYearArray, setGradYearArray] = useState<number[]>([]);
+
+  useEffect(() => {
+    generateGradYearArray();
+    handleSubmit();
+  }, []);
+
+  const generateGradYearArray = () => {
+    const currentYear = new Date().getFullYear();
+    setGradYearArray(() =>
+      Array.from({ length: 4 }, (val, i) => currentYear + i)
+    );
+  };
+
+  const branches = ["Computer", "IT", "AI & DS", "EXTC"];
+  const travelFromLocations = [
+    "Airoli",
+    "Aman Lodge",
+    "Ambernath",
+    "Ambivli",
+    "Andheri",
+    "Apta",
+    "Asangaon",
+    "Atgaon",
+    "Badlapur",
+    "Bamandongri",
+    "Bandra",
+    "Bhandup",
+    "Bhayandar",
+    "Bhivpuri Road",
+    "Bhiwandi Road",
+    "Boisar",
+    "Borivali",
+    "Byculla",
+    "CBD Belapur",
+    "Charni Road",
+    "Chembur",
+    "Chhatrapati Shivaji Terminus",
+    "Chikhale",
+    "Chinchpokli",
+    "Chouk",
+    "Chunabhatti",
+    "Churchgate",
+    "Cotton Green",
+    "Currey Road",
+    "Dadar",
+    "Dahanu Road",
+    "Dahisar",
+    "Dativali",
+    "Dighe",
+    "Diva Junction",
+    "Dockyard Road",
+    "Dolavli",
+    "Dombivli",
+    "Ghansoli",
+    "Ghatkopar",
+    "Goregaon",
+    "Govandi",
+    "Grant Road",
+    "Guru Tegh Bahadur Nagar",
+    "Hamrapur",
+    "Jite",
+    "Jogeshwari",
+    "Juchandra",
+    "Juinagar",
+    "Jummapatti",
+    "Kalamboli",
+    "Kalwa",
+    "Kalyan Junction",
+    "Kaman Road",
+    "Kandivli",
+    "Kanjurmarg",
+    "Karjat",
+    "Kasara",
+    "Kasu",
+    "Kelavli",
+    "Kelve Road",
+    "Khadavli",
+    "Khandeshwar",
+    "Khar Road",
+    "Kharbao",
+    "Khardi",
+    "Kharghar",
+    "Kharkopar",
+    "Khopoli",
+    "King's Circle",
+    "Kopar",
+    "Kopar Khairane",
+    "Kurla",
+    "Lower Parel",
+    "Lowjee",
+    "Mahalaxmi",
+    "Mahim Junction",
+    "Malad",
+    "Mankhurd",
+    "Mansarovar",
+    "Marine Lines",
+    "Masjid",
+    "Matheran",
+    "Matunga",
+    "Matunga Road",
+    "Mira Road",
+    "Mohope",
+    "Mulund",
+    "Mumbai Central",
+    "Mumbra",
+    "Nagothane",
+    "Nahur",
+    "Naigaon",
+    "Nallasopara",
+    "Navde Road",
+    "Neral Junction",
+    "Nerul",
+    "Nidi",
+    "Nilaje",
+    "Palasdari",
+    "Palghar",
+    "Panvel",
+    "Parel",
+    "Pen",
+    "Prabhadevi",
+    "Rabale",
+    "Ram Mandir",
+    "Rasayani",
+    "Reay Road",
+    "Roha",
+    "Sandhurst Road",
+    "Sanpada",
+    "Santacruz",
+    "Saphale",
+    "Seawoods–Darave",
+    "Sewri",
+    "Shahad",
+    "Shelu",
+    "Sion",
+    "Somtane",
+    "Taloje Panchnand",
+    "Thakurli",
+    "Thane",
+    "Thansit",
+    "Tilak Nagar",
+    "Titwala",
+    "Turbhe",
+    "Ulhasnagar",
+    "Umbermali",
+    "Umroli",
+    "Vadala Road",
+    "Vaitarna",
+    "Vangani",
+    "Vangaon",
+    "Vasai Road",
+    "Vashi",
+    "Vasind",
+    "Vidyavihar",
+    "Vikhroli",
+    "Vile Parle",
+    "Virar",
+    "Vithalwadi",
+    "Water Pipe",
+    "Dronagiri",
+    "Gavan",
+    "Nhava Sheva",
+    "Ranjanpada",
+    "Sagar Sangam",
+    "Targhar",
+    "Uran City",
+  ];
+
+  const handleSubmit = async () => {
+    // e.preventDefault();
+    try {
+      const concessionDetailsCollection = collection(db, "ConcessionDetails");
+      console.log(concessionDetailsCollection);
+      await addDoc(concessionDetailsCollection, {
+        name: "Juhi",
+        email: "test",
+        createdAt: new Date(),
+      });
+    } catch (error) {}
+  };
 
   return (
     <>
@@ -103,35 +280,40 @@ const RailwayEntryInterface = () => {
                 </Popover>
               </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="branch">Branch</Label>
-              <Select>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select branch" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* <SelectGroup> */}
-                  {/* <SelectLabel>Fruits</SelectLabel> */}
-                  <SelectItem value="comps">Comps</SelectItem>
-                  <SelectItem value="it">IT</SelectItem>
-                  {/* </SelectGroup> */}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="grad-year">Grad Year</Label>
-              <Select>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select grad year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* <SelectGroup> */}
-                  {/* <SelectLabel>Fruits</SelectLabel> */}
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                  {/* </SelectGroup> */}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="branch">Branch</Label>
+                <Select>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select branch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {branches.map((branch, index) => {
+                      return (
+                        <SelectItem key={index} value={branch}>
+                          {branch}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="grad-year">Graduation Year</Label>
+                <Select>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select grad year" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {gradYearArray.map((year, index) => (
+                      <SelectItem key={index} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>{" "}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="phoneno">Phone Number</Label>
@@ -175,67 +357,51 @@ const RailwayEntryInterface = () => {
               </div>{" "}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="grad-year">Travel Lane</Label>
+              <Label htmlFor="travel-lane">Travel Lane</Label>
               <Select>
                 <SelectTrigger className="">
-                  <SelectValue placeholder="Select grad year" />
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   {/* <SelectGroup> */}
                   {/* <SelectLabel>Fruits</SelectLabel> */}
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
+                  <SelectItem value="western">Western</SelectItem>
+                  <SelectItem value="central">Central</SelectItem>
+                  <SelectItem value="harbour">Harbour</SelectItem>
                   {/* </SelectGroup> */}
                 </SelectContent>
               </Select>
             </div>{" "}
-            <div className="grid gap-2">
-              <Label htmlFor="grad-year">Grad Year</Label>
-              <Select>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select grad year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* <SelectGroup> */}
-                  {/* <SelectLabel>Fruits</SelectLabel> */}
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                  {/* </SelectGroup> */}
-                </SelectContent>
-              </Select>
-            </div>{" "}
-            <div className="grid gap-2">
-              <Label htmlFor="grad-year">Grad Year</Label>
-              <Select>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select grad year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {/* <SelectGroup> */}
-                  {/* <SelectLabel>Fruits</SelectLabel> */}
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                  {/* </SelectGroup> */}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="from">From</Label>
+                <Select>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {travelFromLocations.map((location, index) => (
+                      <SelectItem key={index} value={location}>
+                        {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>{" "}
+              <div className="grid gap-2">
+                <Label htmlFor="to">To</Label>
+                <Input
+                  type="text"
+                  value="Bandra"
+                  className="cursor-default"
+                  readOnly
+                />
+              </div>
             </div>
-            <Button type="submit" className="w-full">
-              Create an account
-            </Button>
-            <Button variant="outline" className="w-full">
-              Sign up with GitHub
-            </Button>
-          </div>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link href="#" className="underline">
-              Sign in
-            </Link>
+            <Button>Apply</Button>
           </div>
         </CardContent>
       </Card>
-      {/* <h1>Railway Entry Interface</h1>
-      <Input type="email" placeholder="Email" /> */}
     </>
   );
 };

@@ -6,11 +6,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { db, app } from "@/firebase";
+} from "../components/ui/card";
+import { Label } from '../components/ui/label';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
+import { db, app } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { Bounce, ToastContainer } from 'react-toastify';
@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from 'next-themes';
 
-const Login = ({ setLoggedIn, setUser, loggedIn }) => {
+const Login = ({ setLoggedIn, setUser }:{setLoggedIn:any, setUser:any}) => {
 
   const {theme} = useTheme();
   console.log(theme)
@@ -32,8 +32,13 @@ const Login = ({ setLoggedIn, setUser, loggedIn }) => {
     };
   }, []);
 
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
 
   const loginMsg = async () => {
     const auth = getAuth(app);

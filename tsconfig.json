@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "components/ui/card.js", "pages/Login.jsx", "pages/Login.jsx", "app/layout.jsx", "components/theme-provider.jsx", "components/theme-provider.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "components/ui/card.js", "pages/Login.jsx", "pages/RailwayEntryInterface.tsx", "app/layout.jsx", "components/theme-provider.jsx", "components/theme-provider.jsx", "src/components/RailwayConcession/getInfo/ApprovalInfo.jsx", "src/components/RailwayConcession/actions/CancelConcession.tsx", "src/pages/RailwayEntryInterface.jsx", "src/components/RailwayConcession/rcList/RailwayConcessionCard.jsx"],
   "exclude": ["node_modules"]
 }
