@@ -6,7 +6,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/modeToggle";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,16 +49,19 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${inter.className} w-screen h-screen`}>
         {/* <ToastContainer> */}
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <UserContext.Provider
+            value={{ loggedIn, setLoggedIn, user, setUser }}
           >
-            <UserContext.Provider value={{ loggedIn, setLoggedIn, user, setUser }}>
-              {children}
-            </UserContext.Provider>
-          </ThemeProvider>
+            {children}
+            <Toaster />
+          </UserContext.Provider>
+        </ThemeProvider>
         {/* </ToastContainer>   */}
       </body>
     </html>
