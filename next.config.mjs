@@ -1,3 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+import path from "path";
+const nextConfig = {
+  webpack: (config) => {
+    // Resolve aliases
+    config.resolve.alias["@"] = "/src"; // Adjust the path as needed
+
+    return config;
+  },
+};
+
 export default nextConfig;
