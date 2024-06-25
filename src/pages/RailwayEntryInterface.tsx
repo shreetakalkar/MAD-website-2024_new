@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import React, { useEffect, useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from "@/config/firebase";
 
 const RailwayEntryInterface = () => {
   const [date, setDate] = React.useState<Date>();
