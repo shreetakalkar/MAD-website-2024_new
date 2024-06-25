@@ -261,41 +261,6 @@ const RailwayEntryInterface = () => {
     "Targhar",
     "Uran City",
   ];
-  // const formData = { email: "omshete0550@gmail.com" };
-
-  const getStudentId = async (formData) => {
-    try {
-      const studentsRef = query(
-        collection(db, "Students "),
-        where("email", "==", formData.email)
-      );
-
-      const querySnapshot = await getDocs(studentsRef);
-      const studentDoc = querySnapshot.docs[0];
-
-      const studentId = studentDoc?.id || "";
-      console.log(studentId);
-      return studentId;
-    } catch (error) {
-      console.error("Error getting student document:", error);
-      throw error;
-    }
-  };
-  const createConcessionDetails = async (studentId, values) => {
-    try {
-      //if no student found, then what to do?
-
-      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
-      console.log("hello");
-      await setDoc(concessionDetailsRef, {
-        // Add other fields as needed
-        ...values,
-      });
-      console.log("Created");
-    } catch (error) {
-      console.error("Error while creating new concession request", error);
-    }
-  };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -317,6 +282,41 @@ const RailwayEntryInterface = () => {
       certNo: "",
     },
   });
+
+  const getStudentId = async (formData) => {
+    try {
+      const studentsRef = query(
+        collection(db, "Students "),
+        where("email", "==", formData.email)
+      );
+
+      const querySnapshot = await getDocs(studentsRef);
+      const studentDoc = querySnapshot.docs[0];
+
+      const studentId = studentDoc?.id || "";
+      console.log(studentId);
+      return studentId;
+    } catch (error) {
+      console.error("Error getting student document:", error);
+      throw error;
+    }
+  };
+
+  const createConcessionDetails = async (studentId, values) => {
+    try {
+      //if no student found, then what to do?
+
+      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
+      console.log("hello");
+      await setDoc(concessionDetailsRef, {
+        // Add other fields as needed
+        ...values,
+      });
+      console.log("Created");
+    } catch (error) {
+      console.error("Error while creating new concession request", error);
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
