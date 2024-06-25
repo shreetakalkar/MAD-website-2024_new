@@ -41,11 +41,12 @@ const RailwayConcessionCard = ({ request, fetchAllEnquiries }) => {
       />
     );
     setInfoWindowVisibility(true);
-  }
+  };
 
   const convertDate = (date) => {
     const dobTimestamp = date;
-    const dobMilliseconds = dobTimestamp.seconds * 1000 + dobTimestamp.nanoseconds / 1e6;
+    const dobMilliseconds =
+      dobTimestamp.seconds * 1000 + dobTimestamp.nanoseconds / 1e6;
     const dobDate = new Date(dobMilliseconds);
     const dateObj = new Date(dobDate);
     const day = dateObj.getDate();
@@ -59,7 +60,9 @@ const RailwayConcessionCard = ({ request, fetchAllEnquiries }) => {
     <div className={styles.railwayConcessionCard}>
       <div className={styles.railwayConcessionTitle}>
         <p className={styles.nameAndGender}>
-          <span className={styles.name}>{request.firstName} {request.middleName} {request.lastName}</span>
+          <span className={styles.name}>
+            {request.firstName} {request.middleName} {request.lastName}
+          </span>
           <span className={styles.gender}>{request.gender}</span>
           <span className={styles.western}>{request.travelLane}</span>
         </p>
@@ -76,7 +79,9 @@ const RailwayConcessionCard = ({ request, fetchAllEnquiries }) => {
               Date of Issue:
             </td>
             <td className={styles.railwayConcessionCardTableCell}>Branch:</td>
-            <td className={styles.railwayConcessionCardTableCell}>Current Year:</td>
+            <td className={styles.railwayConcessionCardTableCell}>
+              Current Year:
+            </td>
           </tr>
 
           <tr>
@@ -141,9 +146,33 @@ const RailwayConcessionCard = ({ request, fetchAllEnquiries }) => {
         <div className={styles.Doc}>
           <p className={styles.railwayConcessionCardTableCell}>Documents:</p>
           <ul className={styles.railwayConcessionCardDocumentsList}>
-            <li onClick={() => handleIDCardClick({ heading: 'Id Card', url: request.idCardURL })}>ID Card</li>
-            <li onClick={() => handleIDCardClick({ heading: 'Previous Pass', url: request.previousPassURL })}>Previous Pass</li>
-            <li onClick={() => handleIDCardClick({ heading: 'Previous Pass', url: '#' })}>Additional documents</li>
+            <li
+              onClick={() =>
+                handleIDCardClick({
+                  heading: "Id Card",
+                  url: request.idCardURL,
+                })
+              }
+            >
+              ID Card
+            </li>
+            <li
+              onClick={() =>
+                handleIDCardClick({
+                  heading: "Previous Pass",
+                  url: request.previousPassURL,
+                })
+              }
+            >
+              Previous Pass
+            </li>
+            <li
+              onClick={() =>
+                handleIDCardClick({ heading: "Previous Pass", url: "#" })
+              }
+            >
+              Additional documents
+            </li>
           </ul>
         </div>
         <div className={styles.railwayConcessionCardFooterButtonDiv}>

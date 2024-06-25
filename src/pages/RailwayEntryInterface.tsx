@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -34,8 +36,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React, { useEffect, useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  setDoc,
+  Timestamp,
+  Firestore,
+  doc,
+} from "firebase/firestore";
 import { db } from "@/config/firebase";
+import { error } from "console";
+import { Value } from "@radix-ui/react-select";
+
 const formSchema = z.object({
   branch: z.string().nonempty({ message: "Field is required." }),
   gradYear: z.string().nonempty({ message: "Field is required." }),
@@ -245,30 +261,41 @@ const RailwayEntryInterface = () => {
     "Targhar",
     "Uran City",
   ];
+  // const formData = { email: "omshete0550@gmail.com" };
 
-  // const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-  //   try {
-  //     console.log(formData);
-  //     // const concessionDetailsCollection = collection(db, "ConcessionDetails");
-  //     // await addDoc(concessionDetailsCollection, {
-  //     //   ...formData,
-  //     //   createdAt: new Date(),
-  //     // });
+  const getStudentId = async (formData) => {
+    try {
+      const studentsRef = query(
+        collection(db, "Students "),
+        where("email", "==", formData.email)
+      );
 
-  //     toast({
-  //       description: "Your form has been submitted successfully.",
-  //     });
+      const querySnapshot = await getDocs(studentsRef);
+      const studentDoc = querySnapshot.docs[0];
 
-  //     // Clear form fields after successful submission (optional)
-  //     // reset();
-  //   } catch (error) {
-  //     console.error("Error adding document: ", error);
-  //     toast({
-  //       description: "Failed to submit the form. Please try again later.",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // };
+      const studentId = studentDoc?.id || "";
+      console.log(studentId);
+      return studentId;
+    } catch (error) {
+      console.error("Error getting student document:", error);
+      throw error;
+    }
+  };
+  const createConcessionDetails = async (studentId, values) => {
+    try {
+      //if no student found, then what to do?
+
+      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
+      console.log("hello");
+      await setDoc(concessionDetailsRef, {
+        // Add other fields as needed
+        ...values,
+      });
+      console.log("Created");
+    } catch (error) {
+      console.error("Error while creating new concession request", error);
+    }
+  };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -290,28 +317,24 @@ const RailwayEntryInterface = () => {
       certNo: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
 
-  // const {
-  //   register,
-  //   handleSubmit: handleFormSubmit,
-  //   formState: { errors },
-  // } = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  // });
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const studentId = await getStudentId(values);
+      console.log("hi");
+
+      createConcessionDetails(studentId, values);
+    } catch {
+      console.error("Error in fetching the doc");
+    }
+    console.log(values);
+  };
 
   return (
     <>
       <Card className="mx-auto max-w-lg">
         <CardHeader>
           <CardTitle className="text-xl">Railway Concession Entry</CardTitle>
-          {/* <CardDescription>
-            Enter your information to create an account
-          </CardDescription> */}
         </CardHeader>
         <CardContent>
           {" "}
