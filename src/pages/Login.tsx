@@ -6,11 +6,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
-import { Label } from '../components/ui/label';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { db, app } from "../config/firebase";
+} from "@/components/ui/card";
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { db, app } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { Bounce, ToastContainer } from 'react-toastify';
