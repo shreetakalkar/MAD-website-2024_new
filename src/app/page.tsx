@@ -9,94 +9,123 @@ import { useEffect } from "react";
 import React from "react";
 import { useTheme } from "next-themes";
 import RailwayEntryInterface from "@/pages/RailwayEntryInterface";
-import { Payment, columns } from "../../src/components/columnDef"
-import { DataTable } from "../../src/components/dataTable"
+import { Payment, columns } from "../../src/components/columnDef";
+import { DataTable } from "../../src/components/dataTable";
 import { useState } from "react";
+import { DataTableDemo } from "@/components/DataTableDemo";
+import UpdatePassDetails from "@/components/updatePassDetails";
 
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.
+
   return [
     {
-        certificateNumber: "CSDSDF3e423",
-        name: "Jash",
-        gender: "M",
-        dob: "22/07/2005",
-        from: "Goregaon",
-        to: "Bandra",
-        class: 1,
-        mode: "Quarterly",
-        dateOfIssue: "25/06/2024",
-        address: "ABCD Bld, Flat 007, Goregaon East",
-        status: "Pending"
-      },
-      {
-          certificateNumber: "CSDSasd423",
-          name: "NIEANDER",
-          gender: "M",
-          dob: "22/07/2005",
-          from: "Goregaon",
-          to: "Bandra",
-          class: 1,
-          mode: "Quarterly",
-          dateOfIssue: "25/06/2024",
-          address: "ABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon East",
-          status: "Confirmed"
-        },
-        {
-            certificateNumber: "CSDasere3F3e423",
-            name: "Jash",
-            gender: "M",
-            dob: "22/07/2005",
-            from: "Goregaon",
-            to: "Bandra",
-            class: 1,
-            mode: "Quarterly",
-            dateOfIssue: "25/06/2024",
-            address: "ABCD Bld, Flat 007, Goregaon East",
-            status: "Confirmed"
-          },
-          {
-              certificateNumber: "23432jnasdn",
-              name: "Jash",
-              gender: "M",
-              dob: "22/07/2005",
-              from: "Goregaon",
-              to: "Bandra",
-              class: 1,
-              mode: "Quarterly",
-              dateOfIssue: "25/06/2024",
-              address: "ABCD Bld, Flat 007, Goregaon East",
-              status: "Confirmed"
-            },
-            {
-                certificateNumber: "1234asda",
-                name: "Jash",
-                gender: "M",
-                dob: "22/07/2005",
-                from: "Goregaon",
-                to: "Bandra",
-                class: 1,
-                mode: "Quarterly",
-                dateOfIssue: "25/06/2024",
-                address: "ABCD Bld, Flat 007, Goregaon East",
-                status: "Pending"
-              },
-              {
-                  certificateNumber: "12eads23d",
-                  name: "Jash",
-                  gender: "M",
-                  dob: "22/07/2005",
-                  from: "Goregaon",
-                  to: "Bandra",
-                  class: 1,
-                  mode: "Quarterly",
-                  dateOfIssue: "25/06/2024",
-                  address: "ABCD Bld, Flat 007, Goregaon East",
-                  status: "Pending"
-                },
-  ]
+      certificateNumber: "CSDSDF3e423",
+      name: "Jash",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Pending",
+    },
+    {
+      certificateNumber: "CSDSasd423",
+      name: "NIEANDER",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address:
+        "ABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon East",
+      status: "Confirmed",
+    },
+    {
+      certificateNumber: "CSDasere3F3e423",
+      name: "Jash",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Confirmed",
+    },
+    {
+      certificateNumber: "23432jnasdn",
+      name: "Jash",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Confirmed",
+    },
+    {
+      certificateNumber: "1234asda",
+      name: "Jash",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Pending",
+    },
+    {
+      certificateNumber: "12eads23d",
+      name: "Jash",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Pending",
+    },
+    {
+      certificateNumber: "12eads23d",
+      name: "Jash",
+      gender: "M",
+      dob: "22/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Rejected",
+    },
+    {
+      certificateNumber: "12eads23d",
+      name: "Jash",
+      gender: "M",
+      dob: "29/07/2005",
+      from: "Goregaon",
+      to: "Bandra",
+      class: 1,
+      mode: "Quarterly",
+      dateOfIssue: "25/06/2024",
+      address: "ABCD Bld, Flat 007, Goregaon East",
+      status: "Rejected",
+    },
+  ];
 }
-
 
 export default function Home() {
   const { loggedIn, setLoggedIn, user, setUser } =
@@ -115,8 +144,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-
-
   return (
     <>
       <div className="w-[100%] h-[100%] flex flex-col">
@@ -132,12 +159,10 @@ export default function Home() {
           </div>
         </div>
         <div className="h-[90%] flex items-center justify-center">
-          {/* <RailwayEntryInterface /> */}
-
-
+          <RailwayEntryInterface />
+          {/* <UpdatePassDetails /> */}
           <div className="w-[70%] overflow-x-auto">
-
-          <DataTable  data={data} columns={columns} /> 
+            {/* <DataTable data={data} columns={columns} /> */}
           </div>
           {/* <Login
             loggedIn={loggedIn}
@@ -149,6 +174,3 @@ export default function Home() {
     </>
   );
 }
-
-
-
