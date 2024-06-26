@@ -71,6 +71,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
+    //className="2xl:w-[xyz] lg:w-[xyz]"
     screens: {
       "2xl": { max: "1535px" },
       // => @media (max-width: 1535px) { ... }
