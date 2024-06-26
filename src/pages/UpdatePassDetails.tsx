@@ -161,6 +161,7 @@ const UpdatePassDetails = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchAllPasses();
   }, []);
