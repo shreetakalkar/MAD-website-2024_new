@@ -8,12 +8,11 @@ import DevsLight from "../public/images/devs-light.png";
 import { useEffect } from "react";
 import React from "react";
 import { useTheme } from "next-themes";
-import RailwayEntryInterface from "@/pages/RailwayEntryInterface";
 import { Payment, columns } from "../../src/components/columnDef";
 import { DataTable } from "../../src/components/dataTable";
 import { useState } from "react";
-import { DataTableDemo } from "@/components/DataTableDemo";
-import UpdatePassDetails from "@/components/updatePassDetails";
+import UpdatePassDetails from "@/pages/UpdatePassDetails";
+import RailwayEntryInterface from "@/components/RailwayEntryInterface";
 
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.
@@ -159,11 +158,11 @@ export default function Home() {
           </div>
         </div>
         <div className="h-[90%] flex items-center justify-center">
-          <RailwayEntryInterface />
-          {/* <UpdatePassDetails /> */}
-          <div className="w-[70%] overflow-x-auto">
-            {/* <DataTable data={data} columns={columns} /> */}
-          </div>
+          {/* <RailwayEntryInterface /> */}
+          <UpdatePassDetails />
+          {/* <div className="w-[70%] overflow-x-auto">
+            <DataTable data={data} columns={columns} />
+          </div> */}
           {/* <Login
             loggedIn={loggedIn}
             setLoggedIn={setLoggedIn}
