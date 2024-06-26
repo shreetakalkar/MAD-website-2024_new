@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import useGradYear from "@/constants/gradYearList";
 import {
   Form,
   FormControl,
@@ -61,6 +62,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { branches } from "@/constants/branches";
+import { travelFromLocations } from "@/constants/travelFromLocations";
 
 const frameworks = [
   {
@@ -114,187 +117,47 @@ const formSchema = z.object({
 });
 const RailwayEntryInterface = () => {
   const [date, setDate] = React.useState<Date>();
-  const [gradYearList, setGradYearList] = useState<any[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
   const { toast } = useToast();
+  const [inputValue, setInputValue] = useState("");
+  const [frameworks, setFrameworks] = useState<any[]>([]);
+  const [filteredFrameworks, setFilteredFrameworks] = useState<any[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<string>("");
+  const { control, setValue: setFormValue, formState } = useForm();
+  const gradYearList = useGradYear();
 
-  useEffect(() => {
-    generateGradYear();
-    // handleSubmit();
-  }, []);
-
-  const generateGradYear = () => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth(); // 0-based index
-
-    let feGradYear = currentYear + 4;
-    if (currentMonth < 6) {
-      feGradYear = currentYear + 3;
-    }
-
-    const years = [
-      { id: 1, year: "FE", gradYear: feGradYear },
-      { id: 2, year: "SE", gradYear: feGradYear - 1 },
-      { id: 3, year: "TE", gradYear: feGradYear - 2 },
-      { id: 4, year: "BE", gradYear: feGradYear - 3 },
+  // Simulated fetch or actual fetch function
+  const fetchFrameworks = () => {
+    // Simulated data for demonstration
+    const mockFrameworks = [
+      { label: "React", value: "react" },
+      { label: "Angular", value: "angular" },
+      { label: "Vue.js", value: "vue" },
+      // Add more frameworks as needed
     ];
-
-    setGradYearList(() => years);
+    setFrameworks(mockFrameworks);
   };
 
-  const branches = ["Computer", "IT", "AI & DS", "EXTC"];
-  const travelFromLocations = [
-    "Airoli",
-    "Aman Lodge",
-    "Ambernath",
-    "Ambivli",
-    "Andheri",
-    "Apta",
-    "Asangaon",
-    "Atgaon",
-    "Badlapur",
-    "Bamandongri",
-    "Bhandup",
-    "Bhayandar",
-    "Bhivpuri Road",
-    "Bhiwandi Road",
-    "Boisar",
-    "Borivali",
-    "Byculla",
-    "CBD Belapur",
-    "Charni Road",
-    "Chembur",
-    "Chhatrapati Shivaji Terminus",
-    "Chikhale",
-    "Chinchpokli",
-    "Chouk",
-    "Chunabhatti",
-    "Churchgate",
-    "Cotton Green",
-    "Currey Road",
-    "Dadar",
-    "Dahanu Road",
-    "Dahisar",
-    "Dativali",
-    "Dighe",
-    "Diva Junction",
-    "Dockyard Road",
-    "Dolavli",
-    "Dombivli",
-    "Ghansoli",
-    "Ghatkopar",
-    "Goregaon",
-    "Govandi",
-    "Grant Road",
-    "Guru Tegh Bahadur Nagar",
-    "Hamrapur",
-    "Jite",
-    "Jogeshwari",
-    "Juchandra",
-    "Juinagar",
-    "Jummapatti",
-    "Kalamboli",
-    "Kalwa",
-    "Kalyan Junction",
-    "Kaman Road",
-    "Kandivli",
-    "Kanjurmarg",
-    "Karjat",
-    "Kasara",
-    "Kasu",
-    "Kelavli",
-    "Kelve Road",
-    "Khadavli",
-    "Khandeshwar",
-    "Khar Road",
-    "Kharbao",
-    "Khardi",
-    "Kharghar",
-    "Kharkopar",
-    "Khopoli",
-    "King's Circle",
-    "Kopar",
-    "Kopar Khairane",
-    "Kurla",
-    "Lower Parel",
-    "Lowjee",
-    "Mahalaxmi",
-    "Mahim Junction",
-    "Malad",
-    "Mankhurd",
-    "Mansarovar",
-    "Marine Lines",
-    "Masjid",
-    "Matheran",
-    "Matunga",
-    "Matunga Road",
-    "Mira Road",
-    "Mohope",
-    "Mulund",
-    "Mumbai Central",
-    "Mumbra",
-    "Nagothane",
-    "Nahur",
-    "Naigaon",
-    "Nallasopara",
-    "Navde Road",
-    "Neral Junction",
-    "Nerul",
-    "Nidi",
-    "Nilaje",
-    "Palasdari",
-    "Palghar",
-    "Panvel",
-    "Parel",
-    "Pen",
-    "Prabhadevi",
-    "Rabale",
-    "Ram Mandir",
-    "Rasayani",
-    "Reay Road",
-    "Roha",
-    "Sandhurst Road",
-    "Sanpada",
-    "Santacruz",
-    "Saphale",
-    "Seawoods–Darave",
-    "Sewri",
-    "Shahad",
-    "Shelu",
-    "Sion",
-    "Somtane",
-    "Taloje Panchnand",
-    "Thakurli",
-    "Thane",
-    "Thansit",
-    "Tilak Nagar",
-    "Titwala",
-    "Turbhe",
-    "Ulhasnagar",
-    "Umbermali",
-    "Umroli",
-    "Vadala Road",
-    "Vaitarna",
-    "Vangani",
-    "Vangaon",
-    "Vasai Road",
-    "Vashi",
-    "Vasind",
-    "Vidyavihar",
-    "Vikhroli",
-    "Vile Parle",
-    "Virar",
-    "Vithalwadi",
-    "Water Pipe",
-    "Dronagiri",
-    "Gavan",
-    "Nhava Sheva",
-    "Ranjanpada",
-    "Sagar Sangam",
-    "Targhar",
-    "Uran City",
-  ];
+  useEffect(() => {
+    fetchFrameworks();
+  }, []);
+
+  useEffect(() => {
+    // Filter frameworks based on inputValue
+    const filtered = frameworks.filter((framework) =>
+      framework.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    setFilteredFrameworks(filtered);
+    setOpen(true); // Always keep the list open when filtering
+  }, [inputValue, frameworks]);
+
+  const handleSelectFramework = (selectedValue: string) => {
+    setFormValue("email", selectedValue); // Update form field value
+    setInputValue(selectedValue); // Update input value
+    setOpen(false); // Close the list after selecting
+    setValue(selectedValue); // Set the selected value state
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -524,38 +387,61 @@ const RailwayEntryInterface = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-0"> */}
-                  <Command>
-                    <CommandInput placeholder="Search framework..." />
-                    <CommandList>
-                      <CommandEmpty>No framework found.</CommandEmpty>
-                      <CommandGroup>
-                        {frameworks.map((framework) => (
-                          <CommandItem
-                            key={framework.value}
-                            value={framework.value}
-                            onSelect={(currentValue) => {
-                              setValue(
-                                currentValue === value ? "" : currentValue
-                              );
-                              setOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                value === framework.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
+                  {/* <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Command>
+                            <CommandInput
+                              placeholder="Search framework..."
+                              value={value}
+                              onValueChange={(e) => {
+                                field.onChange;
+                                setInputValue(e.target.value);
+                                setOpen(true); // Set open to true on input change
+                              }}
+                              {...field}
                             />
-                            {framework.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                  {/* </PopoverContent>
-                  </Popover> */}
+                            <CommandList>
+                              {inputValue && filteredFrameworks.length === 0 ? (
+                                <CommandEmpty>No framework found.</CommandEmpty>
+                              ) : (
+                                <CommandGroup>
+                                  {filteredFrameworks.map((framework) => (
+                                    <CommandItem
+                                      key={framework.value}
+                                      value={framework.value}
+                                      onSelect={() =>
+                                        handleSelectFramework(framework.value)
+                                      }
+                                    >
+                                      {/* Replace with your Check component */}
+                  {/* <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          value === framework.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {framework.label}
+                                    </CommandItem> */}
+                  {/* ))}
+                                </CommandGroup>
+                              )}
+                            </CommandList>
+                          </Command> */}
+                  {/* <Input placeholder="eg., xyz@gmail.com" {...field} /> */}
+                  {/* </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />{" "}
+                  */}
                   <FormField
                     control={form.control}
                     name="email"
