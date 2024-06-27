@@ -16,17 +16,25 @@ import { Button } from "@/components/ui/button";
 import { db, app } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast";
+import { ModeToggle } from "@/components/modeToggle";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { toast } = useToast()
+  const { toast } = useToast();
   return (
     <div className="flex justify-center items-center h-screen">
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>
+            <div className="flex justify-between items-center">
+              <span className="font-bold">Sign In</span>
+              <span>
+                <ModeToggle />
+              </span>
+            </div>
+          </CardTitle>
           <CardDescription>Welcome to the TSEC WEBSITE</CardDescription>
         </CardHeader>
         <CardContent>
@@ -59,32 +67,33 @@ export default function Signin() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" onClick={async () => {
-            try {
-              await signIn("credentials", {
-                email,
-                password,
-                redirect: true,
-                callbackUrl: "/",
-              })
-              toast({
-                title: "Signed in",
-                description: "Sign in successful",
-              })
-            } catch (error) {
-              toast({
-                title: "Error",
-                description: "Sign in failed",
-              })
-              
-            }
-          }}
-          disabled={!email || !password}>
+          <Button
+            className="w-full"
+            onClick={async () => {
+              try {
+                await signIn("credentials", {
+                  email,
+                  password,
+                  redirect: true,
+                  callbackUrl: "/dashboard",
+                });
+                toast({
+                  title: "Signed in",
+                  description: "Sign in successful",
+                });
+              } catch (error) {
+                toast({
+                  title: "Error",
+                  description: "Sign in failed",
+                });
+              }
+            }}
+            disabled={!email || !password}
+          >
             Sign in
           </Button>
         </CardFooter>
       </Card>
-
     </div>
   );
 }
