@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import useGradYear from "@/constants/gradYearList";
 import {
   Form,
   FormControl,
@@ -51,6 +52,41 @@ import {
 import { db } from "@/config/firebase";
 import { error } from "console";
 import { Value } from "@radix-ui/react-select";
+import { Check, ChevronsUpDown } from "lucide-react";
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { branches } from "@/constants/branches";
+import { travelFromLocations } from "@/constants/travelFromLocations";
+
+const frameworks = [
+  {
+    value: "next.js",
+    label: "Next.js",
+  },
+  {
+    value: "sveltekit",
+    label: "SvelteKit",
+  },
+  {
+    value: "nuxt.js",
+    label: "Nuxt.js",
+  },
+  {
+    value: "remix",
+    label: "Remix",
+  },
+  {
+    value: "astro",
+    label: "Astro",
+  },
+];
 
 const formSchema = z.object({
   branch: z.string().nonempty({ message: "Field is required." }),
@@ -70,9 +106,9 @@ const formSchema = z.object({
     },
     { message: "Field is required." }
   ),
-  phoneNo: z.string().nonempty({ message: "Field is required." }),
+  phoneNum: z.string().nonempty({ message: "Field is required." }),
   address: z.string().nonempty({ message: "Field is required." }),
-  classType: z.string().nonempty({ message: "Field is required." }),
+  class: z.string().nonempty({ message: "Field is required." }),
   duration: z.string().nonempty({ message: "Field is required." }),
   travelLane: z.string().nonempty({ message: "Field is required." }),
   from: z.string().nonempty({ message: "Field is required." }),
@@ -81,186 +117,47 @@ const formSchema = z.object({
 });
 const RailwayEntryInterface = () => {
   const [date, setDate] = React.useState<Date>();
-  const [gradYear, setGradYear] = useState<any[]>([]);
   const { toast } = useToast();
+  const [inputValue, setInputValue] = useState("");
+  const [frameworks, setFrameworks] = useState<any[]>([]);
+  const [filteredFrameworks, setFilteredFrameworks] = useState<any[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<string>("");
+  const { control, setValue: setFormValue, formState } = useForm();
+  const gradYearList = useGradYear();
 
-  useEffect(() => {
-    generateGradYear();
-    // handleSubmit();
-  }, []);
-
-  const generateGradYear = () => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth(); // 0-based index
-
-    let feGradYear = currentYear + 4;
-    if (currentMonth < 6) {
-      feGradYear = currentYear + 3;
-    }
-
-    const years = [
-      { id: 1, year: "FE", gradYear: feGradYear },
-      { id: 2, year: "SE", gradYear: feGradYear - 1 },
-      { id: 3, year: "TE", gradYear: feGradYear - 2 },
-      { id: 4, year: "BE", gradYear: feGradYear - 3 },
+  // Simulated fetch or actual fetch function
+  const fetchFrameworks = () => {
+    // Simulated data for demonstration
+    const mockFrameworks = [
+      { label: "React", value: "react" },
+      { label: "Angular", value: "angular" },
+      { label: "Vue.js", value: "vue" },
+      // Add more frameworks as needed
     ];
-
-    setGradYear(() => years);
+    setFrameworks(mockFrameworks);
   };
 
-  const branches = ["Computer", "IT", "AI & DS", "EXTC"];
-  const travelFromLocations = [
-    "Airoli",
-    "Aman Lodge",
-    "Ambernath",
-    "Ambivli",
-    "Andheri",
-    "Apta",
-    "Asangaon",
-    "Atgaon",
-    "Badlapur",
-    "Bamandongri",
-    "Bandra",
-    "Bhandup",
-    "Bhayandar",
-    "Bhivpuri Road",
-    "Bhiwandi Road",
-    "Boisar",
-    "Borivali",
-    "Byculla",
-    "CBD Belapur",
-    "Charni Road",
-    "Chembur",
-    "Chhatrapati Shivaji Terminus",
-    "Chikhale",
-    "Chinchpokli",
-    "Chouk",
-    "Chunabhatti",
-    "Churchgate",
-    "Cotton Green",
-    "Currey Road",
-    "Dadar",
-    "Dahanu Road",
-    "Dahisar",
-    "Dativali",
-    "Dighe",
-    "Diva Junction",
-    "Dockyard Road",
-    "Dolavli",
-    "Dombivli",
-    "Ghansoli",
-    "Ghatkopar",
-    "Goregaon",
-    "Govandi",
-    "Grant Road",
-    "Guru Tegh Bahadur Nagar",
-    "Hamrapur",
-    "Jite",
-    "Jogeshwari",
-    "Juchandra",
-    "Juinagar",
-    "Jummapatti",
-    "Kalamboli",
-    "Kalwa",
-    "Kalyan Junction",
-    "Kaman Road",
-    "Kandivli",
-    "Kanjurmarg",
-    "Karjat",
-    "Kasara",
-    "Kasu",
-    "Kelavli",
-    "Kelve Road",
-    "Khadavli",
-    "Khandeshwar",
-    "Khar Road",
-    "Kharbao",
-    "Khardi",
-    "Kharghar",
-    "Kharkopar",
-    "Khopoli",
-    "King's Circle",
-    "Kopar",
-    "Kopar Khairane",
-    "Kurla",
-    "Lower Parel",
-    "Lowjee",
-    "Mahalaxmi",
-    "Mahim Junction",
-    "Malad",
-    "Mankhurd",
-    "Mansarovar",
-    "Marine Lines",
-    "Masjid",
-    "Matheran",
-    "Matunga",
-    "Matunga Road",
-    "Mira Road",
-    "Mohope",
-    "Mulund",
-    "Mumbai Central",
-    "Mumbra",
-    "Nagothane",
-    "Nahur",
-    "Naigaon",
-    "Nallasopara",
-    "Navde Road",
-    "Neral Junction",
-    "Nerul",
-    "Nidi",
-    "Nilaje",
-    "Palasdari",
-    "Palghar",
-    "Panvel",
-    "Parel",
-    "Pen",
-    "Prabhadevi",
-    "Rabale",
-    "Ram Mandir",
-    "Rasayani",
-    "Reay Road",
-    "Roha",
-    "Sandhurst Road",
-    "Sanpada",
-    "Santacruz",
-    "Saphale",
-    "Seawoods–Darave",
-    "Sewri",
-    "Shahad",
-    "Shelu",
-    "Sion",
-    "Somtane",
-    "Taloje Panchnand",
-    "Thakurli",
-    "Thane",
-    "Thansit",
-    "Tilak Nagar",
-    "Titwala",
-    "Turbhe",
-    "Ulhasnagar",
-    "Umbermali",
-    "Umroli",
-    "Vadala Road",
-    "Vaitarna",
-    "Vangani",
-    "Vangaon",
-    "Vasai Road",
-    "Vashi",
-    "Vasind",
-    "Vidyavihar",
-    "Vikhroli",
-    "Vile Parle",
-    "Virar",
-    "Vithalwadi",
-    "Water Pipe",
-    "Dronagiri",
-    "Gavan",
-    "Nhava Sheva",
-    "Ranjanpada",
-    "Sagar Sangam",
-    "Targhar",
-    "Uran City",
-  ];
+  useEffect(() => {
+    fetchFrameworks();
+  }, []);
+
+  useEffect(() => {
+    // Filter frameworks based on inputValue
+    const filtered = frameworks.filter((framework) =>
+      framework.label.toLowerCase().includes(inputValue.toLowerCase())
+    );
+    setFilteredFrameworks(filtered);
+    setOpen(true); // Always keep the list open when filtering
+  }, [inputValue, frameworks]);
+
+  const handleSelectFramework = (selectedValue: string) => {
+    setFormValue("email", selectedValue); // Update form field value
+    setInputValue(selectedValue); // Update input value
+    setOpen(false); // Close the list after selecting
+    setValue(selectedValue); // Set the selected value state
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -271,10 +168,10 @@ const RailwayEntryInterface = () => {
       middleName: "",
       lastName: "",
       gender: "",
-      dob: new Date(2000, 0, 1),
-      phoneNo: "",
+      dob: new Date(2003, 5, 1),
+      phoneNum: "",
       address: "",
-      classType: "",
+      class: "",
       duration: "",
       travelLane: "",
       from: "",
@@ -283,11 +180,11 @@ const RailwayEntryInterface = () => {
     },
   });
 
-  const getStudentId = async (formData) => {
+  const getStudentId = async (values) => {
     try {
       const studentsRef = query(
         collection(db, "Students "),
-        where("email", "==", formData.email)
+        where("email", "==", values.email)
       );
 
       const querySnapshot = await getDocs(studentsRef);
@@ -302,32 +199,97 @@ const RailwayEntryInterface = () => {
     }
   };
 
-  const createConcessionDetails = async (studentId, values) => {
+  const calculateAge = (dob) => {
+    const dobDate = new Date(dob);
+    const today = new Date();
+
+    let ageYears = today.getFullYear() - dobDate.getFullYear();
+    let ageMonths = today.getMonth() - dobDate.getMonth();
+
+    if (ageMonths < 0) {
+      ageYears--;
+      ageMonths += 12;
+    }
+    // console.log(ageMonths, ageYears);
+    return { ageYears, ageMonths };
+  };
+
+  const createConcDetailsDoc = async (studentId, values) => {
     try {
-      //if no student found, then what to do?
+      const { ageYears, ageMonths } = calculateAge(values.dob);
+      const { email, certNo, gradYear, ...formData } = values;
+
+      //Fetching the gradYear based on "FE","SE",etc.
+      const selectedGradYear = gradYearList.find(
+        (item) => item.year === gradYear
+      ).gradYear;
 
       const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
-      console.log("hello");
+
+      //Creating a doc in ConcessionDetails Collection
       await setDoc(concessionDetailsRef, {
-        // Add other fields as needed
-        ...values,
+        ...formData,
+        ageYears,
+        ageMonths,
+        gradyear: selectedGradYear,
+        lastPassIssued: new Date(),
+        status: "serviced",
+        statusMessage: "Your request has been serviced",
       });
-      console.log("Created");
+
+      // Successfully created concession request
+
+      toast({
+        description: "Concession request has been created!",
+      });
     } catch (error) {
-      console.error("Error while creating new concession request", error);
+      toast({
+        description: "Student not found!",
+      });
+      console.error(
+        "Error while creating doc in ConcessionDetails collection",
+        error
+      );
+    }
+  };
+  const createConcRequestDoc = async (studentId, values) => {
+    try {
+      const concessionRequestRef = doc(db, "ConcessionRequest", studentId);
+
+      //Creating a doc in ConcessionDetails Collection
+      await setDoc(concessionRequestRef, {
+        notificationTime: new Date(),
+        passNum: values.certNo,
+        status: "serviced",
+        statusMessage: "Your request has been serviced",
+        time: new Date(),
+        uid: studentId,
+      });
+
+      // Successfully created concession request
+    } catch (error) {
+      toast({
+        description: "Student not found!",
+      });
+      console.log(
+        "Error while creating doc in ConcessionRequest collection",
+        error
+      );
     }
   };
 
+  // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const studentId = await getStudentId(values);
-      console.log("hi");
-
-      createConcessionDetails(studentId, values);
-    } catch {
-      console.error("Error in fetching the doc");
+      createConcDetailsDoc(studentId, values);
+      createConcRequestDoc(studentId, values);
+    } catch (error) {
+      toast({
+        description: "An error occurred",
+      });
+      console.error("Error ", error);
     }
-    console.log(values);
   };
 
   return (
@@ -391,7 +353,7 @@ const RailwayEntryInterface = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {gradYear.map((year, index) => {
+                              {gradYearList.map((year, index) => {
                                 return (
                                   <SelectItem key={index} value={year.year}>
                                     {year.year}
@@ -408,6 +370,78 @@ const RailwayEntryInterface = () => {
                   </div>
                 </div>
                 <div className="grid gap-2">
+                  {/* <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-[200px] justify-between"
+                      >
+                        {value
+                          ? frameworks.find(
+                              (framework) => framework.value === value
+                            )?.label
+                          : "Select framework..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0"> */}
+                  {/* <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Command>
+                            <CommandInput
+                              placeholder="Search framework..."
+                              value={value}
+                              onValueChange={(e) => {
+                                field.onChange;
+                                setInputValue(e.target.value);
+                                setOpen(true); // Set open to true on input change
+                              }}
+                              {...field}
+                            />
+                            <CommandList>
+                              {inputValue && filteredFrameworks.length === 0 ? (
+                                <CommandEmpty>No framework found.</CommandEmpty>
+                              ) : (
+                                <CommandGroup>
+                                  {filteredFrameworks.map((framework) => (
+                                    <CommandItem
+                                      key={framework.value}
+                                      value={framework.value}
+                                      onSelect={() =>
+                                        handleSelectFramework(framework.value)
+                                      }
+                                    >
+                                      {/* Replace with your Check component */}
+                  {/* <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          value === framework.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {framework.label}
+                                    </CommandItem> */}
+                  {/* ))}
+                                </CommandGroup>
+                              )}
+                            </CommandList>
+                          </Command> */}
+                  {/* <Input placeholder="eg., xyz@gmail.com" {...field} /> */}
+                  {/* </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />{" "}
+                  */}
                   <FormField
                     control={form.control}
                     name="email"
@@ -492,8 +526,8 @@ const RailwayEntryInterface = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="Male">Male</SelectItem>
+                              <SelectItem value="Female">Female</SelectItem>
                             </SelectContent>
                           </Select>
 
@@ -534,7 +568,8 @@ const RailwayEntryInterface = () => {
                             >
                               <Calendar
                                 mode="single"
-                                selected={field.value}
+                                selected={new Date(2003, 5, 1)}
+                                defaultMonth={new Date(2003, 5, 1)}
                                 onSelect={field.onChange}
                                 disabled={(date) =>
                                   date > new Date() ||
@@ -554,7 +589,7 @@ const RailwayEntryInterface = () => {
                 <div className="grid gap-2">
                   <FormField
                     control={form.control}
-                    name="phoneNo"
+                    name="phoneNum"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
@@ -592,7 +627,7 @@ const RailwayEntryInterface = () => {
                     {" "}
                     <FormField
                       control={form.control}
-                      name="classType"
+                      name="class"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Class</FormLabel>
@@ -634,8 +669,8 @@ const RailwayEntryInterface = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="monthly">Monthly</SelectItem>
-                              <SelectItem value="quarterly">
+                              <SelectItem value="Monthly">Monthly</SelectItem>
+                              <SelectItem value="Quarterly">
                                 Quarterly
                               </SelectItem>
                             </SelectContent>
@@ -664,9 +699,9 @@ const RailwayEntryInterface = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="western">Western</SelectItem>
-                            <SelectItem value="central">Central</SelectItem>
-                            <SelectItem value="harbour">Harbour</SelectItem>
+                            <SelectItem value="Western">Western</SelectItem>
+                            <SelectItem value="Central">Central</SelectItem>
+                            <SelectItem value="Harbour">Harbour</SelectItem>
                           </SelectContent>
                         </Select>
 
@@ -746,241 +781,6 @@ const RailwayEntryInterface = () => {
                   />
                 </div>
                 <Button type="submit">Submit</Button>
-                {/* </div> */}
-                {/* <div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="branch">Branch</Label>
-                    <Select {...register("branch")}>
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select branch" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {branches.map((branch, index) => {
-                          return (
-                            <SelectItem key={index} value={branch}>
-                              {branch}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="grad-year">Graduation Year</Label>
-                    <Select {...register("gradYear")}>
-                      {" "}
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select grad year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {gradYear.map((year, index) => {
-                          return (
-                            <SelectItem key={index} value={year.year}>
-                              {year.year}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>{" "}
-                </div>
-                <div className="grid gap-4">
-                  {" "}
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    {...register("email")}
-                    id="email"
-                    placeholder="Email Address"
-                  />{" "}
-                  {errors.email && <span>{errors.email.message}</span>}
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="first-name">First name</Label>
-                    <Input
-                      {...register("firstName")}
-                      id="first-name"
-                      placeholder="Max"
-                    />
-                    {errors.firstName && (
-                      <span>{errors.firstName.message}</span>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="middle-name">Middle name</Label>
-                    <Input
-                      {...register("middleName")}
-                      id="middle-name"
-                      placeholder="Stephen"
-                    />
-                    {errors.middleName && (
-                      <span>{errors.middleName.message}</span>
-                    )}
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="last-name">Last name</Label>
-                    <Input
-                      {...register("lastName")}
-                      id="last-name"
-                      placeholder="Robinson"
-                    />
-                    {errors.lastName && <span>{errors.lastName.message}</span>}{" "}
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="gender">Gender</Label>
-                    <Select {...register("gender")}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {/* <SelectGroup> */}
-                {/* <SelectLabel>Fruits</SelectLabel> */}
-                {/* <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem> */}
-                {/* </SelectGroup> */}
-                {/* </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="dob">Date of Birth</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {date ? (
-                            format(date, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={date}
-                          onSelect={setDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phoneno">Phone Number</Label>
-                  <Input
-                    {...register("phoneNo")}
-                    id="phoneno"
-                    placeholder="Phone Number"
-                  />
-                  {errors.phoneNo && <span>{errors.phoneNo.message}</span>}{" "}
-                </div> */}
-                {/* <div className="grid gap-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Textarea
-                    {...register("address")}
-                    id="address"
-                    placeholder="Type your address here"
-                  />
-                  {errors.address && <span>{errors.address.message}</span>}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  {" "}
-                  <div className="grid gap-2">
-                    <Label htmlFor="class">Class</Label>
-                    <Select {...register("classType")}>
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {/* <SelectGroup> */}
-                {/* <SelectLabel>Fruits</SelectLabel> */}
-                {/* <SelectItem value="first-class">I</SelectItem>
-                        <SelectItem value="second-class">II</SelectItem> */}
-                {/* </SelectGroup> */}
-                {/* </SelectContent>
-                    </Select>
-                  </div>{" "}
-                  <div className="grid gap-2">
-                    <Label htmlFor="duration">Duration</Label>
-                    <Select {...register("duration")}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent> */}
-                {/* <SelectGroup> */}
-                {/* <SelectLabel>Fruits</SelectLabel> */}
-                {/* <SelectItem value="monthly">Monthly</SelectItem>
-                        <SelectItem value="quarterly">Quarterly</SelectItem> */}
-                {/* </SelectGroup> */}
-                {/* </SelectContent>
-                    </Select>
-                  </div>{" "}
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="travel-lane">Travel Lane</Label>
-                  <Select {...register("travelLane")}>
-                    <SelectTrigger>
-                      {" "}
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger> */}
-                {/* <SelectContent> */}
-                {/* <SelectGroup> */}
-                {/* <SelectLabel>Fruits</SelectLabel> */}
-                {/* <SelectItem value="western">Western</SelectItem>
-                      <SelectItem value="central">Central</SelectItem>
-                      <SelectItem value="harbour">Harbour</SelectItem> */}
-                {/* </SelectGroup> */}
-                {/* </SelectContent>
-                  </Select>
-                </div>{" "}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="from">From</Label>
-                    <Select {...register("from")}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {travelFromLocations.map((location, index) => (
-                          <SelectItem key={index} value={location}>
-                            {location}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>{" "}
-                  <div className="grid gap-2">
-                    <Label htmlFor="to">To</Label>
-                    <Input
-                      type="text"
-                      value="Bandra"
-                      className="cursor-default"
-                      readOnly
-                    />
-                  </div>
-                  <div className="grid gap-4">
-                    {" "}
-                    <Label htmlFor="cert-no">Certificate Number</Label>
-                    <Input
-                      {...register("certNo")}
-                      id="cert-no"
-                      placeholder="eg., Z XXX"
-                    />
-                    {errors.certNo && <span>{errors.certNo.message}</span>}
-                  </div>
-                </div>
-                <Button type="submit" variant={"default"}>
-                  Submit
-                </Button> */}
               </div>
             </form>
           </Form>
