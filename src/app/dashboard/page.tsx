@@ -14,7 +14,6 @@ import { doc, getDoc } from "firebase/firestore";
 import Header from "./Header";
 import LeftSideLinks from "./LeftSideLinks";
 import { ModeToggle } from "@/components/modeToggle";
-import Login from "../../components/Login";
 import Image from "next/image";
 import { UserContext } from "../layout";
 import DevsDark from "../../public/images/devs-dark.png";
@@ -28,125 +27,124 @@ import { redirect } from "next/navigation";
 import UpdatePassDetails from "@/pages/UpdatePassDetails";
 import RailwayEntryInterface from "@/components/RailwayEntryInterface";
 
-async function getData(): Promise<Payment[]> {
-  // Fetch data from your API here.
+// async function getData(): Promise<Payment[]> {
+//   // Fetch data from your API here.
 
-  return [
-    {
-      certificateNumber: "CSDSDF3e423",
-      name: "Jash",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Pending",
-    },
-    {
-      certificateNumber: "CSDSasd423",
-      name: "NIEANDER",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address:
-        "ABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon East",
-      status: "Confirmed",
-    },
-    {
-      certificateNumber: "CSDasere3F3e423",
-      name: "Jash",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Confirmed",
-    },
-    {
-      certificateNumber: "23432jnasdn",
-      name: "Jash",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Confirmed",
-    },
-    {
-      certificateNumber: "1234asda",
-      name: "Jash",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Pending",
-    },
-    {
-      certificateNumber: "12eads23d",
-      name: "Jash",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Pending",
-    },
-    {
-      certificateNumber: "12eads23d",
-      name: "Jash",
-      gender: "M",
-      dob: "22/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Rejected",
-    },
-    {
-      certificateNumber: "12eads23d",
-      name: "Jash",
-      gender: "M",
-      dob: "29/07/2005",
-      from: "Goregaon",
-      to: "Bandra",
-      class: 1,
-      mode: "Quarterly",
-      dateOfIssue: "25/06/2024",
-      address: "ABCD Bld, Flat 007, Goregaon East",
-      status: "Rejected",
-    },
-  ];
-}
+//   return [
+//     {
+//       certificateNumber: "CSDSDF3e423",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Pending",
+//     },
+//     {
+//       certificateNumber: "CSDSasd423",
+//       name: "NIEANDER",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address:
+//         "ABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon EastABCD Bld, Flat 007, Goregaon East",
+//       status: "Confirmed",
+//     },
+//     {
+//       certificateNumber: "CSDasere3F3e423",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Confirmed",
+//     },
+//     {
+//       certificateNumber: "23432jnasdn",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Confirmed",
+//     },
+//     {
+//       certificateNumber: "1234asda",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Pending",
+//     },
+//     {
+//       certificateNumber: "12eads23d",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Pending",
+//     },
+//     {
+//       certificateNumber: "12eads23d",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "22/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Rejected",
+//     },
+//     {
+//       certificateNumber: "12eads23d",
+//       name: "Jash",
+//       gender: "M",
+//       dob: "29/07/2005",
+//       from: "Goregaon",
+//       to: "Bandra",
+//       class: 1,
+//       mode: "Quarterly",
+//       dateOfIssue: "25/06/2024",
+//       address: "ABCD Bld, Flat 007, Goregaon East",
+//       status: "Rejected",
+//     },
+//   ];
+// }
 
 export default function Home() {
-  const { loggedIn, setLoggedIn, user, setUser } =
-    React.useContext(UserContext);
+  // const { loggedIn, setLoggedIn, user, setUser } = React.useContext(UserContext);
 
   const { theme } = useTheme();
 
-  const [data, setData] = useState<Payment[]>([]);
+  // const [data, setData] = useState<Payment[]>([]);
   const [userType, setUserType] = useState(null);
 
   useEffect(() => {
@@ -157,18 +155,9 @@ export default function Home() {
       setUserType(docSnap.data()?.type);
     };
 
-    fetchUserType({ uid: "aZFJC56szEO7mfshzEVR75fxvu13" }); //railway
+    fetchUserType({ uid: "MWJbMeMRwHjYcMxQeL2w" }); //railway
   }, []);
   console.log(userType);
-
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await getData();
-      setData(result);
-    }
-    fetchData();
-  }, []);
 
   const session = useSession({
     required: true,
@@ -177,31 +166,47 @@ export default function Home() {
     },
   });
 
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const result = await getData();
+  //     setData(result);
+  //   }
+  //   fetchData();
+  // }, []);
+
+
+
   return (
     <>
-      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] bg-gray-100">
+      <div className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${theme} `}>
+
         {/* Left Side Block */}
-        <div className="hidden border-r bg-white md:block">
+        <div className={`hidden border-r  md:block `}>
           <div className="flex h-full max-h-screen flex-col gap-2">
-            {/* Logo/Notification */}
-            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-              <Link
-                href="/"
-                className="flex items-center gap-2 font-semibold text-blue-600"
-              >
-                <Package2 className="h-6 w-6" />
-                <span className="">vrSafe</span>
-              </Link>
-              <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                <Bell className="h-4 w-4" />
-                <span className="sr-only">Toggle notifications</span>
-              </Button>
+
+            {/* Mode Toggle */}
+            <div className="h-[10%] flex justify-between ">
+              <div className="mt-2 ml-5">
+                <Image src={theme == "dark" ? DevsDark : DevsLight} alt="logo" width={75} height={75} />
+              </div>
+              <div className="mt-5 mr-2">
+                <ModeToggle />
+              </div>
             </div>
 
             {/* Links */}
-            <div className="flex-1">
+            <div className="flex-1 mt-5">
               <LeftSideLinks userType={userType ? userType : ""} />
             </div>
+
+            {/* Logout Button */}
+            <div className="p-8">
+              <div>{session?.data?.user?.email}</div>
+              <button onClick={() => signOut()}>
+                Logout
+              </button>
+            </div>
+
           </div>
         </div>
 
@@ -228,42 +233,26 @@ export default function Home() {
               </div>
             </div>
           </main>
-        </div>
-      </div>{" "}
 
 
-
-      
-      <div className="p-8">
-        <div className="text-white">{session?.data?.user?.email}</div>
-        <button className="text-white" onClick={() => signOut()}>
-          Logout
-        </button>
-      </div>
-      <div className="w-[100%] h-[100%] flex flex-col">
-        <div className="h-[10%] flex items-center justify-between">
-          <div className="ml-5">
-            <Image src={theme == "dark" ? DevsDark : DevsLight} alt="logo" />
-          </div>
-          <div className=" mr-5">
-            <ModeToggle />
-          </div>
-        </div>
+          {/* <div className="w-[100%] h-[100%] flex flex-col">
         <div className="h-[90%] flex items-center justify-center">
-          {/* <RailwayEntryInterface /> */}
 
+          <RailwayEntryInterface /> 
           <div className="w-[70%] overflow-x-auto">
             <DataTable data={data} columns={columns} />
           </div>
           <UpdatePassDetails />
-          {/* <div className="w-[70%] overflow-x-auto">
+          <div className="w-[70%] overflow-x-auto">
             <DataTable data={data} columns={columns} />
-          </div> */}
-          {/* <Login
+          </div>
+           <Login
             loggedIn={loggedIn}
             setLoggedIn={setLoggedIn}
             setUser={setUser}
-          /> */}
+          />
+        </div>
+      </div> */}
         </div>
       </div>
     </>
