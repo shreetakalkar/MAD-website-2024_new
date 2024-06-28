@@ -16,7 +16,6 @@ import LeftSideLinks from "./LeftSideLinks";
 import { ModeToggle } from "@/components/modeToggle";
 import Login from "../../components/Login";
 import Image from "next/image";
-import { UserContext } from "../layout";
 import DevsDark from "../../public/images/devs-dark.png";
 import DevsLight from "../../public/images/devs-light.png";
 import React from "react";
@@ -141,8 +140,6 @@ async function getData(): Promise<Payment[]> {
 }
 
 export default function Home() {
-  const { loggedIn, setLoggedIn, user, setUser } =
-    React.useContext(UserContext);
 
   const { theme } = useTheme();
 
@@ -236,11 +233,13 @@ export default function Home() {
       
       <div className="p-8">
         <div className="text-white">{session?.data?.user?.email}</div>
+        <div className="text-white">{session?.data?.user?.name}</div>
+        <div className="text-white">{session?.data?.user?.uid}</div>
         <button className="text-white" onClick={() => signOut()}>
           Logout
         </button>
       </div>
-      <div className="w-[100%] h-[100%] flex flex-col">
+      {/* <div className="w-[100%] h-[100%] flex flex-col">
         <div className="h-[10%] flex items-center justify-between">
           <div className="ml-5">
             <Image src={theme == "dark" ? DevsDark : DevsLight} alt="logo" />
@@ -250,22 +249,22 @@ export default function Home() {
           </div>
         </div>
         <div className="h-[90%] flex items-center justify-center">
-          {/* <RailwayEntryInterface /> */}
+          <RailwayEntryInterface />
 
           <div className="w-[70%] overflow-x-auto">
             <DataTable data={data} columns={columns} />
           </div>
           <UpdatePassDetails />
-          {/* <div className="w-[70%] overflow-x-auto">
+          <div className="w-[70%] overflow-x-auto">
             <DataTable data={data} columns={columns} />
-          </div> */}
-          {/* <Login
+          </div>
+          <Login
             loggedIn={loggedIn}
             setLoggedIn={setLoggedIn}
             setUser={setUser}
-          /> */}
+          />
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
