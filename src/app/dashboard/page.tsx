@@ -21,7 +21,6 @@ import DevsLight from "../../public/images/devs-light.png";
 import React from "react";
 import { useTheme } from "next-themes";
 import { Payment, columns } from "../../components/columnDef";
-import { DataTable } from "../../components/dataTable";
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import UpdatePassDetails from "@/pages/UpdatePassDetails";
