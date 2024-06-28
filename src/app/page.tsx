@@ -13,6 +13,10 @@ import { DataTable } from "../../src/components/dataTable";
 import { useState } from "react";
 import UpdatePassDetails from "@/pages/UpdatePassDetails";
 import RailwayEntryInterface from "@/components/RailwayEntryInterface";
+import UpdatePass from "@/pages/UpdatePass";
+import Pass from "@/pages/Pass";
+import PassesList from "@/pages/PassesList";
+import RailwayUpdateConc from "@/pages/RailwayUpdateConc";
 
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.
@@ -159,7 +163,10 @@ export default function Home() {
         </div>
         <div className="h-[90%] flex items-center justify-center">
           {/* <RailwayEntryInterface /> */}
-          <UpdatePassDetails />
+          <RailwayUpdateConc />
+          {/* <UpdatePass /> */}
+          {/* <PassesList /> */}
+          {/* <UpdatePassDetails /> */}
           {/* <div className="w-[70%] overflow-x-auto">
             <DataTable data={data} columns={columns} />
           </div> */}
