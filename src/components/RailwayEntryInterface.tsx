@@ -64,6 +64,7 @@ import {
 } from "@/components/ui/command";
 import { branches } from "@/constants/branches";
 import { travelFromLocations } from "@/constants/travelFromLocations";
+import { calculateAge } from "@/constants/AgeCalc";
 
 const frameworks = [
   {
@@ -106,7 +107,19 @@ const formSchema = z.object({
     },
     { message: "Field is required." }
   ),
-  phoneNum: z.string().nonempty({ message: "Field is required." }),
+  phoneNum: z
+    .string()
+    .refine((val) => val.trim() !== "", {
+      message: "Phone number must not be empty",
+    })
+    .refine(
+      (val) => {
+        const parsed = Number(val);
+        return !isNaN(parsed) && parsed >= 0 && val.length === 10;
+      },
+      { message: "Phone number must be a valid 10-digit number" }
+    ),
+
   address: z.string().nonempty({ message: "Field is required." }),
   class: z.string().nonempty({ message: "Field is required." }),
   duration: z.string().nonempty({ message: "Field is required." }),
@@ -199,31 +212,16 @@ const RailwayEntryInterface = () => {
     }
   };
 
-  const calculateAge = (dob) => {
-    const dobDate = new Date(dob);
-    const today = new Date();
-
-    let ageYears = today.getFullYear() - dobDate.getFullYear();
-    let ageMonths = today.getMonth() - dobDate.getMonth();
-
-    if (ageMonths < 0) {
-      ageYears--;
-      ageMonths += 12;
-    }
-    // console.log(ageMonths, ageYears);
-    return { ageYears, ageMonths };
-  };
-
   const createConcDetailsDoc = async (studentId, values) => {
     try {
       const { ageYears, ageMonths } = calculateAge(values.dob);
-      const { email, certNo, gradYear, ...formData } = values;
+      const { email, certNo, gradYear, phoneNum, ...formData } = values;
 
       //Fetching the gradYear based on "FE","SE",etc.
       const selectedGradYear = gradYearList.find(
         (item) => item.year === gradYear
       ).gradYear;
-
+      const parsedPhoneNum = parseInt(phoneNum, 10);
       const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
 
       //Creating a doc in ConcessionDetails Collection
@@ -232,6 +230,7 @@ const RailwayEntryInterface = () => {
         ageYears,
         ageMonths,
         gradyear: selectedGradYear,
+        phoneNum: parsedPhoneNum,
         lastPassIssued: new Date(),
         status: "serviced",
         statusMessage: "Your request has been serviced",

@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, createContext } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import SessionProvider from "@/providers/SessionProvider";
@@ -16,38 +14,20 @@ const metadata: Metadata = {
   description: "Created by batch 2024-2025",
 };
 
-export const UserContext = createContext({
-  loggedIn: false,
-  setLoggedIn: (value: boolean) => {},
-  user: { type: "", email: "", name: "" },
-  setUser: (user: { type: string; email: string; name: string }) => {},
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState({
-    type: "",
-    email: "",
-    name: "",
-  });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        setLoggedIn(true);
-        setUser(JSON.parse(storedUser));
-      }
-    }
-  }, []);
 
   return (
     <html lang="en">
       <head>
         <title>{metadata.title as React.ReactNode}</title>
         <meta name="description" content={metadata.description ?? undefined} />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${inter.className} w-screen h-screen`}>
         <SessionProvider>
@@ -57,12 +37,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <UserContext.Provider
-              value={{ loggedIn, setLoggedIn, user, setUser }}
-            >
               {children}
               <Toaster />
-            </UserContext.Provider>
           </ThemeProvider>
         </SessionProvider>
       </body>

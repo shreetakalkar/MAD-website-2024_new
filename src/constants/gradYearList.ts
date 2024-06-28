@@ -13,10 +13,10 @@ const useGradYear = () => {
     }
 
     const years = [
-      { id: 1, year: "FE", gradYear: feGradYear },
-      { id: 2, year: "SE", gradYear: feGradYear - 1 },
-      { id: 3, year: "TE", gradYear: feGradYear - 2 },
-      { id: 4, year: "BE", gradYear: feGradYear - 3 },
+      { id: 1, year: "FE", gradYear: feGradYear.toString() },
+      { id: 2, year: "SE", gradYear: (feGradYear - 1).toString() },
+      { id: 3, year: "TE", gradYear: (feGradYear - 2).toString() },
+      { id: 4, year: "BE", gradYear: (feGradYear - 3).toString() },
     ];
 
     setGradYearList(years);

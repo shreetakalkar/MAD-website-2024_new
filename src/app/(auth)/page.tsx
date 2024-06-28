@@ -13,6 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch"; // Import the Switch component
 import { db, app } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -22,7 +23,52 @@ import { ModeToggle } from "@/components/modeToggle";
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("email");
+    const savedPassword = localStorage.getItem("password");
+    const savedRememberMe = localStorage.getItem("rememberMe") === "true";
+
+    if (savedRememberMe) {
+      setEmail(savedEmail || "");
+      setPassword(savedPassword || "");
+      setRememberMe(savedRememberMe);
+    }
+  }, []);
+
+  const handleSignIn = async () => {
+    try {
+      await signIn("credentials", {
+        email,
+        password,
+        redirect: true,
+        callbackUrl: "/dashboard",
+      });
+
+      if (rememberMe) {
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+        localStorage.setItem("rememberMe", rememberMe);
+      } else {
+        localStorage.removeItem("email");
+        localStorage.removeItem("password");
+        localStorage.removeItem("rememberMe");
+      }
+
+      toast({
+        title: "Signed in",
+        description: "Sign in successful",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Sign in failed",
+      });
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-screen">
       <Card className="w-[350px]">
@@ -64,30 +110,20 @@ export default function Signin() {
                 value={password}
               />
             </div>
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="rememberMe">Remember Me</Label>
+              <Switch
+                id="rememberMe"
+                checked={rememberMe}
+                onCheckedChange={setRememberMe}
+              />
+            </div>
           </div>
         </CardContent>
         <CardFooter>
           <Button
             className="w-full"
-            onClick={async () => {
-              try {
-                await signIn("credentials", {
-                  email,
-                  password,
-                  redirect: true,
-                  callbackUrl: "/dashboard",
-                });
-                toast({
-                  title: "Signed in",
-                  description: "Sign in successful",
-                });
-              } catch (error) {
-                toast({
-                  title: "Error",
-                  description: "Sign in failed",
-                });
-              }
-            }}
+            onClick={handleSignIn}
             disabled={!email || !password}
           >
             Sign in
