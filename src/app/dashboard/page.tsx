@@ -22,7 +22,7 @@ export default function Home() {
   const [userType, setUserType] = useState(null);
 
   useEffect(() => {
-    const fetchUserType = async ({ uid }) => {
+    const fetchUserType = async ({ uid }: { uid: string }) => {
       const facultyRef = doc(db, "Faculty", uid);
       const docSnap = await getDoc(facultyRef);
       console.log(docSnap.data());
