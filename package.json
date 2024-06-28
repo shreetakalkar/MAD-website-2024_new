@@ -9,8 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-checkbox": "^1.1.0",
-    "@radix-ui/react-dialog": "^1.1.1",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-checkbox": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
@@ -26,6 +24,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "firebase": "^10.12.2",
+    "jsonexport": "^3.2.0",
     "lucide-react": "^0.395.0",
     "next": "14.2.4",
     "next-auth": "^4.24.7",
@@ -41,6 +40,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/jsonexport": "^3.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
