@@ -1,2 +1,2 @@
-const branches = ["Computer", "IT", "AI & DS", "EXTC"];
+const branches = ["Comps", "Chem", "Aids", "It", "Extc"];
 export { branches };
