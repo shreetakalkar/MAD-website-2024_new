@@ -1,4 +1,3 @@
-// ProtectedRoute.tsx
 import React from 'react';
 import { useUser } from './UserProvider';
 import { useRouter } from 'next/navigation';

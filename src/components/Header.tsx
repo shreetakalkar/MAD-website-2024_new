@@ -1,6 +1,10 @@
 import {
   Bell,
   CircleUser,
+  ClipboardEdit,
+  FilePlus,
+  FileStack,
+  GitPullRequestClosed,
   Home,
   LineChart,
   Menu,
@@ -94,28 +98,28 @@ const Header = ({ userType }: { userType: string }) => {
                   href="#"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  <FilePlus className="h-4 w-4" />
                   Create New Pass
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  <ClipboardEdit className="h-4 w-4" />
                   Update Pass
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  <FileStack className="h-4 w-4" />
                   Pending Requests
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  <GitPullRequestClosed className="h-4 w-4" />
                   Approved/Rejected Requests
                 </Link>
               </>

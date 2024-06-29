@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { db, auth,app } from "@/config/firebase";
+import { db, auth } from "@/config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Header from "@/components/Header";
 import LeftSideLinks from "@/components/LeftSideLinks";
@@ -14,23 +14,37 @@ import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
 import ProtectionProvider from "@/providers/ProtectionProvider";
 import { useUser } from "@/providers/UserProvider";
+import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
+
 export default function Home() {
   const { theme } = useTheme();
-  const { user } = useUser();
-
+  const { user, setUser, setLoggedIn } = useUser();
+  const router = useRouter();
   const [userType, setUserType] = useState(null);
 
   useEffect(() => {
     const fetchUserType = async ({ uid }: { uid: string }) => {
       const facultyRef = doc(db, "Faculty", uid);
       const docSnap = await getDoc(facultyRef);
-      console.log(docSnap.data());
       setUserType(docSnap.data()?.type);
     };
 
     fetchUserType({ uid: "Kp7s1qw1LZfw9OW3euqfJg1SvFW2" });
   }, []);
-  console.log(userType);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setUser(null);
+      setLoggedIn(false);
+      localStorage.removeItem("user");
+      localStorage.removeItem("isLoggedIn");
+      router.push("/");
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   return (
     <ProtectionProvider>
@@ -55,8 +69,9 @@ export default function Home() {
             <p>Welcome, {user?.name}!</p>
 
             {/* Logout Button */}
-            <div className="p-8">
-              <Button onClick={() => auth.signOut()}>Logout</Button>            </div>
+            <div className="p-4">
+              <Button onClick={handleLogout} variant={"link"}><LogOut className="mr-2 h-4 w-4" />Logout</Button>
+            </div>
           </div>
         </div>
 
@@ -80,4 +95,3 @@ export default function Home() {
     </ProtectionProvider>
   );
 }
-

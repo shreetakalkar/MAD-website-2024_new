@@ -11,6 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { db, auth } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -24,13 +25,25 @@ const SignIn = () => {
   const isMounted = useRef(true);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const { setUser, setLoggedIn } = useUser();
+  const [rememberMe, setRememberMe] = useState(false);
+  const { user, setUser, setLoggedIn } = useUser();
 
   useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      const storedEmail = localStorage.getItem("rememberMeEmail");
+      const storedPassword = localStorage.getItem("rememberMePassword");
+      if (storedEmail && storedPassword) {
+        setEmail(storedEmail);
+        setPassword(storedPassword);
+        setRememberMe(true);
+      }
+    }
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [user, router]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -40,13 +53,13 @@ const SignIn = () => {
     setPassword(e.target.value);
   };
 
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+  };
+
   const loginMsg = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       const facultyRef = collection(db, "Faculty");
@@ -62,6 +75,13 @@ const SignIn = () => {
             type: data.type,
           });
           setLoggedIn(true);
+          if (rememberMe) {
+            localStorage.setItem("rememberMeEmail", email);
+            localStorage.setItem("rememberMePassword", password);
+          } else {
+            localStorage.removeItem("rememberMeEmail");
+            localStorage.removeItem("rememberMePassword");
+          }
           toast({
             title: "Sign In successful",
             description: "Redirecting to dashboard",
@@ -74,7 +94,6 @@ const SignIn = () => {
       toast({
         title: "Error signing in",
         description: "Please check your email and password",
-        variant: "destructive",
       });
     }
   };
@@ -106,6 +125,14 @@ const SignIn = () => {
                 value={password}
                 onChange={handlePasswordChange}
               />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="remember-me"
+                checked={rememberMe}
+                onCheckedChange={handleRememberMeChange}
+              />
+              <Label htmlFor="remember-me">Remember Me</Label>
             </div>
           </div>
         </CardContent>
