@@ -25,8 +25,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/modeToggle";
 import Image from "next/image";
-import DevsDark from "../../public/images/devs-dark.png";
-import DevsLight from "../../public/images/devs-light.png";
+import DevsDark from "@/public/images/devs-dark.png";
+import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
 
 const Header = ({ userType }: { userType: string }) => {

@@ -1,18 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { db } from "@/config/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import Header from "./Header";
-import LeftSideLinks from "./LeftSideLinks";
+import Header from "@/components/Header";
+import LeftSideLinks from "@/components/LeftSideLinks";
 import { ModeToggle } from "@/components/modeToggle";
 import Image from "next/image";
-import DevsDark from "../../public/images/devs-dark.png";
-import DevsLight from "../../public/images/devs-light.png";
-import React from "react";
+import DevsDark from "@/public/images/devs-dark.png";
+import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";

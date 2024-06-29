@@ -24,10 +24,7 @@ export default function RootLayout({
       <head>
         <title>{metadata.title as React.ReactNode}</title>
         <meta name="description" content={metadata.description ?? undefined} />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="icon" href="../public/favicon.ico" sizes="any" />
       </head>
       <body className={`${inter.className} w-screen h-screen`}>
         <SessionProvider>

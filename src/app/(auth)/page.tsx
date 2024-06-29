@@ -14,9 +14,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch"; // Import the Switch component
-import { db, app } from "@/config/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { ModeToggle } from "@/components/modeToggle";
 
