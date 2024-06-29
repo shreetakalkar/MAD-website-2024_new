@@ -1,4 +1,3 @@
-"use client";
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 interface User {
@@ -18,18 +17,26 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
   });
 
   const [isLoggedIn, setLoggedIn] = useState(() => {
-    const storedLoggedIn = localStorage.getItem('isLoggedIn');
-    return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
+    if (typeof window !== 'undefined') {
+      const storedLoggedIn = localStorage.getItem('isLoggedIn');
+      return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
+    }
+    return false;
   });
 
   useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
+    }
   }, [user, isLoggedIn]);
 
   return (
