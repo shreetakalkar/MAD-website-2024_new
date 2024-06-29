@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { db } from "@/config/firebase";
+import { db, auth,app } from "@/config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Header from "@/components/Header";
 import LeftSideLinks from "@/components/LeftSideLinks";
@@ -12,11 +12,12 @@ import Image from "next/image";
 import DevsDark from "@/public/images/devs-dark.png";
 import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
-import { signOut, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-
+import ProtectionProvider from "@/providers/ProtectionProvider";
+import { useUser } from "@/providers/UserProvider";
 export default function Home() {
   const { theme } = useTheme();
+  const { user } = useUser();
+
   const [userType, setUserType] = useState(null);
 
   useEffect(() => {
@@ -27,19 +28,12 @@ export default function Home() {
       setUserType(docSnap.data()?.type);
     };
 
-    fetchUserType({ uid: "MWJbMeMRwHjYcMxQeL2w" });
+    fetchUserType({ uid: "Kp7s1qw1LZfw9OW3euqfJg1SvFW2" });
   }, []);
   console.log(userType);
 
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/");
-    },
-  });
-
   return (
-    <>
+    <ProtectionProvider>
       <div className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${theme}`}>
         {/* Left Side Block */}
         <div className={`hidden border-r md:block`}>
@@ -58,12 +52,11 @@ export default function Home() {
             <div className="flex-1 mt-5">
               <LeftSideLinks userType={userType ? userType : ""} />
             </div>
+            <p>Welcome, {user?.name}!</p>
 
             {/* Logout Button */}
             <div className="p-8">
-              <div>{session?.data?.user?.email}</div>
-              <button onClick={() => signOut()}>Logout</button>
-            </div>
+              <Button onClick={() => auth.signOut()}>Logout</Button>            </div>
           </div>
         </div>
 
@@ -84,8 +77,7 @@ export default function Home() {
           </main>
         </div>
       </div>
-    </>
+    </ProtectionProvider>
   );
 }
 
-Home.requireAuth = true;

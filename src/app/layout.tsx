@@ -5,7 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import SessionProvider from "@/providers/SessionProvider";
+import {UserProvider} from "@/providers/UserProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
         <link rel="icon" href="../public/favicon.ico" sizes="any" />
       </head>
       <body className={`${inter.className} w-screen h-screen`}>
-        <SessionProvider>
+        <UserProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -37,7 +37,7 @@ export default function RootLayout({
               {children}
               <Toaster />
           </ThemeProvider>
-        </SessionProvider>
+        </UserProvider>
       </body>
     </html>
   );
