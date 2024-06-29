@@ -1,4 +1,4 @@
-import { ShoppingCart, Home, ClipboardEdit, FilePlus, FileStack, GitPullRequestClosed } from 'lucide-react'
+import { ShoppingCart, Home, ClipboardEdit, FilePlus, FileStack, GitPullRequestClosed, Download } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -78,6 +78,13 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
           >
             <GitPullRequestClosed className="h-4 w-4" />
             Approved/Rejected Requests
+          </Link>
+          <Link
+            href="/dashboard/downloads"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+          >
+            <Download className="h-4 w-4" />
+              Download
           </Link>
         </>
       )}
