@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { convertJsonToCsv, downloadCsv } from "@/lib/utils";
+import { cn, convertJsonToCsv, downloadCsv } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
 
@@ -41,7 +41,6 @@ interface Enquiry {
   travelLane: string;
 }
 
-
 interface BatchElement {
   enquiries: Enquiry[];
   fileName: string;
@@ -62,7 +61,7 @@ const Downloads: React.FC = () => {
       const querySnapshot = await getDocs(concessionHistoryRef);
       const data = querySnapshot.docs.map((doc) => doc.data());
       if (data.length > 0 && data[0].history) {
-        console.log(data[0].history); 
+        console.log(data[0].history);
         makeBatches(data[0].history);
         setDate(data[0].csvUpdatedDate);
       } else {
@@ -181,7 +180,12 @@ const Downloads: React.FC = () => {
                 <TableCell>
                   <div className="flex items-center">
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-300">
+                      <div
+                        className={cn("text-sm font-medium", {
+                          "text-gray-300": theme === "dark",
+                          "text-gray-700": theme === "light",
+                        })}
+                      >
                         {batch.fileName}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -200,8 +204,13 @@ const Downloads: React.FC = () => {
                     Download CSV
                   </button>
                 </TableCell>
-                <TableCell className="text-left text-sm font-medium text-gray-300">
-                {new Date(date[index].date).toLocaleDateString()}
+                <TableCell
+                  className={cn("text-left text-sm font-medium", {
+                    "text-gray-300": theme === "dark",
+                    "text-gray-700": theme === "light",
+                  })}
+                >
+                  {new Date(date[index].date).toLocaleDateString()}
                 </TableCell>
               </TableRow>
             ))
