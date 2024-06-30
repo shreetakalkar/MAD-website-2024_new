@@ -4,6 +4,7 @@ interface User {
   name: string;
   email: string;
   type: string;
+  uid : string;
 }
 
 interface UserContextType {

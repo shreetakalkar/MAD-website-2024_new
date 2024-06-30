@@ -73,6 +73,7 @@ const SignIn = () => {
             name: data.name,
             email: data.email,
             type: data.type,
+            uid : user.uid
           });
           setLoggedIn(true);
           if (rememberMe) {
