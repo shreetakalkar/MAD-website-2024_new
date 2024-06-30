@@ -114,11 +114,11 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
         lastPassIssued: values.doi,
         phoneNum: parseInt(values.phoneNum, 10),
       };
-
+      // console.log(formData);
       const concessionRef = doc(db, "ConcessionDetails", studentId);
       await updateDoc(concessionRef, newData);
-      const requestRef = doc(db, "ConcessionRequest", studentId);
-      await updateDoc(requestRef, { passNum: certNo });
+      // const requestRef = doc(db, "ConcessionRequest", studentId);
+      // await updateDoc(requestRef, { passNum: certNo });
 
       toast({ description: "Document updated successfully!" });
     } catch (error) {
@@ -137,7 +137,7 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
         <CardContent className="p-6">
           {" "}
           <Form {...form}>
-            <form className="space-y-8">
+            <form method="post" className="space-y-8">
               <div className="grid gap-4 ">
                 <div className="card-head-wrapper w-[100%]  flex justify-between items-center">
                   <div className="flex gap-2 w-[55%]">
@@ -148,7 +148,7 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                         name="firstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Juhi test</FormLabel>
+                            <FormLabel>First Name</FormLabel>
                             <FormControl>
                               <Input {...field} readOnly={!isEditable} />
                             </FormControl>
@@ -199,7 +199,11 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                           <FormItem>
                             <FormLabel>Certifcate Number</FormLabel>
                             <FormControl>
-                              <Input readOnly={!isEditable} {...field} />
+                              <Input
+                                className="cursor-default"
+                                value={field.value}
+                                disabled
+                              />
                             </FormControl>
 
                             <FormMessage />

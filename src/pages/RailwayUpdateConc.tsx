@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card"; // Replace with actual Card component import
 import {
   collection,
@@ -12,11 +12,17 @@ import {
 import { db } from "@/config/firebase";
 import { z } from "zod";
 import RailwayUpdateCard from "./RailwayUpdateCard";
-import { toast } from "react-toastify";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const RailwayUpdateConc = () => {
   const [passes, setPasses] = useState<any[]>([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredPasses, setFilteredPasses] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
   const formSchema = z.object({
     branch: z.string(),
     gradyear: z.string(),
@@ -75,7 +81,7 @@ const RailwayUpdateConc = () => {
   });
 
   useEffect(() => {
-    const fetchPassesWithRequestDocs = async () => {
+    const fetchAllRecentPasses = async () => {
       try {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -115,6 +121,7 @@ const RailwayUpdateConc = () => {
             }
 
             setPasses(fetchedPasses);
+            setFilteredPasses(fetchedPasses);
             setLoading(false);
           },
           (error) => {
@@ -131,13 +138,77 @@ const RailwayUpdateConc = () => {
       }
     };
 
-    fetchPassesWithRequestDocs(); // Initial fetch when component mounts
+    fetchAllRecentPasses(); // Initial fetch when component mounts
   }, []);
 
+  // useEffect(() => {
+  //   setFilteredPasses(passes);
+  //   console.log(passes);
+  // }, [passes]);
+  const handleSearchRequest = () => {
+    if (searchInput.trim() === "") {
+      toast({
+        description: "Please enter a search value",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const filteredPassArray = passes.filter((pass) =>
+      pass.certNo.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    setFilteredPasses(filteredPassArray);
+  };
+  // const handleSearchRequest = () => {
+  //   console.log(searchInput);
+  //   if (searchInput.trim() === "") {
+  //     toast({
+  //       description: "Please enter a search value",
+  //       variant: "destructive",
+  //     });
+  //   }
+
+  //   const filteredPassArray = [];
+  //   passes.map((pass, index) => {
+  //     if (pass.certNo.toLowerCase().includes(searchInput.toLowerCase())) {
+  //       console.log("found you", pass);
+
+  //       filteredPassArray.push(pass);
+  //     } else {
+  //       console.log("No match", pass);
+  //     }
+  //   });
+  //   console.log(filteredPassArray);
+  //   setFilteredPasses(filteredPassArray);
+  // };
+
+  useEffect(() => {
+    console.log(filteredPasses);
+  }, [filteredPasses]);
   return (
     <div className="w-[75%] flex flex-col gap-[5rem]">
-      {passes.map((pass, index) => (
-        <RailwayUpdateCard formSchema={formSchema} passData={pass} />
+      <div className="flex w-full max-w-sm items-center space-x-2">
+        <Input
+          type="text"
+          placeholder="Certificate No"
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+        <Button
+          type="submit"
+          onClick={(e) => {
+            e.preventDefault();
+            handleSearchRequest();
+          }}
+        >
+          Search
+        </Button>
+      </div>
+      {filteredPasses.map((filteredPass, index) => (
+        <RailwayUpdateCard
+          key={index}
+          formSchema={formSchema}
+          passData={filteredPass}
+        />
       ))}
     </div>
   );
