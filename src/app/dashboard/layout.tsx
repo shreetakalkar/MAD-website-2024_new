@@ -16,6 +16,8 @@ import ProtectionProvider from "@/providers/ProtectionProvider";
 import { useUser } from "@/providers/UserProvider";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { User } from "lucide-react";
 
 export default function Home({children}: {children: React.ReactNode}) {
   const { theme } = useTheme();
@@ -66,11 +68,19 @@ export default function Home({children}: {children: React.ReactNode}) {
             <div className="flex-1 mt-5">
               <LeftSideLinks userType={userType ? userType : ""} />
             </div>
-            <p>Welcome, {user?.name}!</p>
-
-            {/* Logout Button */}
+            
+            {/* Account Dropdown */}
             <div className="p-4">
-              <Button onClick={handleLogout} variant={"link"}><LogOut className="mr-2 h-4 w-4" />Logout</Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="link"><User className="mr-2 h-4 w-4" />{`${user?.name}`}</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
