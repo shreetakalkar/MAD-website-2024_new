@@ -19,6 +19,8 @@ import { LogOut } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
 import Approved_Rejected from "@/pages/Approved_Rejected";
+import PendingRequests from "@/pages/PendingRequests";
+import RailwayUpdateConc from "@/pages/RailwayUpdateConc";
 
 export default function Home({children}: {children: React.ReactNode}) {
   const { theme } = useTheme();
@@ -92,7 +94,12 @@ export default function Home({children}: {children: React.ReactNode}) {
           {children}
         </div> */}
         {/* test commit - can delete this comment later */}
-        <Approved_Rejected />
+        <div>
+
+        <PendingRequests/>
+        {/* {window.innerHeight} x {window.innerWidth} */}
+        </div>
+        
 
 
       </div>
