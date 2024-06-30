@@ -1,27 +1,52 @@
-'use client';
+"use client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { convertJsonToCsv, downloadCsv } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { Input } from "@/components/ui/input";
+import DownloadTable from "@/components/DownloadTable";
 
-interface Enquiry {
-  fileName: string;
-  content: string;
-  timestamp: Timestamp;
+export interface Enquiry {
+  id: string;
+  address: string;
+  ageMonths: number;
+  ageYears: number;
+  branch: string;
+  class: string;
+  dob: Timestamp;
+  duration: string;
+  firstName: string;
+  from: string;
+  gender: string;
+  gradyear: string;
+  idCardURL: string;
+  lastName: string;
+  lastPassIssued: Timestamp;
+  middleName: string;
+  passNum: string;
+  phoneNum: number;
+  previousPassURL: string;
+  status: string;
+  statusMessage: string;
+  to: string;
+  travelLane: string;
 }
 
-interface BatchElement {
+export interface BatchElement {
   enquiries: Enquiry[];
   fileName: string;
 }
 
 const Downloads: React.FC = () => {
+  const { theme } = useTheme();
   const { toast } = useToast();
   const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]); // State for filtered batches // State for search term
-  const limit = 3; // Number of items per CSV file
+  const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
+  const limit = 5; 
+  const [date, setDate] = useState<any>([]);
 
   const fetchEnquiries = async () => {
     try {
@@ -30,6 +55,7 @@ const Downloads: React.FC = () => {
       const data = querySnapshot.docs.map((doc) => doc.data());
       if (data.length > 0 && data[0].history) {
         makeBatches(data[0].history);
+        setDate(data[0].csvUpdatedDate);
       } else {
         setBatchedEnquiries([]);
       }
@@ -51,7 +77,7 @@ const Downloads: React.FC = () => {
       if (currentBatch.length === limit) {
         batches.push({
           enquiries: currentBatch,
-          fileName: `Z${i}-Z${i+limit-1}.csv`,
+          fileName: `Z${i}-Z${i + limit - 1}.csv`,
         });
       }
       i += limit;
@@ -73,10 +99,7 @@ const Downloads: React.FC = () => {
         return;
       }
 
-      const csvContent = await convertJsonToCsv(
-        enquiriesSubset.enquiries,
-        columnsToInclude
-      );
+      const csvContent = await convertJsonToCsv(enquiriesSubset.enquiries, columnsToInclude);
 
       if (!csvContent) {
         toast({
@@ -86,10 +109,7 @@ const Downloads: React.FC = () => {
         return;
       }
 
-      downloadCsv(
-        csvContent,
-        fileName
-      );
+      downloadCsv(csvContent, fileName);
     } catch (error) {
       console.error("Error handling CSV download:", error);
       toast({
@@ -101,69 +121,37 @@ const Downloads: React.FC = () => {
 
   useEffect(() => {
     fetchEnquiries();
-  }, []); // Fetch enquiries on initial render
-
+  }, []);
 
   useEffect(() => {
-    const filtered = batchedEnquiries.filter(batch =>
+    const filtered = batchedEnquiries.filter((batch) =>
       batch.fileName.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredBatches(filtered);
-  }, [searchTerm, batchedEnquiries]); 
+  }, [searchTerm, batchedEnquiries]);
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-4">Enquiries</h2>
-      <div className="flex items-center mb-4">
-        <input
-          type="text"
-          placeholder="Search batch names..."
-          className="border border-gray-300 rounded px-3 py-1 outline-none focus:border-blue-500"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+    <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
+      <div className="flex items-center justify-between mb-4 p-5">
+        <div className="flex w-full justify-between flex-wrap items-center">
+          <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">Downloads</h2>
+          <div>
+            <Input
+              className="ring-1 ring-gray-400 focus:ring-gray-400"
+              type="text"
+              placeholder="Search batch names..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Batch
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {filteredBatches.map((batch, index) => (
-            <tr key={index}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">
-                      {batch.fileName}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {batch.enquiries.length} items
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
-                <button
-                  className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-                  onClick={() => handleDownloadBatchCSV(index, batch.fileName)}
-                >
-                  Download CSV
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {filteredBatches.length === 0 && (
-        <p className="text-gray-600 mt-4">No enquiries available.</p>
-      )}
+      <DownloadTable 
+        batches={filteredBatches} 
+        date={date} 
+        handleDownloadBatchCSV={handleDownloadBatchCSV} 
+        theme={theme}
+      />
     </div>
   );
 };
