@@ -18,6 +18,9 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
+import Approved_Rejected from "@/pages/Approved_Rejected";
+import PendingRequests from "@/pages/PendingRequests";
+import RailwayUpdateConc from "@/pages/RailwayUpdateConc";
 
 export default function Home({children}: {children: React.ReactNode}) {
   const { theme } = useTheme();
@@ -86,10 +89,19 @@ export default function Home({children}: {children: React.ReactNode}) {
         </div>
 
         {/* Right Side Block */}
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <Header userType={userType ? userType : ""} />
           {children}
+        </div> */}
+        {/* test commit - can delete this comment later */}
+        <div>
+
+        <PendingRequests/>
+        {/* {window.innerHeight} x {window.innerWidth} */}
         </div>
+        
+
+
       </div>
     </ProtectionProvider>
   );

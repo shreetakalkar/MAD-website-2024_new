@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Card } from "@/components/ui/Card"; // Replace with actual Card component import
+import { Card } from "@/components/ui/card"; // Replace with actual Card component import
 import {
   collection,
   doc,
