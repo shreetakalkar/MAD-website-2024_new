@@ -16,6 +16,8 @@ import ProtectionProvider from "@/providers/ProtectionProvider";
 import { useUser } from "@/providers/UserProvider";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import Approved_Rejected from '@/pages/Approved_Rejected'
+
 
 export default function Home({children}: {children: React.ReactNode}) {
   const { theme } = useTheme();
@@ -76,10 +78,13 @@ export default function Home({children}: {children: React.ReactNode}) {
         </div>
 
         {/* Right Side Block */}
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <Header userType={userType ? userType : ""} />
           {children}
-        </div>
+        </div> */}
+        <Approved_Rejected />
+
+
       </div>
     </ProtectionProvider>
   );
