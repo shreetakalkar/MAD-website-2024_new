@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { db, auth } from "@/config/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "./ui/use-toast";
 import { useUser } from "@/providers/UserProvider";
@@ -88,7 +88,13 @@ const SignIn = () => {
             description: "Redirecting to dashboard",
           });
           router.push("/dashboard");
+         } else {
+          toast({
+            title: "Error signing in",
+            description: "User not found in Faculty collection",
+          });
         }
+        
       });
     } catch (error) {
       console.error("Error signing in: ", error);
@@ -98,6 +104,7 @@ const SignIn = () => {
       });
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen">

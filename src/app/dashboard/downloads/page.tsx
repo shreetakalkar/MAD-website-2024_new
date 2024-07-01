@@ -3,19 +3,12 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { cn, convertJsonToCsv, downloadCsv } from "@/lib/utils";
+import { convertJsonToCsv, downloadCsv } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
+import DownloadTable from "@/components/DownloadTable";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-interface Enquiry {
+export interface Enquiry {
   id: string;
   address: string;
   ageMonths: number;
@@ -41,7 +34,7 @@ interface Enquiry {
   travelLane: string;
 }
 
-interface BatchElement {
+export interface BatchElement {
   enquiries: Enquiry[];
   fileName: string;
 }
@@ -51,8 +44,8 @@ const Downloads: React.FC = () => {
   const { toast } = useToast();
   const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]); // State for filtered batches // State for search term
-  const limit = 5; // Number of items per CSV file
+  const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
+  const limit = 5; 
   const [date, setDate] = useState<any>([]);
 
   const fetchEnquiries = async () => {
@@ -61,7 +54,6 @@ const Downloads: React.FC = () => {
       const querySnapshot = await getDocs(concessionHistoryRef);
       const data = querySnapshot.docs.map((doc) => doc.data());
       if (data.length > 0 && data[0].history) {
-        console.log(data[0].history);
         makeBatches(data[0].history);
         setDate(data[0].csvUpdatedDate);
       } else {
@@ -71,8 +63,7 @@ const Downloads: React.FC = () => {
       console.error("Error fetching ConcessionHistory:", error);
       toast({
         title: "Error",
-        description:
-          "Failed to fetch ConcessionHistory. Please try again later.",
+        description: "Failed to fetch ConcessionHistory. Please try again later.",
       });
     }
   };
@@ -95,10 +86,7 @@ const Downloads: React.FC = () => {
     setFilteredBatches(batches);
   };
 
-  const handleDownloadBatchCSV = async (
-    batchIndex: number,
-    fileName: string
-  ) => {
+  const handleDownloadBatchCSV = async (batchIndex: number, fileName: string) => {
     try {
       const columnsToInclude = ["fileName", "content", "timestamp"];
       const enquiriesSubset = batchedEnquiries[batchIndex];
@@ -111,10 +99,7 @@ const Downloads: React.FC = () => {
         return;
       }
 
-      const csvContent = await convertJsonToCsv(
-        enquiriesSubset.enquiries,
-        columnsToInclude
-      );
+      const csvContent = await convertJsonToCsv(enquiriesSubset.enquiries, columnsToInclude);
 
       if (!csvContent) {
         toast({
@@ -136,7 +121,7 @@ const Downloads: React.FC = () => {
 
   useEffect(() => {
     fetchEnquiries();
-  }, []); // Fetch enquiries on initial render
+  }, []);
 
   useEffect(() => {
     const filtered = batchedEnquiries.filter((batch) =>
@@ -149,9 +134,7 @@ const Downloads: React.FC = () => {
     <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
       <div className="flex items-center justify-between mb-4 p-5">
         <div className="flex w-full justify-between flex-wrap items-center">
-          <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">
-            Downloads
-          </h2>
+          <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">Downloads</h2>
           <div>
             <Input
               className="ring-1 ring-gray-400 focus:ring-gray-400"
@@ -163,101 +146,14 @@ const Downloads: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Batch</TableHead>
-            <TableHead>Actions</TableHead>
-            <TableHead>Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {/* {" "} */}
-          {filteredBatches.length > 0 ? (
-            filteredBatches.map((batch, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <div className="flex items-center">
-                    <div className="ml-4">
-                      <div
-                        className={cn("text-sm font-medium", {
-                          "text-gray-300": theme === "dark",
-                          "text-gray-700": theme === "light",
-                        })}
-                      >
-                        {batch.fileName}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {batch.enquiries.length} items
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-left text-sm font-medium">
-                  <button
-                    className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-                    onClick={() =>
-                      handleDownloadBatchCSV(index, batch.fileName)
-                    }
-                  >
-                    Download CSV
-                  </button>
-                </TableCell>
-                <TableCell
-                  className={cn("text-left text-sm font-medium", {
-                    "text-gray-300": theme === "dark",
-                    "text-gray-700": theme === "light",
-                  })}
-                >
-                  {new Date(date[index].date).toLocaleDateString()}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={2} className="px-6 py-4 text-gray-600">
-                {" "}
-                No enquiries available.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <DownloadTable 
+        batches={filteredBatches} 
+        date={date} 
+        handleDownloadBatchCSV={handleDownloadBatchCSV} 
+        theme={theme}
+      />
     </div>
   );
 };
-
-// export function TableDemo() {
-//   return (
-//     <Table>
-//       <TableCaption>A list of your recent invoices.</TableCaption>
-//       <TableHeader>
-//         <TableRow>
-//           <TableHead className="w-[100px]">Invoice</TableHead>
-//           <TableHead>Status</TableHead>
-//           <TableHead>Method</TableHead>
-//           <TableHead className="text-right">Amount</TableHead>
-//         </TableRow>
-//       </TableHeader>
-//       <TableBody>
-//         {invoices.map((invoice) => (
-//           <TableRow key={invoice.invoice}>
-//             <TableCell className="font-medium">{invoice.invoice}</TableCell>
-//             <TableCell>{invoice.paymentStatus}</TableCell>
-//             <TableCell>{invoice.paymentMethod}</TableCell>
-//             <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-//           </TableRow>
-//         ))}
-//       </TableBody>
-//       <TableFooter>
-//         <TableRow>
-//           <TableCell colSpan={3}>Total</TableCell>
-//           <TableCell className="text-right">$2,500.00</TableCell>
-//         </TableRow>
-//       </TableFooter>
-//     </Table>
-//   )
-// }
 
 export default Downloads;

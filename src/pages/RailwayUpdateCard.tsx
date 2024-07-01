@@ -40,15 +40,16 @@ import { calculateAge } from "@/constants/AgeCalc";
 
 const RailwayUpdateCard = ({ formSchema, passData }) => {
   const [isEditable, setIsEditable] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const gradYearList = useGradYear();
   const { toast } = useToast();
   const { control } = useForm();
-  const gradYearList = useGradYear();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: passData,
   });
+
   const toggleEditMode = () => {
     if (!isEditable) {
       toast({
@@ -56,10 +57,10 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
       });
     }
     setIsEditable(!isEditable);
-    // console.log(pass.dob);
   };
   const extractRequiredFields = (schema) => {
     const requiredFields = [];
+
     for (const key in schema.shape) {
       const field = schema.shape[key];
       if (
@@ -71,9 +72,9 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
     }
     return requiredFields;
   };
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      setLoading(true);
       const studentId = values.uid;
       const requiredFields = extractRequiredFields(formSchema);
       const emptyFields = requiredFields.filter(
@@ -81,7 +82,6 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
           !values[field] ||
           (typeof values[field] === "string" && values[field].trim() === "")
       );
-      console.log(emptyFields);
 
       if (emptyFields.length > 0) {
         // Display error toast if any required field is empty
@@ -91,8 +91,6 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
           )})`,
           variant: "destructive",
         });
-        // setIsEditable(true);
-        // console.log(isEditable);
         return; // Exit early, do not submit
       }
 
@@ -104,9 +102,9 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
           variant: "destructive",
         });
         setIsEditable(true);
-        console.log(isEditable);
         return; // Exit early, do not submit
       }
+
       const { doi, phoneNum, uid, lastPassIssued, certNo, ...formData } =
         values;
       const newData = {
@@ -114,20 +112,20 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
         lastPassIssued: values.doi,
         phoneNum: parseInt(values.phoneNum, 10),
       };
-      // console.log(formData);
+
       const concessionRef = doc(db, "ConcessionDetails", studentId);
       await updateDoc(concessionRef, newData);
-      // const requestRef = doc(db, "ConcessionRequest", studentId);
-      // await updateDoc(requestRef, { passNum: certNo });
-
+      setLoading(false);
       toast({ description: "Document updated successfully!" });
     } catch (error) {
       toast({
         description: "An error occurred",
+        variant: "destructive",
       });
       console.error("Error ", error);
     } finally {
       setIsEditable(false);
+      setLoading(false);
     }
   };
 
@@ -135,7 +133,6 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
     <>
       <Card className="mx-auto ml-[1%]  mt-2">
         <CardContent className="p-6">
-          {" "}
           <Form {...form}>
             <form method="post" className="space-y-8">
               <div className="grid gap-4 ">
@@ -278,7 +275,6 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                                       ) : (
                                         <span>Pick a date</span>
                                       )}
-                                      {/* <CalendarIcon className="ml-auto h-4 w-4 opacity-50" /> */}
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
@@ -339,7 +335,6 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                                       ) : (
                                         <span>Pick a date</span>
                                       )}
-                                      {/* <CalendarIcon className="ml-auto h-4 w-4 opacity-50" /> */}
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
