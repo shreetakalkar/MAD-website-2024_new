@@ -66,29 +66,6 @@ import { branches } from "@/constants/branches";
 import { travelFromLocations } from "@/constants/travelFromLocations";
 import { calculateAge } from "@/constants/AgeCalc";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
 const formSchema = z.object({
   branch: z.string().nonempty({ message: "Field is required." }),
   gradYear: z.string().nonempty({ message: "Field is required." }),
@@ -128,48 +105,48 @@ const formSchema = z.object({
   to: z.string(),
   certNo: z.string().nonempty({ message: "Field is required." }),
 });
+
 const RailwayEntryInterface = () => {
-  const [date, setDate] = React.useState<Date>();
-  const { toast } = useToast();
-  const [inputValue, setInputValue] = useState("");
-  const [frameworks, setFrameworks] = useState<any[]>([]);
-  const [filteredFrameworks, setFilteredFrameworks] = useState<any[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const [emails, setEmails] = useState<any[]>([]);
   const [value, setValue] = useState<string>("");
-  const { control, setValue: setFormValue, formState } = useForm();
+  const [studentId, setStudentId] = useState("");
+  const [loading, setLoading] = useState(false);
   const gradYearList = useGradYear();
+  const { toast } = useToast();
 
-  // Simulated fetch or actual fetch function
-  const fetchFrameworks = () => {
-    // Simulated data for demonstration
-    const mockFrameworks = [
-      { label: "React", value: "react" },
-      { label: "Angular", value: "angular" },
-      { label: "Vue.js", value: "vue" },
-      // Add more frameworks as needed
-    ];
-    setFrameworks(mockFrameworks);
+  const fetchEmails = async () => {
+    try {
+      setLoading(true);
+      const studentRef = collection(db, "Students ");
+      const querySnapshot = await getDocs(studentRef);
+      const emailArray = [];
+
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, " => ", doc.data().email);
+        emailArray.push(doc.data().email);
+        // Access individual fields like doc.data().email, doc.data().name, etc.
+      });
+
+      setEmails(emailArray);
+      setLoading(false);
+    } catch (error) {
+      toast({
+        description: "Error while fetching emails",
+        variant: "destructive",
+      });
+      console.log("Error while fetching emails", error);
+    } finally {
+      setLoading(false);
+    }
   };
-
   useEffect(() => {
-    fetchFrameworks();
+    fetchEmails();
   }, []);
 
   useEffect(() => {
-    // Filter frameworks based on inputValue
-    const filtered = frameworks.filter((framework) =>
-      framework.label.toLowerCase().includes(inputValue.toLowerCase())
-    );
-    setFilteredFrameworks(filtered);
-    setOpen(true); // Always keep the list open when filtering
-  }, [inputValue, frameworks]);
-
-  const handleSelectFramework = (selectedValue: string) => {
-    setFormValue("email", selectedValue); // Update form field value
-    setInputValue(selectedValue); // Update input value
-    setOpen(false); // Close the list after selecting
-    setValue(selectedValue); // Set the selected value state
-  };
+    form.setValue("email", value);
+    setStudentData(value);
+  }, [value]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -193,20 +170,39 @@ const RailwayEntryInterface = () => {
     },
   });
 
-  const getStudentId = async (values) => {
+  const setStudentData = async (value) => {
     try {
       const studentsRef = query(
         collection(db, "Students "),
-        where("email", "==", values.email)
+        where("email", "==", value)
       );
 
       const querySnapshot = await getDocs(studentsRef);
-      const studentDoc = querySnapshot.docs[0];
+      if (!querySnapshot.empty) {
+        const studentDoc = querySnapshot.docs[0];
+        if (studentDoc.exists()) {
+          const studentId = studentDoc?.id || "";
+          const studentData = studentDoc.data();
 
-      const studentId = studentDoc?.id || "";
-      console.log(studentId);
-      return studentId;
+          const name = studentData.Name.trim();
+          const nameParts = name.split(" ");
+          const firstName = nameParts[0] || "";
+          const middleName = nameParts[1] || "";
+          const lastName = nameParts[nameParts.length - 1] || "";
+
+          form.setValue("firstName", firstName);
+          form.setValue("middleName", middleName);
+          form.setValue("lastName", lastName);
+          form.setValue("branch", studentData.Branch);
+
+          setStudentId(studentId);
+        }
+      }
     } catch (error) {
+      toast({
+        description: "Error fetching student data",
+        variant: "destructive",
+      });
       console.error("Error getting student document:", error);
       throw error;
     }
@@ -214,6 +210,7 @@ const RailwayEntryInterface = () => {
 
   const createConcDetailsDoc = async (studentId, values) => {
     try {
+      setLoading(true);
       const { ageYears, ageMonths } = calculateAge(values.dob);
       const { email, certNo, gradYear, phoneNum, ...formData } = values;
 
@@ -237,7 +234,7 @@ const RailwayEntryInterface = () => {
       });
 
       // Successfully created concession request
-
+      setLoading(false);
       toast({
         description: "Concession request has been created!",
       });
@@ -249,6 +246,8 @@ const RailwayEntryInterface = () => {
         "Error while creating doc in ConcessionDetails collection",
         error
       );
+    } finally {
+      setLoading(false);
     }
   };
   const createConcRequestDoc = async (studentId, values) => {
@@ -280,9 +279,9 @@ const RailwayEntryInterface = () => {
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const studentId = await getStudentId(values);
-      createConcDetailsDoc(studentId, values);
-      createConcRequestDoc(studentId, values);
+      await createConcDetailsDoc(studentId, values);
+      await createConcRequestDoc(studentId, values);
+      form.reset();
     } catch (error) {
       toast({
         description: "An error occurred",
@@ -290,12 +289,11 @@ const RailwayEntryInterface = () => {
       console.error("Error ", error);
     }
   };
-
   return (
     <>
-      <Card className="mx-auto max-w-lg">
+      <Card className="mx-auto max-w-[70%] ">
         <CardHeader>
-          <CardTitle className="text-xl">Railway Concession Entry</CardTitle>
+          <CardTitle className="text-3xl">Railway Concession Entry</CardTitle>
         </CardHeader>
         <CardContent>
           {" "}
@@ -306,7 +304,112 @@ const RailwayEntryInterface = () => {
               className="space-y-8"
             >
               <div className="grid gap-4">
-                <div className="grid grid-cols-2 gap-4">
+                {" "}
+                <div className="grid gap-2 mt-[2.5%] mb-[2.5%]">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Command className={cn(" h-[10rem]")}>
+                            <CommandInput placeholder="Search email..." />
+                            <CommandList
+                              style={{
+                                overflow: "auto",
+                                WebkitOverflowScrolling: "touch",
+                                scrollbarWidth: "none",
+                                msOverflowStyle: "none",
+                              }}
+                              className={cn("max-h-[100px] no-scrollbar")}
+                            >
+                              <CommandEmpty>No such email found.</CommandEmpty>
+                              <CommandGroup>
+                                {emails.map((email, index) => (
+                                  <CommandItem
+                                    key={index}
+                                    value={email}
+                                    onSelect={(currentValue) => {
+                                      setValue(
+                                        currentValue === value
+                                          ? ""
+                                          : currentValue
+                                      );
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        value === email
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {email}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>{" "}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>First Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />{" "}
+                  </div>
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="middleName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Middle Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>{" "}
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Last Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-2">
                     <FormField
                       control={form.control}
@@ -316,7 +419,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>Branch</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -348,7 +451,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>Year</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -372,144 +475,6 @@ const RailwayEntryInterface = () => {
                     />
                   </div>
                 </div>
-                <div className="grid gap-2">
-                  {/* <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-[200px] justify-between"
-                      >
-                        {value
-                          ? frameworks.find(
-                              (framework) => framework.value === value
-                            )?.label
-                          : "Select framework..."}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0"> */}
-                  {/* <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Command>
-                            <CommandInput
-                              placeholder="Search framework..."
-                              value={value}
-                              onValueChange={(e) => {
-                                field.onChange;
-                                setInputValue(e.target.value);
-                                setOpen(true); // Set open to true on input change
-                              }}
-                              {...field}
-                            />
-                            <CommandList>
-                              {inputValue && filteredFrameworks.length === 0 ? (
-                                <CommandEmpty>No framework found.</CommandEmpty>
-                              ) : (
-                                <CommandGroup>
-                                  {filteredFrameworks.map((framework) => (
-                                    <CommandItem
-                                      key={framework.value}
-                                      value={framework.value}
-                                      onSelect={() =>
-                                        handleSelectFramework(framework.value)
-                                      }
-                                    >
-                                      {/* Replace with your Check component */}
-                  {/* <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          value === framework.value
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {framework.label}
-                                    </CommandItem> */}
-                  {/* ))}
-                                </CommandGroup>
-                              )}
-                            </CommandList>
-                          </Command> */}
-                  {/* <Input placeholder="eg., xyz@gmail.com" {...field} /> */}
-                  {/* </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />{" "}
-                  */}
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="eg., xyz@gmail.com" {...field} />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="grid gap-2">
-                    <FormField
-                      control={form.control}
-                      name="firstName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>First Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="John" {...field} />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />{" "}
-                  </div>
-                  <div className="grid gap-2">
-                    <FormField
-                      control={form.control}
-                      name="middleName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Middle Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Steve" {...field} />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>{" "}
-                  <div className="grid gap-2">
-                    <FormField
-                      control={form.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Last Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Walker" {...field} />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     {" "}
@@ -521,7 +486,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>Gender</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -552,7 +517,7 @@ const RailwayEntryInterface = () => {
                                 <Button
                                   variant={"outline"}
                                   className={cn(
-                                    "w-[240px] pl-3 text-left font-normal",
+                                    "w-[240px] pl-3 text-left font-normal flex",
                                     !field.value && "text-muted-foreground"
                                   )}
                                 >
@@ -589,43 +554,45 @@ const RailwayEntryInterface = () => {
                     />
                   </div>
                 </div>
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="phoneNum"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="" {...field} />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>{" "}
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Address</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder=""
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="phoneNum"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>{" "}
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder=""
+                              className="resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-2">
                     {" "}
                     <FormField
@@ -636,7 +603,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>Class</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -664,7 +631,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>Duration</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -683,36 +650,36 @@ const RailwayEntryInterface = () => {
                         </FormItem>
                       )}
                     />
+                  </div>{" "}
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="travelLane"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Travel lane</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="Western">Western</SelectItem>
+                              <SelectItem value="Central">Central</SelectItem>
+                              <SelectItem value="Harbour">Harbour</SelectItem>
+                            </SelectContent>
+                          </Select>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />{" "}
                   </div>
                 </div>{" "}
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="travelLane"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Travel lane</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Western">Western</SelectItem>
-                            <SelectItem value="Central">Central</SelectItem>
-                            <SelectItem value="Harbour">Harbour</SelectItem>
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />{" "}
-                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     {" "}
@@ -724,7 +691,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>From</FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>

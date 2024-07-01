@@ -1,5 +1,4 @@
 import React, { use, useEffect, useState } from "react";
-import { Card } from "@/components/ui/card"; // Replace with actual Card component import
 import {
   collection,
   doc,
@@ -18,8 +17,9 @@ import { useToast } from "@/components/ui/use-toast";
 
 const RailwayUpdateConc = () => {
   const [passes, setPasses] = useState<any[]>([]);
+  const [passArrayLength, setPassArrayLength] = useState(null);
+
   const [searchInput, setSearchInput] = useState("");
-  const [filteredPasses, setFilteredPasses] = useState([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -83,15 +83,15 @@ const RailwayUpdateConc = () => {
   useEffect(() => {
     const fetchAllRecentPasses = async () => {
       try {
+        setLoading(true);
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
         const concessionDetailsRef = collection(db, "ConcessionDetails");
         const q = query(
           concessionDetailsRef,
-          where("lastPassIssued", ">=", sevenDaysAgo)
+          where("status", "in", ["serviced", "downloaded"])
         );
-
         const unsubscribe = onSnapshot(
           q,
           async (snapshot) => {
@@ -99,7 +99,7 @@ const RailwayUpdateConc = () => {
 
             for (const docSnap of snapshot.docs) {
               const enquiry = docSnap.data();
-              const lastPassIssued = enquiry.lastPassIssued.toDate();
+              const lastPassIssued = enquiry.lastPassIssued?.toDate();
 
               if (lastPassIssued >= sevenDaysAgo) {
                 const concessionRequestRef = doc(
@@ -115,21 +115,32 @@ const RailwayUpdateConc = () => {
                   enquiry.dob = enquiry.dob.toDate();
                   enquiry.doi = enquiry.lastPassIssued.toDate();
                   enquiry.gradyear = enquiry.gradyear.toString();
+
                   fetchedPasses.push(enquiry);
                 }
               }
             }
 
-            setPasses(fetchedPasses);
-            setFilteredPasses(fetchedPasses);
+            let filteredPasses = fetchedPasses;
+
+            if (searchInput.trim() === "") {
+              setPasses(filteredPasses);
+            } else {
+              filteredPasses = fetchedPasses.filter((pass) =>
+                pass.certNo.toLowerCase().includes(searchInput.toLowerCase())
+              );
+              setPasses(filteredPasses);
+            }
+
+            setPassArrayLength(filteredPasses.length);
+
             setLoading(false);
           },
           (error) => {
             console.error("Error fetching passes:", error);
           }
         );
-
-        return () => unsubscribe();
+        if (!loading) return () => unsubscribe();
       } catch (error) {
         toast({ description: "There was an error in fetching recent passes" });
         console.error("Error fetching recent passes:", error);
@@ -138,53 +149,15 @@ const RailwayUpdateConc = () => {
       }
     };
 
-    fetchAllRecentPasses(); // Initial fetch when component mounts
-  }, []);
-
-  // useEffect(() => {
-  //   setFilteredPasses(passes);
-  //   console.log(passes);
-  // }, [passes]);
-  const handleSearchRequest = () => {
-    if (searchInput.trim() === "") {
-      toast({
-        description: "Please enter a search value",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const filteredPassArray = passes.filter((pass) =>
-      pass.certNo.toLowerCase().includes(searchInput.toLowerCase())
-    );
-    setFilteredPasses(filteredPassArray);
-  };
-  // const handleSearchRequest = () => {
-  //   console.log(searchInput);
-  //   if (searchInput.trim() === "") {
-  //     toast({
-  //       description: "Please enter a search value",
-  //       variant: "destructive",
-  //     });
-  //   }
-
-  //   const filteredPassArray = [];
-  //   passes.map((pass, index) => {
-  //     if (pass.certNo.toLowerCase().includes(searchInput.toLowerCase())) {
-  //       console.log("found you", pass);
-
-  //       filteredPassArray.push(pass);
-  //     } else {
-  //       console.log("No match", pass);
-  //     }
-  //   });
-  //   console.log(filteredPassArray);
-  //   setFilteredPasses(filteredPassArray);
-  // };
+    fetchAllRecentPasses();
+  }, [searchInput]);
 
   useEffect(() => {
-    console.log(filteredPasses);
-  }, [filteredPasses]);
+    if (passArrayLength == 0) {
+      toast({ description: "No such pass found", variant: "destructive" });
+    }
+  }, [passArrayLength]);
+
   return (
     <div className="w-[75%] flex flex-col gap-[5rem]">
       <div className="flex w-full max-w-sm items-center space-x-2">
@@ -193,23 +166,14 @@ const RailwayUpdateConc = () => {
           placeholder="Certificate No"
           onChange={(e) => setSearchInput(e.target.value)}
         />
-        <Button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            handleSearchRequest();
-          }}
-        >
-          Search
-        </Button>
       </div>
-      {filteredPasses.map((filteredPass, index) => (
-        <RailwayUpdateCard
-          key={index}
-          formSchema={formSchema}
-          passData={filteredPass}
-        />
-      ))}
+      {passes.map((pass, index) => {
+        return (
+          <div key={pass.certNo}>
+            <RailwayUpdateCard formSchema={formSchema} passData={pass} />
+          </div>
+        );
+      })}
     </div>
   );
 };
