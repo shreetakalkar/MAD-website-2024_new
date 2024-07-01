@@ -1,5 +1,4 @@
 import React, { use, useEffect, useState } from "react";
-import { Card } from "@/components/ui/Card";
 import {
   collection,
   doc,

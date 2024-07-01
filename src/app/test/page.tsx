@@ -2,14 +2,14 @@
 import { ComboboxPopover } from "@/components/FilterEmails";
 import RailwayEntryInterface from "@/components/RailwayEntryInterface";
 import RailwayUpdateConc from "@/pages/RailwayUpdateConc";
+import PendingRequests from "@/pages/PendingRequests";
 
-const TestPage = () => {
+const pendingRequests = () => {
   return (
-    <>
-      {/* <ComboboxPopover /> */}
-      <RailwayEntryInterface />
-      {/* <RailwayUpdateConc /> */}
-    </>
+    <div>
+      <PendingRequests />
+    </div>
   );
 };
-export default TestPage;
+
+export default pendingRequests;

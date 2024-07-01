@@ -15,6 +15,7 @@ export default function page() {
         <Button className="mt-4">Add Product</Button>
       </div>
     </div>
+
   </main>
 )
 }
