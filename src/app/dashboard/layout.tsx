@@ -35,7 +35,7 @@ export default function Home({children}: {children: React.ReactNode}) {
       setUserType(docSnap.data()?.type);
     };
 
-    fetchUserType({ uid: "Kp7s1qw1LZfw9OW3euqfJg1SvFW2" });
+    fetchUserType({ uid: user?.uid });
   }, []);
 
   const handleLogout = async () => {

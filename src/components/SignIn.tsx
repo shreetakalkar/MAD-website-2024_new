@@ -61,38 +61,41 @@ const SignIn = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-  
-      // Query the "Faculty" collection to find the document with the matching user UID
-      const facultyDocRef = doc(db, "Faculty", user.uid);
-      const docSnapshot = await getDoc(facultyDocRef);
-  
-      if (docSnapshot.exists()) {
-        const data = docSnapshot.data();
-        // console.log(data);
-        setUser({
-          name: data.name,
-          email: data.email,
-          type: data.type,
-        });
-        setLoggedIn(true);
-        if (rememberMe) {
-          localStorage.setItem("rememberMeEmail", email);
-          localStorage.setItem("rememberMePassword", password);
-        } else {
-          localStorage.removeItem("rememberMeEmail");
-          localStorage.removeItem("rememberMePassword");
+
+      const facultyRef = collection(db, "Faculty");
+      const querySnapshot = await getDocs(facultyRef);
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+
+        if (doc.id === user.uid) {
+          setUser({
+            name: data.name,
+            email: data.email,
+            type: data.type,
+            uid : user.uid
+          });
+          setLoggedIn(true);
+          if (rememberMe) {
+            localStorage.setItem("rememberMeEmail", email);
+            localStorage.setItem("rememberMePassword", password);
+          } else {
+            localStorage.removeItem("rememberMeEmail");
+            localStorage.removeItem("rememberMePassword");
+          }
+          toast({
+            title: "Sign In successful",
+            description: "Redirecting to dashboard",
+          });
+          router.push("/dashboard");
+         } else {
+          toast({
+            title: "Error signing in",
+            description: "User not found in Faculty collection",
+          });
         }
-        toast({
-          title: "Sign In successful",
-          description: "Redirecting to dashboard",
-        });
-        router.push("/dashboard");
-      } else {
-        toast({
-          title: "Error signing in",
-          description: "User not found in Faculty collection",
-        });
-      }
+        
+      });
     } catch (error) {
       console.error("Error signing in: ", error);
       toast({
