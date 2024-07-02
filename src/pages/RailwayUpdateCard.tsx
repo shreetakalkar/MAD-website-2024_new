@@ -73,8 +73,8 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
     return requiredFields;
   };
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const studentId = values.uid;
       const requiredFields = extractRequiredFields(formSchema);
       const emptyFields = requiredFields.filter(
@@ -115,7 +115,6 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
 
       const concessionRef = doc(db, "ConcessionDetails", studentId);
       await updateDoc(concessionRef, newData);
-      setLoading(false);
       toast({ description: "Document updated successfully!" });
     } catch (error) {
       toast({
