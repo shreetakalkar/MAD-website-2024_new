@@ -48,6 +48,7 @@ import {
   Timestamp,
   Firestore,
   doc,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { error } from "console";
@@ -114,40 +115,6 @@ const RailwayEntryInterface = () => {
   const gradYearList = useGradYear();
   const { toast } = useToast();
 
-  const fetchEmails = async () => {
-    try {
-      setLoading(true);
-      const studentRef = collection(db, "Students ");
-      const querySnapshot = await getDocs(studentRef);
-      const emailArray = [];
-
-      querySnapshot.forEach((doc) => {
-        // console.log(doc.id, " => ", doc.data().email);
-        emailArray.push(doc.data().email);
-        // Access individual fields like doc.data().email, doc.data().name, etc.
-      });
-
-      setEmails(emailArray);
-      setLoading(false);
-    } catch (error) {
-      toast({
-        description: "Error while fetching emails",
-        variant: "destructive",
-      });
-      console.log("Error while fetching emails", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchEmails();
-  }, []);
-
-  useEffect(() => {
-    form.setValue("email", value);
-    setStudentData(value);
-  }, [value]);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -169,48 +136,86 @@ const RailwayEntryInterface = () => {
       certNo: "",
     },
   });
-
-  const setStudentData = async (value) => {
+  const fetchEmails = async () => {
+    setLoading(true);
     try {
-      const studentsRef = query(
-        collection(db, "Students "),
-        where("email", "==", value)
-      );
+      const studentRef = collection(db, "Students ");
+      const querySnapshot = await getDocs(studentRef);
+      const emailArray = [];
 
-      const querySnapshot = await getDocs(studentsRef);
-      if (!querySnapshot.empty) {
-        const studentDoc = querySnapshot.docs[0];
-        if (studentDoc.exists()) {
-          const studentId = studentDoc?.id || "";
-          const studentData = studentDoc.data();
+      querySnapshot.forEach((doc) => {
+        emailArray.push(doc.data().email);
+      });
 
-          const name = studentData.Name.trim();
-          const nameParts = name.split(" ");
-          const firstName = nameParts[0] || "";
-          const middleName = nameParts[1] || "";
-          const lastName = nameParts[nameParts.length - 1] || "";
-
-          form.setValue("firstName", firstName);
-          form.setValue("middleName", middleName);
-          form.setValue("lastName", lastName);
-          form.setValue("branch", studentData.Branch);
-
-          setStudentId(studentId);
-        }
-      }
+      setEmails(emailArray.sort());
     } catch (error) {
       toast({
-        description: "Error fetching student data",
+        description: "Error while fetching emails",
         variant: "destructive",
       });
-      console.error("Error getting student document:", error);
-      throw error;
+      console.log("Error while fetching emails", error);
+    } finally {
+      setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchEmails();
+  }, []);
 
-  const createConcDetailsDoc = async (studentId, values) => {
-    try {
+  const setStudentData = async (value) => {
+    if (value != "") {
       setLoading(true);
+      try {
+        const lowerCaseEmail = value.toLowerCase();
+
+        const studentsRef = collection(db, "Students ");
+        const querySnapshot = await getDocs(studentsRef);
+
+        // Iterate through the query snapshot to find a case-insensitive match
+        querySnapshot.forEach((doc) => {
+          const studentData = doc.data();
+          const storedEmail = studentData?.email?.toLowerCase(); // Convert stored email to lowercase for comparison
+
+          if (storedEmail === lowerCaseEmail) {
+            const studentId = doc?.id || "";
+            const studentData = doc?.data();
+
+            const name = studentData.Name.trim();
+            const nameParts = name.split(" ");
+            const firstName = nameParts[0] || "";
+            const middleName = nameParts[1] || "";
+            const lastName = nameParts[nameParts.length - 1] || "";
+
+            form.setValue("firstName", firstName);
+            form.setValue("middleName", middleName);
+            form.setValue("lastName", lastName);
+            form.setValue("branch", studentData.Branch);
+            form.setValue("email", value);
+
+            setStudentId(studentId);
+          }
+        });
+      } catch (error) {
+        toast({
+          description: "Error fetching student data",
+          variant: "destructive",
+        });
+        console.error("Error getting student document:", error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      form.reset();
+    }
+  };
+  useEffect(() => {
+    form.setValue("email", value);
+    setStudentData(value);
+  }, [value]);
+  const createConcDetailsDoc = async (studentId, values) => {
+    setLoading(true);
+    try {
       const { ageYears, ageMonths } = calculateAge(values.dob);
       const { email, certNo, gradYear, phoneNum, ...formData } = values;
 
@@ -228,19 +233,21 @@ const RailwayEntryInterface = () => {
         ageMonths,
         gradyear: selectedGradYear,
         phoneNum: parsedPhoneNum,
+        idCardURL: "",
+        previousPassURL: "",
         lastPassIssued: new Date(),
         status: "serviced",
         statusMessage: "Your request has been serviced",
       });
 
       // Successfully created concession request
-      setLoading(false);
       toast({
         description: "Concession request has been created!",
       });
     } catch (error) {
       toast({
-        description: "Student not found!",
+        description: "Error while processing request!",
+        variant: "destructive",
       });
       console.error(
         "Error while creating doc in ConcessionDetails collection",
@@ -267,7 +274,8 @@ const RailwayEntryInterface = () => {
       // Successfully created concession request
     } catch (error) {
       toast({
-        description: "Student not found!",
+        description: "Error while processing request!",
+        variant: "destructive",
       });
       console.log(
         "Error while creating doc in ConcessionRequest collection",
@@ -275,22 +283,76 @@ const RailwayEntryInterface = () => {
       );
     }
   };
+  const appendFEDataInConcHistory = async (values) => {
+    const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
+    setLoading(true);
+    try {
+      const { ageYears, ageMonths } = calculateAge(values.dob);
+      const { email, certNo, gradYear, phoneNum, ...formData } = values;
 
+      //  Fetching the gradYear based on "FE","SE",etc.
+      const selectedGradYear = gradYearList.find(
+        (item) => item.year === gradYear
+      ).gradYear;
+      const parsedPhoneNum = parseInt(phoneNum, 10);
+      const formattedData = {
+        ...formData,
+        ageYears,
+        ageMonths,
+        gradyear: selectedGradYear,
+        passNum: certNo,
+        phoneNum: parsedPhoneNum,
+        lastPassIssued: new Date(),
+        status: "serviced",
+        statusMessage: "Your request has been serviced",
+      };
+      await updateDoc(concessionHistoryRef, {
+        history: arrayUnion(formattedData),
+      });
+      toast({
+        description: "Concession request has been created!",
+      });
+    } catch (error) {
+      toast({
+        description: "Error while processing request!",
+        variant: "destructive",
+      });
+      console.error("An error occurred while appending data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await createConcDetailsDoc(studentId, values);
-      await createConcRequestDoc(studentId, values);
+      if (values.gradYear === "FE" && value === "") {
+        await appendFEDataInConcHistory(values);
+      } else {
+        if (studentId !== "") {
+          await createConcDetailsDoc(studentId, values);
+          await createConcRequestDoc(studentId, values);
+        } else {
+          toast({
+            description: "No such student found!",
+            variant: "destructive",
+          });
+        }
+      }
       form.reset();
+      setValue("");
+      setStudentId("");
     } catch (error) {
       toast({
         description: "An error occurred",
+        variant: "destructive",
       });
       console.error("Error ", error);
     }
   };
   return (
     <>
+      {" "}
+      {loading && <p>Loading...</p>}
       <Card className="mx-auto max-w-[70%] ">
         <CardHeader>
           <CardTitle className="text-3xl">Railway Concession Entry</CardTitle>
@@ -306,58 +368,44 @@ const RailwayEntryInterface = () => {
               <div className="grid gap-4">
                 {" "}
                 <div className="grid gap-2 mt-[2.5%] mb-[2.5%]">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Command className={cn(" h-[10rem]")}>
-                            <CommandInput placeholder="Search email..." />
-                            <CommandList
-                              style={{
-                                overflow: "auto",
-                                WebkitOverflowScrolling: "touch",
-                                scrollbarWidth: "none",
-                                msOverflowStyle: "none",
-                              }}
-                              className={cn("max-h-[100px] no-scrollbar")}
-                            >
-                              <CommandEmpty>No such email found.</CommandEmpty>
-                              <CommandGroup>
-                                {emails.map((email, index) => (
-                                  <CommandItem
-                                    key={index}
-                                    value={email}
-                                    onSelect={(currentValue) => {
-                                      setValue(
-                                        currentValue === value
-                                          ? ""
-                                          : currentValue
-                                      );
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        value === email
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {email}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <Command className={cn(" h-[10rem] bg-gray-800")}>
+                    <CommandInput placeholder="Search email..." />
+                    <CommandList
+                      style={{
+                        overflow: "auto",
+                        WebkitOverflowScrolling: "touch",
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                      className={cn("max-h-[100px] no-scrollbar")}
+                    >
+                      <CommandEmpty>
+                        No such email found. Please enter all the fields
+                        manually.
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {emails.map((email, index) => (
+                          <CommandItem
+                            key={index}
+                            value={email}
+                            onSelect={(currentValue) => {
+                              setValue(
+                                currentValue === value ? "" : currentValue
+                              );
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                value === email ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {email}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
                 </div>{" "}
                 <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-2">
@@ -410,6 +458,22 @@ const RailwayEntryInterface = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />{" "}
+                  </div>{" "}
                   <div className="grid gap-2">
                     <FormField
                       control={form.control}
@@ -473,7 +537,7 @@ const RailwayEntryInterface = () => {
                         </FormItem>
                       )}
                     />
-                  </div>
+                  </div>{" "}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
@@ -490,7 +554,7 @@ const RailwayEntryInterface = () => {
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select" />
+                                <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -563,7 +627,10 @@ const RailwayEntryInterface = () => {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="" {...field} />
+                            <Input
+                              placeholder="Enter phone number"
+                              {...field}
+                            />
                           </FormControl>
 
                           <FormMessage />
@@ -580,7 +647,7 @@ const RailwayEntryInterface = () => {
                           <FormLabel>Address</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder=""
+                              placeholder="Enter student address"
                               className="resize-none"
                               {...field}
                             />
@@ -607,7 +674,7 @@ const RailwayEntryInterface = () => {
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select" />
+                                <SelectValue placeholder="Select class" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -635,7 +702,7 @@ const RailwayEntryInterface = () => {
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select" />
+                                <SelectValue placeholder="Select pass duration" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -664,7 +731,7 @@ const RailwayEntryInterface = () => {
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select" />
+                                <SelectValue placeholder="Select travel lane" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -695,7 +762,7 @@ const RailwayEntryInterface = () => {
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select" />
+                                <SelectValue placeholder="Select station" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>

@@ -82,8 +82,8 @@ const RailwayUpdateConc = () => {
 
   useEffect(() => {
     const fetchAllRecentPasses = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -133,8 +133,6 @@ const RailwayUpdateConc = () => {
             }
 
             setPassArrayLength(filteredPasses.length);
-
-            setLoading(false);
           },
           (error) => {
             console.error("Error fetching passes:", error);
@@ -159,22 +157,25 @@ const RailwayUpdateConc = () => {
   }, [passArrayLength]);
 
   return (
-    <div className="w-[75%] flex flex-col gap-[5rem]">
-      <div className="flex w-full max-w-sm items-center space-x-2">
-        <Input
-          type="text"
-          placeholder="Certificate No"
-          onChange={(e) => setSearchInput(e.target.value)}
-        />
+    <>
+      {loading && <p>Loading...</p>}
+      <div className="w-[75%] flex flex-col gap-[5rem]">
+        <div className="flex w-full max-w-sm items-center space-x-2">
+          <Input
+            type="text"
+            placeholder="Certificate No"
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+        {passes.map((pass, index) => {
+          return (
+            <div key={pass.certNo}>
+              <RailwayUpdateCard formSchema={formSchema} passData={pass} />
+            </div>
+          );
+        })}
       </div>
-      {passes.map((pass, index) => {
-        return (
-          <div key={pass.certNo}>
-            <RailwayUpdateCard formSchema={formSchema} passData={pass} />
-          </div>
-        );
-      })}
-    </div>
+    </>
   );
 };
 export default RailwayUpdateConc;
