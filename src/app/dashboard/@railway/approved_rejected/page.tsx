@@ -1,5 +1,6 @@
+"use client";
 import React, { useEffect, useState } from 'react';
-import DataTable from '@/app/dashboard/approved_rejected/datatable';
+import DataTable from '@/components/datatable';
 import { ColumnDef } from "@tanstack/react-table";
 import { db } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
