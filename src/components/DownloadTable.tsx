@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DownloadTableRow from "@/components/DownloadTableRow";
-import { BatchElement } from "@/app/dashboard/downloads/page";
+import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 
 
 interface DownloadTableProps {

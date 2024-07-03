@@ -150,7 +150,7 @@ const Downloads: React.FC = () => {
         batches={filteredBatches} 
         date={date} 
         handleDownloadBatchCSV={handleDownloadBatchCSV} 
-        theme={theme}
+        theme={theme || "dark"}
       />
     </div>
   );
