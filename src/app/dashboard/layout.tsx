@@ -16,13 +16,32 @@ import ProtectionProvider from "@/providers/ProtectionProvider";
 import { useUser } from "@/providers/UserProvider";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
 import Approved_Rejected from "@/pages/Approved_Rejected";
 import PendingRequests from "@/pages/PendingRequests";
 import RailwayUpdateConc from "@/pages/RailwayUpdateConc";
 
-export default function Home({children}: {children: React.ReactNode}) {
+export default function Home({
+  admin,
+  committee,
+  faculty,
+  principal,
+  student,
+  railway,
+}: {
+  admin: React.ReactNode;
+  committee: React.ReactNode;
+  faculty: React.ReactNode;
+  principal: React.ReactNode;
+  student: React.ReactNode;
+  railway: React.ReactNode;
+}) {
   const { theme } = useTheme();
   const { user, setUser, setLoggedIn } = useUser();
   const router = useRouter();
@@ -53,14 +72,21 @@ export default function Home({children}: {children: React.ReactNode}) {
 
   return (
     <ProtectionProvider>
-      <div className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${theme}`}>
+      <div
+        className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${theme}`}
+      >
         {/* Left Side Block */}
         <div className={`hidden border-r md:block`}>
           <div className="flex h-full max-h-screen flex-col gap-2">
             {/* Mode Toggle */}
             <div className="h-[10%] flex justify-between">
               <div className="mt-2 ml-5">
-                <Image src={theme == "dark" ? DevsDark : DevsLight} alt="logo" width={75} height={75} />
+                <Image
+                  src={theme == "dark" ? DevsDark : DevsLight}
+                  alt="logo"
+                  width={75}
+                  height={75}
+                />
               </div>
               <div className="mt-5 mr-2">
                 <ModeToggle />
@@ -71,16 +97,20 @@ export default function Home({children}: {children: React.ReactNode}) {
             <div className="flex-1 mt-5">
               <LeftSideLinks userType={userType ? userType : ""} />
             </div>
-            
+
             {/* Account Dropdown */}
             <div className="p-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="link"><User className="mr-2 h-4 w-4" />{`${user?.name}`}</Button>
+                  <Button variant="link">
+                    <User className="mr-2 h-4 w-4" />
+                    {`${user?.name}`}
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onSelect={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />Logout
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -89,19 +119,15 @@ export default function Home({children}: {children: React.ReactNode}) {
         </div>
 
         {/* Right Side Block */}
-        {/* <div className="flex flex-col">
+        <div className="flex flex-col">
           <Header userType={userType ? userType : ""} />
-          {children}
-        </div> */}
-        {/* test commit - can delete this comment later */}
-        <div>
-
-        <PendingRequests/>
-        {/* {window.innerHeight} x {window.innerWidth} */}
+          {userType == "admin" && admin}
+          {userType == "committee" && committee}
+          {userType == "faculty" && faculty}
+          {userType == "principal" && principal}
+          {userType == "student" && student}
+          {userType == "railway" && railway}
         </div>
-        
-
-
       </div>
     </ProtectionProvider>
   );
