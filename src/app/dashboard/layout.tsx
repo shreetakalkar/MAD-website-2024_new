@@ -23,9 +23,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
-import Approved_Rejected from "@/pages/Approved_Rejected";
-import PendingRequests from "@/pages/PendingRequests";
-import RailwayUpdateConc from "@/pages/RailwayUpdateConc";
 
 export default function Home({
   admin,
@@ -54,7 +51,7 @@ export default function Home({
       setUserType(docSnap.data()?.type);
     };
 
-    fetchUserType({ uid: user?.uid });
+    fetchUserType({ uid: user?.uid || "" });
   }, []);
 
   const handleLogout = async () => {

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import Switch from "react-switch";
 import sidebarLinks from "../constants/sidebarLinks";
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Spinner from "@/public/icons/Spinner";
 import SunIcon from "@/public/icons/SunIcon";
@@ -10,13 +10,12 @@ import { UserContext } from "@/app/layout";
 import { useTheme } from "next-themes";
 import { userTypes } from "@/constants/types/userTypes";
 
-
-function Sidebar({ user } : { user : any }) {
+function Sidebar({ user }: { user: any }) {
   user = {
     type: userTypes.RAILWAY,
     email: "anish@gmail.com",
-    name: "Anish", 
-  } // DEFINE USER FOR TESTING
+    name: "Anish",
+  }; // DEFINE USER FOR TESTING
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // State to manage loading spinner
   const { theme, setTheme } = useTheme();
@@ -39,7 +38,7 @@ function Sidebar({ user } : { user : any }) {
     setIsOpen(!isOpen);
   };
 
-  const getOrdinalIndicator = useCallback((day : number) => {
+  const getOrdinalIndicator = useCallback((day: number) => {
     if (day >= 11 && day <= 13) {
       return "th";
     }
@@ -91,14 +90,21 @@ function Sidebar({ user } : { user : any }) {
     setIsLoading(false);
   }, [pathname, searchParams]);
 
-  const userHasAccess = (featureTypes : any) => {
+  const userHasAccess = (featureTypes: any) => {
     return featureTypes.length === 0 || featureTypes.includes(user.type);
   };
 
   return (
     <div className="relative z-10">
-      <div className={fixed top-0 left-0 h-full ${isOpen ? "w-[17vw]" : "w-0"} transition-width duration-300}>
-        <div className="absolute top-8 left-8 cursor-pointer" onClick={toggleMenu}>
+      <div
+        className={`fixed top-0 left-0 h-full ${
+          isOpen ? "w-[17vw]" : "w-0"
+        } transition-width duration-300`}
+      >
+        <div
+          className="absolute top-8 left-8 cursor-pointer"
+          onClick={toggleMenu}
+        >
           <div className="w-5 h-[2px] bg-black mb-1"></div>
           <div className="w-5 h-[2px] bg-black mb-1"></div>
           <div className="w-5 h-[2px] bg-black mb-1"></div>
@@ -106,10 +112,22 @@ function Sidebar({ user } : { user : any }) {
         {isOpen && (
           <div className="flex flex-col items-center h-full w-[17vw] border border-gray-500 rounded-2xl mt-16 ml-8 pb-8 bg-gray-500">
             <div className="w-full mt-4 ml-8">
-              <img className="w-12 h-12" src={theme === "dark" ? "/assets/images/devs-dark.png" : "/assets/images/devs-light.png"} alt="Logo" />
+              <img
+                className="w-12 h-12"
+                src={
+                  theme === "dark"
+                    ? "/assets/images/devs-dark.png"
+                    : "/assets/images/devs-light.png"
+                }
+                alt="Logo"
+              />
             </div>
             <div className="flex justify-center mt-4 w-full">
-              <img className="w-12 h-12 rounded-full mt-6" src="assets/images/DP.png" alt="User" />
+              <img
+                className="w-12 h-12 rounded-full mt-6"
+                src="assets/images/DP.png"
+                alt="User"
+              />
             </div>
             <div className="flex flex-col items-center mt-4 font-sans">
               <h5 className="text-sm font-normal mb-1">{user.name}</h5>
@@ -121,7 +139,15 @@ function Sidebar({ user } : { user : any }) {
                 userHasAccess(data.type) ? (
                   <Link key={id} href={data.mainLink}>
                     <div className="flex items-center text-gray-200 hover:bg-gray-300 rounded px-2 py-3 cursor-pointer">
-                      <img src={theme === "light" ? data.lightIconLink : data.darkIconLink} alt="" className="w-4 h-4 mr-5" />
+                      <img
+                        src={
+                          theme === "light"
+                            ? data.lightIconLink
+                            : data.darkIconLink
+                        }
+                        alt=""
+                        className="w-4 h-4 mr-5"
+                      />
                       {data.mainTitle}
                     </div>
                   </Link>
@@ -132,8 +158,20 @@ function Sidebar({ user } : { user : any }) {
               <Switch
                 checked={theme === "dark"}
                 onChange={toggleTheme}
-                uncheckedHandleIcon={<SunIcon width={16} height={16} style={{ marginTop: "-6px", marginLeft: "2px" }} />}
-                checkedHandleIcon={<MoonIcon width={16} height={16} style={{ marginTop: "-6px", marginLeft: "2px" }} />}
+                uncheckedHandleIcon={
+                  <SunIcon
+                    width={16}
+                    height={16}
+                    style={{ marginTop: "-6px", marginLeft: "2px" }}
+                  />
+                }
+                checkedHandleIcon={
+                  <MoonIcon
+                    width={16}
+                    height={16}
+                    style={{ marginTop: "-6px", marginLeft: "2px" }}
+                  />
+                }
                 onColor={"#2a66ff"}
                 offColor={"#C9C9C9"}
                 uncheckedIcon={false}
@@ -142,7 +180,10 @@ function Sidebar({ user } : { user : any }) {
                 width={48}
                 handleDiameter={20}
               />
-              <p>{formattedDate}{getOrdinalIndicator(day)}</p>
+              <p>
+                {formattedDate}
+                {getOrdinalIndicator(day)}
+              </p>
               <button
                 onClick={() => {
                   if (localStorage.getItem("user")) {
