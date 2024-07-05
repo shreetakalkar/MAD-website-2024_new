@@ -259,7 +259,7 @@ function CreateEventComponent() {
                   onChange={handleEventDetails}
                 />
                 <p style={{ color: "rgb(255, 12, 19)" }}>
-                  Please upload the full url, Don't upload shortened url
+                  Please upload the full url, Don&apos;t upload shortened url
                 </p>
               </Element>
               <Element title="Select date and time">

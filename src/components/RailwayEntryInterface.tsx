@@ -142,8 +142,7 @@ const RailwayEntryInterface = () => {
     try {
       const studentRef = collection(db, "Students ");
       const querySnapshot = await getDocs(studentRef);
-      const emailArray = [];
-
+      const emailArray: string[] = [];
       querySnapshot.forEach((doc) => {
         emailArray.push(doc.data().email);
       });
