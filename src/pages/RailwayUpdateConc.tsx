@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { z } from "zod";
-import RailwayUpdateCard from "./RailwayUpdateCard";
+import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
