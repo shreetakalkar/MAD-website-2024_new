@@ -6,7 +6,7 @@ interface DownloadTableRowProps {
   index: number;
   batch: BatchElement;
   date: any;
-  handleDownloadBatchCSV: (batchIndex: number, fileName: string) => void;
+  handleDownloadBatchExcel: (batchIndex: number, fileName: string) => void;
   theme: string;
 }
 
@@ -14,7 +14,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
   index,
   batch,
   date,
-  handleDownloadBatchCSV,
+  handleDownloadBatchExcel,
   theme,
 }) => {
   return (
@@ -39,7 +39,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
       <TableCell className="text-left text-sm font-medium">
         <button
           className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-          onClick={() => handleDownloadBatchCSV(index, batch.fileName)}
+          onClick={() => handleDownloadBatchExcel(index, batch.fileName)}
         >
           Download CSV
         </button>

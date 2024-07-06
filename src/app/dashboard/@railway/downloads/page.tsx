@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { convertJsonToCsv, downloadCsv } from "@/lib/utils";
+import { createExcelFile, downloadExcelFile } from "@/lib/excelUtils";
 import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
 import DownloadTable from "@/components/DownloadTable";
@@ -77,7 +77,7 @@ const Downloads: React.FC = () => {
       if (currentBatch.length === limit) {
         batches.push({
           enquiries: currentBatch,
-          fileName: `Z${i}-Z${i + limit - 1}.csv`,
+          fileName: `Z${i}-Z${i + limit - 1}.xlsx`,
         });
       }
       i += limit;
@@ -86,9 +86,8 @@ const Downloads: React.FC = () => {
     setFilteredBatches(batches);
   };
 
-  const handleDownloadBatchCSV = async (batchIndex: number, fileName: string) => {
+  const handleDownloadBatchExcel = async (batchIndex: number, fileName: string) => {
     try {
-      const columnsToInclude = ["fileName", "content", "timestamp"];
       const enquiriesSubset = batchedEnquiries[batchIndex];
 
       if (!enquiriesSubset) {
@@ -99,22 +98,22 @@ const Downloads: React.FC = () => {
         return;
       }
 
-      const csvContent = await convertJsonToCsv(enquiriesSubset.enquiries, columnsToInclude);
+      const excelContent = await createExcelFile(enquiriesSubset.enquiries);
 
-      if (!csvContent) {
+      if (!excelContent) {
         toast({
           title: "Error",
-          description: "Failed to generate CSV content.",
+          description: "Failed to generate Excel content.",
         });
         return;
       }
 
-      downloadCsv(csvContent, fileName);
+      downloadExcelFile(excelContent, fileName);
     } catch (error) {
-      console.error("Error handling CSV download:", error);
+      console.error("Error handling Excel download:", error);
       toast({
         title: "Error",
-        description: "Failed to download CSV file. Please try again later.",
+        description: "Failed to download Excel file. Please try again later.",
       });
     }
   };
@@ -149,7 +148,7 @@ const Downloads: React.FC = () => {
       <DownloadTable 
         batches={filteredBatches} 
         date={date} 
-        handleDownloadBatchCSV={handleDownloadBatchCSV} 
+        handleDownloadBatchExcel={handleDownloadBatchExcel} 
         theme={theme || "dark"}
       />
     </div>
