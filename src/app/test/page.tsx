@@ -6,7 +6,8 @@ import PendingRequests from "@/pages/PendingRequests";
 const pendingRequests = () => {
   return (
     <div>
-      <RailwayEntryInterface />
+      <RailwayUpdateConc />
+      {/* <RailwayEntryInterface /> */}
       {/* <PendingRequests /> */}
     </div>
   );
