@@ -232,6 +232,10 @@ const PendingCard: React.FC<PendingCardProps> = ({
       passNum: certificateNumber,
       statusMessage: updatedConcessionDetailsFields.statusMessage,
       notificationTime: currentDate,
+      passCollected: {
+        date: null,
+        collected: 0
+      }
     };
 
     try {

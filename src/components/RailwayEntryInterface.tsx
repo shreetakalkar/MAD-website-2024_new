@@ -269,6 +269,10 @@ const RailwayEntryInterface = () => {
         statusMessage: "Your request has been serviced",
         time: new Date(),
         uid: studentId,
+        passCollected: {
+          date: new Date(),
+          collected: 1
+        }
       });
 
       // Successfully created concession request
