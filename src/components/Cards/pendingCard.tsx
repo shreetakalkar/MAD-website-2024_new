@@ -233,7 +233,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
       statusMessage: updatedConcessionDetailsFields.statusMessage,
       notificationTime: currentDate,
       passCollected: {
-        date: "",
+        date: null,
         collected: 0
       }
     };
