@@ -234,7 +234,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
       notificationTime: currentDate,
       passCollected: {
         date: null,
-        collected: 0
+        collected: "0"
       }
     };
 
