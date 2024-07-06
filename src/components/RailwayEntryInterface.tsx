@@ -271,7 +271,7 @@ const RailwayEntryInterface = () => {
         uid: studentId,
         passCollected: {
           date: new Date(),
-          collected: 1
+          collected: "1"
         }
       });
 
