@@ -9,6 +9,7 @@ import {
   getDocs,
   orderBy,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -24,9 +25,34 @@ interface Data {
   status: "Collected" | "Not Collected";
   branch: string;
   gradYear: string;
+  lastPassIssued: Date;
 }
 
 const CollectedPassTable: React.FC = () => {
+
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const currentUserYear = (gradyear: string) => {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    const gradYear = parseInt(gradyear);
+  
+    if ( ((currentMonth >= 6) && (gradYear == currentYear + 4)) || ((currentMonth <= 5) && (gradYear == currentYear + 3)) ) {
+      return "FE";
+    } else if ( ((currentMonth >= 6) && (gradYear == currentYear + 3)) || ((currentMonth <= 5) && (gradYear == currentYear + 2)) ) {
+      return "SE";
+    } else if ( ((currentMonth >= 6) && (gradYear == currentYear + 2)) || ((currentMonth <= 5) && (gradYear == currentYear + 1)) ) {
+      return "TE";
+    } else if ( ((currentMonth >= 6) && (gradYear == currentYear + 1)) || ((currentMonth <= 5) && (gradYear == currentYear)) ) {
+      return "BE";
+    }
+  };
+
   const columns: ColumnDef<Data, any>[] = [
     {
       id: "select",
@@ -49,6 +75,15 @@ const CollectedPassTable: React.FC = () => {
       header: "Certificate Number",
     },
     {
+      accessorKey: "lastPassIssued",
+      header: "Issued Date",
+      cell: ({ getValue }) => formatDate(getValue()),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
       accessorKey: "firstName",
       header: "Name",
     },
@@ -57,16 +92,12 @@ const CollectedPassTable: React.FC = () => {
       header: "Surname",
     },
     {
-      accessorKey: "status",
-      header: "Status",
-    },
-    {
       accessorKey: "branch",
       header: "Branch",
     },
     {
       accessorKey: "gradYear",
-      header: "Graduation Year",
+      header: "Year",
     },
   ];
 
@@ -100,12 +131,13 @@ const CollectedPassTable: React.FC = () => {
               lastName: detailsData?.lastName || "",
               status: collectedValue === "1" ? "Collected" : "Not Collected",
               branch: detailsData?.branch || "",
-              gradYear: detailsData?.gradyear || "",
+              gradYear: currentUserYear(detailsData?.gradyear) || "",
+              lastPassIssued: detailsData.lastPassIssued.toDate(),
             };
             fetchedData.push(studentDetails);
           }
         }
-        fetchedData.sort((a, b) => a.firstName.localeCompare(b.firstName));
+        fetchedData.sort((a, b) => b.lastPassIssued.getTime() - a.lastPassIssued.getTime());
 
         setData(fetchedData);
       } catch (error) {
