@@ -49,6 +49,7 @@ import {
   Firestore,
   doc,
   arrayUnion,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { error } from "console";
@@ -67,50 +68,12 @@ import { branches } from "@/constants/branches";
 import { travelFromLocations } from "@/constants/travelFromLocations";
 import { calculateAge } from "@/constants/AgeCalc";
 
-const formSchema = z.object({
-  branch: z.string().nonempty({ message: "Field is required." }),
-  gradYear: z.string().nonempty({ message: "Field is required." }),
-  email: z.string().email().nonempty({ message: "Field is required." }),
-  firstName: z.string().nonempty({ message: "Field is required." }),
-  middleName: z.string().optional(),
-  lastName: z.string().nonempty({ message: "Field is required." }),
-  gender: z.string().nonempty({ message: "Field is required." }),
-  dob: z.date().refine(
-    (date) => {
-      // Check for undefined or null and return false if either is true
-      if (date === undefined || date === null) {
-        return false;
-      }
-      return true;
-    },
-    { message: "Field is required." }
-  ),
-  phoneNum: z
-    .string()
-    .refine((val) => val.trim() !== "", {
-      message: "Phone number must not be empty",
-    })
-    .refine(
-      (val) => {
-        const parsed = Number(val);
-        return !isNaN(parsed) && parsed >= 0 && val.length === 10;
-      },
-      { message: "Phone number must be a valid 10-digit number" }
-    ),
-
-  address: z.string().nonempty({ message: "Field is required." }),
-  class: z.string().nonempty({ message: "Field is required." }),
-  duration: z.string().nonempty({ message: "Field is required." }),
-  travelLane: z.string().nonempty({ message: "Field is required." }),
-  from: z.string().nonempty({ message: "Field is required." }),
-  to: z.string(),
-  certNo: z.string().nonempty({ message: "Field is required." }),
-});
-
-const RailwayEntryInterface = () => {
-  const [emails, setEmails] = useState<any[]>([]);
+const CreateNewPass = ({ formSchema, emails }) => {
   const [value, setValue] = useState<string>("");
   const [studentId, setStudentId] = useState("");
+  const [diffInDays, setDiffInDays] = useState<number | null>(null);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+  const [canRenewPass, setCanRenewPass] = useState(true);
   const [loading, setLoading] = useState(false);
   const gradYearList = useGradYear();
   const { toast } = useToast();
@@ -137,49 +100,64 @@ const RailwayEntryInterface = () => {
     },
   });
 
-  const fetchEmails = async () => {
+  const setStudentData = async (value) => {
+    if (!value) {
+      form.reset();
+      return;
+    }
+
     setLoading(true);
     try {
-      const studentRef = collection(db, "Students ");
-      const querySnapshot = await getDocs(studentRef);
-      const emailArray: string[] = [];
-      querySnapshot.forEach((doc) => {
-        emailArray.push(doc.data().email);
-      });
+      const lowerCaseEmail = value.toLowerCase();
+      const studentsRef = collection(db, "Students ");
+      const querySnapshot = await getDocs(studentsRef);
 
-      setEmails(emailArray.sort());
-    } catch (error) {
-      toast({
-        description: "Error while fetching emails",
-        variant: "destructive",
-      });
-      console.log("Error while fetching emails", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchEmails();
-  }, []);
+      for (const studentDoc of querySnapshot.docs) {
+        const studentData = studentDoc.data();
+        const storedEmail = studentData?.email?.toLowerCase();
 
-  const setStudentData = async (value) => {
-    if (value != "") {
-      setLoading(true);
-      try {
-        const lowerCaseEmail = value.toLowerCase();
+        if (storedEmail === lowerCaseEmail) {
+          const studentId = studentDoc.id;
+          const studentDetailsRef = doc(db, "ConcessionDetails", studentId);
+          const studentDetailsDoc = await getDoc(studentDetailsRef);
 
-        const studentsRef = collection(db, "Students ");
-        const querySnapshot = await getDocs(studentsRef);
+          if (studentDetailsDoc.exists()) {
+            const studentDetails = studentDetailsDoc.data();
+            const lastPass = studentDetails.lastPassIssued.toDate();
 
-        // Iterate through the query snapshot to find a case-insensitive match
-        querySnapshot.forEach((doc) => {
-          const studentData = doc.data();
-          const storedEmail = studentData?.email?.toLowerCase(); // Convert stored email to lowercase for comparison
+            const canRenew = await canIssuePass(
+              lastPass,
+              studentDetails.status,
+              studentDetails.duration
+            );
 
-          if (storedEmail === lowerCaseEmail) {
-            const studentId = doc?.id || "";
-            const studentData = doc?.data();
+            if (!canRenew) {
+              return; // Exit early if cannot renew pass
+            }
 
+            // Set form values
+            const {
+              firstName,
+              middleName,
+              lastName,
+              address,
+              phoneNum,
+              from,
+              travelLane,
+              dob,
+              gender,
+            } = studentDetails;
+            form.setValue("firstName", firstName);
+            form.setValue("middleName", middleName);
+            form.setValue("lastName", lastName);
+            form.setValue("address", address);
+            form.setValue("phoneNum", phoneNum.toString());
+            form.setValue("from", from);
+            form.setValue("travelLane", travelLane);
+            form.setValue("dob", dob.toDate());
+            form.setValue("gender", gender);
+          } else {
+            // If no ConcessionDetails found, set basic info from Students collection
             const name = studentData.Name.trim();
             const nameParts = name.split(" ");
             const firstName = nameParts[0] || "";
@@ -189,44 +167,49 @@ const RailwayEntryInterface = () => {
             form.setValue("firstName", firstName);
             form.setValue("middleName", middleName);
             form.setValue("lastName", lastName);
-            form.setValue("branch", studentData.Branch);
-            form.setValue("email", value);
-
-            setStudentId(studentId);
           }
-        });
-      } catch (error) {
-        toast({
-          description: "Error fetching student data",
-          variant: "destructive",
-        });
-        console.error("Error getting student document:", error);
-        throw error;
-      } finally {
-        setLoading(false);
+
+          // Set other form values
+          form.setValue("branch", studentData.Branch);
+          form.setValue("email", value);
+          setStudentId(studentId);
+          break; // Exit loop once student is found
+        }
       }
-    } else {
-      form.reset();
+    } catch (error) {
+      toast({
+        description: "Error fetching student data",
+        variant: "destructive",
+      });
+      console.error("Error getting student document:", error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
-    form.setValue("email", value);
     setStudentData(value);
+    setCanRenewPass(true);
+    setDaysLeft(null);
+    setDiffInDays(null);
+    form.reset();
   }, [value]);
-  const createConcDetailsDoc = async (studentId, values) => {
+
+  const createConcDetailsAndRequestDocs = async (studentId, values) => {
     setLoading(true);
     try {
       const { ageYears, ageMonths } = calculateAge(values.dob);
       const { email, certNo, gradYear, phoneNum, ...formData } = values;
 
-      //Fetching the gradYear based on "FE","SE",etc.
       const selectedGradYear = gradYearList.find(
         (item) => item.year === gradYear
-      ).gradYear;
+      )?.gradYear;
       const parsedPhoneNum = parseInt(phoneNum, 10);
-      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
 
-      //Creating a doc in ConcessionDetails Collection
+      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
+      const concessionRequestRef = doc(db, "ConcessionRequest", studentId);
+
       await setDoc(concessionDetailsRef, {
         ...formData,
         ageYears,
@@ -240,7 +223,19 @@ const RailwayEntryInterface = () => {
         statusMessage: "Your request has been serviced",
       });
 
-      // Successfully created concession request
+      await setDoc(concessionRequestRef, {
+        notificationTime: new Date(),
+        passNum: certNo,
+        status: "serviced",
+        statusMessage: "Your request has been serviced",
+        time: new Date(),
+        uid: studentId,
+        passCollected: {
+          date: new Date(),
+          collected: "1",
+        },
+      });
+
       toast({
         description: "Concession request has been created!",
       });
@@ -249,44 +244,12 @@ const RailwayEntryInterface = () => {
         description: "Error while processing request!",
         variant: "destructive",
       });
-      console.error(
-        "Error while creating doc in ConcessionDetails collection",
-        error
-      );
+      console.error("Error while creating docs", error);
     } finally {
       setLoading(false);
     }
   };
-  const createConcRequestDoc = async (studentId, values) => {
-    try {
-      const concessionRequestRef = doc(db, "ConcessionRequest", studentId);
 
-      //Creating a doc in ConcessionDetails Collection
-      await setDoc(concessionRequestRef, {
-        notificationTime: new Date(),
-        passNum: values.certNo,
-        status: "serviced",
-        statusMessage: "Your request has been serviced",
-        time: new Date(),
-        uid: studentId,
-        passCollected: {
-          date: new Date(),
-          collected: "1"
-        }
-      });
-
-      // Successfully created concession request
-    } catch (error) {
-      toast({
-        description: "Error while processing request!",
-        variant: "destructive",
-      });
-      console.log(
-        "Error while creating doc in ConcessionRequest collection",
-        error
-      );
-    }
-  };
   const appendFEDataInConcHistory = async (values) => {
     const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
     setLoading(true);
@@ -294,10 +257,9 @@ const RailwayEntryInterface = () => {
       const { ageYears, ageMonths } = calculateAge(values.dob);
       const { email, certNo, gradYear, phoneNum, ...formData } = values;
 
-      //  Fetching the gradYear based on "FE","SE",etc.
       const selectedGradYear = gradYearList.find(
         (item) => item.year === gradYear
-      ).gradYear;
+      )?.gradYear;
       const parsedPhoneNum = parseInt(phoneNum, 10);
       const formattedData = {
         ...formData,
@@ -310,9 +272,11 @@ const RailwayEntryInterface = () => {
         status: "serviced",
         statusMessage: "Your request has been serviced",
       };
+
       await updateDoc(concessionHistoryRef, {
         history: arrayUnion(formattedData),
       });
+
       toast({
         description: "Concession request has been created!",
       });
@@ -326,15 +290,66 @@ const RailwayEntryInterface = () => {
       setLoading(false);
     }
   };
-  // Handle form submission
+
+  const canIssuePass = async (lastPass, status, duration) => {
+    if (status.toLowerCase() === "rejected") {
+      return true;
+    } else if (status.toLowerCase() === "unserviced") {
+      toast({
+        description:
+          "Cannot issue a new pass. The previous request is pending.",
+        variant: "destructive",
+      });
+      return false;
+    } else {
+      const today = new Date();
+      const diffInMs = today - lastPass;
+      const differenceInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+      const futurePass = new Date(lastPass);
+      if (duration === "Monthly") {
+        futurePass.setDate(futurePass.getDate() + 27);
+      } else if (duration === "Quarterly") {
+        futurePass.setDate(futurePass.getDate() + 87);
+      }
+
+      const daysRemaining = Math.ceil(
+        (futurePass - today) / (1000 * 60 * 60 * 24)
+      );
+
+      if (duration === "Monthly" && differenceInDays < 26) {
+        toast({
+          description: `Cannot renew pass. Number of days left: ${daysRemaining}`,
+          variant: "destructive",
+        });
+        return false;
+      } else if (duration === "Quarterly" && differenceInDays < 86) {
+        toast({
+          description: `Cannot renew pass. Number of days left: ${daysRemaining}`,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      return true;
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!canRenewPass) {
+      toast({
+        description: `Cannot renew pass. Number of days left: ${daysLeft}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (values.gradYear === "FE" && value === "") {
         await appendFEDataInConcHistory(values);
       } else {
-        if (studentId !== "") {
-          await createConcDetailsDoc(studentId, values);
-          await createConcRequestDoc(studentId, values);
+        if (studentId) {
+          await createConcDetailsAndRequestDocs(studentId, values);
         } else {
           toast({
             description: "No such student found!",
@@ -342,6 +357,7 @@ const RailwayEntryInterface = () => {
           });
         }
       }
+
       form.reset();
       setValue("");
       setStudentId("");
@@ -353,6 +369,7 @@ const RailwayEntryInterface = () => {
       console.error("Error ", error);
     }
   };
+
   return (
     <>
       {" "}
@@ -830,4 +847,4 @@ const RailwayEntryInterface = () => {
     </>
   );
 };
-export default RailwayEntryInterface;
+export default CreateNewPass;
