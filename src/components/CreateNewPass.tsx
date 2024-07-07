@@ -308,9 +308,9 @@ const CreateNewPass = ({ formSchema, emails }) => {
 
       const futurePass = new Date(lastPass);
       if (duration === "Monthly") {
-        futurePass.setDate(futurePass.getDate() + 27);
+        futurePass.setDate(futurePass.getDate() + 26);
       } else if (duration === "Quarterly") {
-        futurePass.setDate(futurePass.getDate() + 87);
+        futurePass.setDate(futurePass.getDate() + 86);
       }
 
       const daysRemaining = Math.ceil(
