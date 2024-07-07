@@ -10,6 +10,7 @@ const pendingRequests = () => {
       {/* <RailwayUpdateConc /> */}
       {/* <RailwayEntryInterface /> */}
       {/* <PendingRequests /> */}
+      <RailwayUpdateCard/>
     </div>
   );
 };
