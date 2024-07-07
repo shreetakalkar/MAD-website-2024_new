@@ -20,8 +20,7 @@ import { Button } from "../ui/button";
 
 interface Data {
   certNo: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   status: "Collected" | "Not Collected";
   branch: string;
   gradYear: string;
@@ -84,12 +83,8 @@ const CollectedPassTable: React.FC = () => {
       header: "Status",
     },
     {
-      accessorKey: "firstName",
+      accessorKey: "name",
       header: "Name",
-    },
-    {
-      accessorKey: "lastName",
-      header: "Surname",
     },
     {
       accessorKey: "branch",
@@ -127,8 +122,7 @@ const CollectedPassTable: React.FC = () => {
             const collectedValue = requestDoc.data().passCollected.collected;
             const studentDetails: Data = {
               certNo: requestDoc.data().passNum,
-              firstName: detailsData?.firstName || "",
-              lastName: detailsData?.lastName || "",
+              name: (detailsData?.lastName + " " + detailsData?.firstName + " " + detailsData?.middleName),
               status: collectedValue === "1" ? "Collected" : "Not Collected",
               branch: detailsData?.branch || "",
               gradYear: currentUserYear(detailsData?.gradyear) || "",
