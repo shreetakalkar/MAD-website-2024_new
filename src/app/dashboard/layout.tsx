@@ -117,7 +117,7 @@ export default function Home({
         </div>
 
         {/* Right Side Block */}
-        {/* <div className="flex flex-col">
+        <div className="flex flex-col">
           <Header userType={userType ? userType : ""} />
           {userType == "admin" && admin}
           {userType == "committee" && committee}
@@ -125,8 +125,8 @@ export default function Home({
           {userType == "principal" && principal}
           {userType == "student" && student}
           {userType == "railway" && railway}
-        </div> */}
-        <PendingRequests />
+        </div>
+        {/* <PendingRequests /> */}
       </div>
     </ProtectionProvider>
   );
