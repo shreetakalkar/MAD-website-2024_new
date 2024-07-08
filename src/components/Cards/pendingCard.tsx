@@ -22,7 +22,7 @@ function InputWithLabel({ label, input }: { label: any; input: any }) {
     </div>
   );
 }
-
+//ignore
 interface ImageModalProps {
   isOpen: boolean;
   onClose: () => void;
