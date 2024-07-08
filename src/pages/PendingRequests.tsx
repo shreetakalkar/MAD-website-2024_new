@@ -30,6 +30,8 @@ const PendingRequests = () => {
         statusMessage: string;
         to: string;
         travelLane: string;
+        idCardURL: string;
+        previousPassURL: string;
     }
 
     useEffect(() => {
@@ -63,6 +65,8 @@ const PendingRequests = () => {
                             statusMessage: data.statusMessage || "N/A",
                             to: data.to || "N/A",
                             travelLane: data.travelLane || "N/A",
+                            idCardURL: data.idCardURL || "N/A",
+                            previousPassURL: data.previousPassURL || "N/A",
                         };
                     })
                     .filter((item) => item.status === 'unserviced');
@@ -116,6 +120,8 @@ const PendingRequests = () => {
                                 phoneNum={item.phoneNum}
                                 statusMessage={item.statusMessage}
                                 onCardUpdate={handleCardUpdate}
+                                idCardURL={item.idCardURL}
+                                previousPassURL={item.previousPassURL}
                             />
                         ))}
                     </div>
