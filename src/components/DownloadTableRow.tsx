@@ -41,7 +41,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
           className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
           onClick={() => handleDownloadBatchExcel(index, batch.fileName)}
         >
-          Download CSV
+          Download
         </button>
       </TableCell>
       <TableCell

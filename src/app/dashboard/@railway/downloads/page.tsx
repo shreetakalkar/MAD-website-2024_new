@@ -45,7 +45,7 @@ const Downloads: React.FC = () => {
   const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
-  const limit = 5; 
+  const limit = 100; 
   const [date, setDate] = useState<any>([]);
 
   const fetchEnquiries = async () => {
