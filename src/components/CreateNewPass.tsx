@@ -217,6 +217,7 @@ const CreateNewPass = ({ formSchema, emails }) => {
         gradyear: selectedGradYear,
         phoneNum: parsedPhoneNum,
         idCardURL: "",
+        idCardURL2: "",
         previousPassURL: "",
         lastPassIssued: new Date(),
         status: "serviced",

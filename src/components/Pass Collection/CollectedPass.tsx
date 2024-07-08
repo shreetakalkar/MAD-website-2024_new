@@ -17,6 +17,7 @@ import { toast } from "../ui/use-toast";
 import { CollectionDisplayTable } from "./CollectionDisplayTable";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
+import useGradYear from "@/constants/gradYearList";
 
 interface Data {
   certNo: string;
@@ -28,26 +29,40 @@ interface Data {
 }
 
 const CollectedPassTable: React.FC = () => {
-
   const formatDate = (date: Date) => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
 
   const currentUserYear = (gradyear: string) => {
+    // const gradYearList = useGradYear();
+    // console.log(gradYearList);
+
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     const gradYear = parseInt(gradyear);
-  
-    if ( ((currentMonth >= 6) && (gradYear == currentYear + 4)) || ((currentMonth <= 5) && (gradYear == currentYear + 3)) ) {
+
+    if (
+      (currentMonth >= 6 && gradYear == currentYear + 4) ||
+      (currentMonth <= 5 && gradYear == currentYear + 3)
+    ) {
       return "FE";
-    } else if ( ((currentMonth >= 6) && (gradYear == currentYear + 3)) || ((currentMonth <= 5) && (gradYear == currentYear + 2)) ) {
+    } else if (
+      (currentMonth >= 6 && gradYear == currentYear + 3) ||
+      (currentMonth <= 5 && gradYear == currentYear + 2)
+    ) {
       return "SE";
-    } else if ( ((currentMonth >= 6) && (gradYear == currentYear + 2)) || ((currentMonth <= 5) && (gradYear == currentYear + 1)) ) {
+    } else if (
+      (currentMonth >= 6 && gradYear == currentYear + 2) ||
+      (currentMonth <= 5 && gradYear == currentYear + 1)
+    ) {
       return "TE";
-    } else if ( ((currentMonth >= 6) && (gradYear == currentYear + 1)) || ((currentMonth <= 5) && (gradYear == currentYear)) ) {
+    } else if (
+      (currentMonth >= 6 && gradYear == currentYear + 1) ||
+      (currentMonth <= 5 && gradYear == currentYear)
+    ) {
       return "BE";
     }
   };
@@ -122,7 +137,12 @@ const CollectedPassTable: React.FC = () => {
             const collectedValue = requestDoc.data().passCollected.collected;
             const studentDetails: Data = {
               certNo: requestDoc.data().passNum,
-              name: (detailsData?.lastName + " " + detailsData?.firstName + " " + detailsData?.middleName),
+              name:
+                detailsData?.lastName +
+                " " +
+                detailsData?.firstName +
+                " " +
+                detailsData?.middleName,
               status: collectedValue === "1" ? "Collected" : "Not Collected",
               branch: detailsData?.branch || "",
               gradYear: currentUserYear(detailsData?.gradyear) || "",
@@ -131,7 +151,9 @@ const CollectedPassTable: React.FC = () => {
             fetchedData.push(studentDetails);
           }
         }
-        fetchedData.sort((a, b) => b.lastPassIssued.getTime() - a.lastPassIssued.getTime());
+        fetchedData.sort(
+          (a, b) => b.lastPassIssued.getTime() - a.lastPassIssued.getTime()
+        );
 
         setData(fetchedData);
       } catch (error) {
