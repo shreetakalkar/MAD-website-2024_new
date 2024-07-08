@@ -14,7 +14,7 @@ function InputWithLabel({ label, input }: { label: any; input: any }) {
       </div>
       <div className=" h-[65%] overflow-auto">
         <div
-          className={`border-[0.5px] xl:text-sm flex items-center h-[100%]   text-start py-[4.5%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `}
+          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[4.5%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `}
         >
           {input}
         </div>
@@ -315,119 +315,109 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div> */}
 
-      <div className="p-[0.8%] flex flex-col rounded-md border-[0.5px] border-[#E2E8F0] w-[50vw] h-[50vh] temp-> ml-[20px] my-[20px]">
-        <div className=" h-[18.75%] flex w-[100%]">
-          <div className="h-[100%] w-[73%] flex">
-            <div className="h-[100%] w-[33.33%]">
-              <InputWithLabel label={`First Name`} input={firstName} />
-            </div>
-            <div className="h-[100%] w-[33.33%]">
-              <InputWithLabel label={`Middle Name`} input={middleName} />
-            </div>
-            <div className="h-[100%] w-[33.33%]">
-              <InputWithLabel label={`Last Name`} input={lastName} />
-            </div>
-          </div>
-          <div className="h-[100%] w-[27%]">
-            <InputWithLabel
-              label={`Certificate Number`}
-              input={`ye toh badme denge na ig?`}
-            />
-          </div>
-        </div>
-        <div className=" h-[18.75%] flex w-[100%]">
-          <div className="flex h-[100%] w-[50%]">
-            <div className="h-[100%] w-[50%]">
-              <InputWithLabel label={`Gender`} input={gender} />
-            </div>
-            <div className="h-[100%] w-[50%]">
-              <InputWithLabel label={`Date of Birth`} input={dob} />
-            </div>
-          </div>
-          <div className="h-[100%] flex w-[50%]">
-            <div className="h-[100%] w-[50%]">
-              <InputWithLabel label={`From`} input={from} />
-            </div>
-            <div className="h-[100%] w-[50%]">
-              <InputWithLabel label={`To`} input={to} />
-            </div>
-          </div>
-        </div>
-        <div className="h-[18.75%] flex w-[100%]">
-          <div className="flex h-[100%] w-[50%]">
-            <div className="w-[50%] h-[100%]">
-              <InputWithLabel label={`Branch`} input={branch} />
-            </div>
-            <div className="w-[50%] h-[100%]">
-              <InputWithLabel label={`Graduation Year`} input={gradyear} />
-            </div>
-          </div>
-          <div className=" flex h-[100%] w-[50%]">
-            <div className="w-[50%] h-[100%]">
-              <InputWithLabel label={`Class`} input={travelClass} />
-            </div>
-            <div className="w-[50%] h-[100%]">
-              <InputWithLabel label={`Duration`} input={duration} />
-            </div>
-          </div>
-        </div>
-        <div className="h-[18.75%] flex w-[100%]">
-          <div className="flex h-[100%] w-[50%]">
-            <div className="w-[50%] h-[100%]">
-              <InputWithLabel label={`Phone Number`} input={phoneNum} />
-            </div>
-            <div className="w-[50%] h-[100%]">
-              <InputWithLabel label={`Travel Lane`} input={`iska var konsa?`} />
-            </div>
-          </div>
-          <div className=" flex h-[100%] w-[50%]">
-            <div
-              className="w-[50%] h-[100%] flex flex-col items-center justify-end hover:cursor-pointer"
-              onClick={() =>
-                handleImageClick("../../public/images/OnlineTraining.png")
-              }
-            >
-              <EyeIcon />
-              <div className="2xl:text-sm xl:text-xs text-center">
-                Click to view ID
+      <div className="p-[0.8%] flex rounded-md border-[0.5px] border-[#E2E8F0] w-[70vw] h-[90vh] temp-> ml-[20px] my-[20px] ">
+        <div className="flex flex-col w-1/2 h-full">
+          <div className="h-[100%] w-[100%] flex flex-col  ">
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`First Name`} input={firstName} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Middle Name`} input={middleName} />
               </div>
             </div>
-            <div
-              className="w-[50%] h-[100%] flex flex-col items-center justify-end hover:cursor-pointer"
-              onClick={() =>
-                handleImageClick("../../public/images/OnlineTraining.png")
-              }
-            >
-              <EyeIcon />
-              <div className="2xl:text-sm xl:text-xs text-center">
-                Click to view prev pass
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Last Name`} input={lastName} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Certificate Number`} input={`TESTZ123`} />
+              </div>
+            </div>
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Gender`} input={gender} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Date of Birth`} input={dob} />
+              </div>
+            </div>
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`From`} input={from} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`To`} input={to} />
+              </div>
+            </div>
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Branch`} input={branch} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Graduation Year`} input={gradyear} />
+              </div>
+            </div>
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Class`} input={travelClass} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Duration`} input={duration} />
+              </div>
+            </div>
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Phone Number`} input={phoneNum} />
+              </div>
+              <div className="w-[50%] h-full">
+                <InputWithLabel label={`Travel Lane`} input={`var?`} />
               </div>
             </div>
           </div>
         </div>
-        <div className=" h-[25%] flex w-[100%]">
-          <div className=" w-[50%] h-[100%]">
-            <InputWithLabel label={`Address`} input={address} />
-          </div>
-          <div className=" flex w-[50%]">
-            <div className="w-[50%] flex items-end  justify-center">
-              <button
-                className="bg-green-500 w-[80%] h-[50%] text-white bg- py-2 px-4 rounded hover:bg-green-600"
-                onClick={handleApprove}
-              >
-                Approve
-              </button>
+        <div className="flex flex-col w-1/2 h-full">
+          <div className="h-[100%] w-[100%] flex flex-col  ">
+            <div className="h-[28.5714285714%] w-[100%] ">
+              <div className="w-full h-full">
+                <InputWithLabel label={`Address`} input={address} />
+              </div>
             </div>
-            <div className="w-[50%]   flex items-end justify-center">
-              <button
-                className="bg-red-500 text-white  w-[80%] h-[50%] py-2 px-4 rounded hover:bg-red-600"
-                onClick={handleReject}
-              >
-                Reject
-              </button>
+            <div className="h-[57.1428571429%] w-[100%] ">
+              <div className="w-full h-full border-[0.5px] rounded-lg overflow-auto remove-scroller flex flex-col items-center">
+                  <div className="my-2">
+                    <img src="https://via.placeholder.com/350x225" alt="" />
+                  </div>
+                  <div className="my-2">
+                    <img src="https://via.placeholder.com/350x225" alt="" />
+                  </div>
+                  <div className="my-2">
+                    <img src="https://via.placeholder.com/350x225" alt="" />
+                  </div>
+              </div>
+            </div>
+            <div className="h-[14.2857142857%] flex w-[100%] ">
+              <div className="w-[50%] flex items-center  justify-center">
+                <button
+                  className="bg-green-500 w-[80%] h-[50%] text-white bg- py-2 px-4 rounded hover:bg-green-600"
+                  onClick={handleApprove}
+                >
+                  Approve
+                </button>
+              </div>
+              <div className="w-[50%]   flex items-center justify-center">
+                <button
+                  className="bg-red-500 text-white  w-[80%] h-[50%] py-2 px-4 rounded hover:bg-red-600"
+                  onClick={handleReject}
+                >
+                  Reject
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        
+        
       </div>
 
       {/* Approve/Reject modal */}

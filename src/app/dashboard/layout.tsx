@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
+import PendingRequests from "@/pages/PendingRequests";
 
 export default function Home({
   admin,
@@ -116,7 +117,7 @@ export default function Home({
         </div>
 
         {/* Right Side Block */}
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <Header userType={userType ? userType : ""} />
           {userType == "admin" && admin}
           {userType == "committee" && committee}
@@ -124,7 +125,8 @@ export default function Home({
           {userType == "principal" && principal}
           {userType == "student" && student}
           {userType == "railway" && railway}
-        </div>
+        </div> */}
+        <PendingRequests />
       </div>
     </ProtectionProvider>
   );
