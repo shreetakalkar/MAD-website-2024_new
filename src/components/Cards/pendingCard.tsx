@@ -167,6 +167,9 @@ interface PendingCardProps {
   ageMonths: number;
   phoneNum: number;
   statusMessage: string;
+  idCardURL: string;
+  idCardURL2: string;
+  previousPassURL: string;
   onCardUpdate: (id: string) => void;
 }
 
@@ -180,15 +183,14 @@ const PendingCard: React.FC<PendingCardProps> = ({
   to,
   travelClass,
   duration,
-  lastPassIssued,
   branch,
   gradyear,
   address,
   dob,
-  ageYears,
-  ageMonths,
   phoneNum,
-  statusMessage,
+  idCardURL,
+  idCardURL2,
+  previousPassURL,
   onCardUpdate,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -209,10 +211,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
     setIsModalOpen(true);
   };
 
-  const handleImageClick = (src: string) => {
-    setImageSrc(src);
-    setIsImageModalOpen(true);
-  };
 
   const handleSubmit = async (certificateNumber: string) => {
     setIsModalOpen(false);
@@ -386,13 +384,13 @@ const PendingCard: React.FC<PendingCardProps> = ({
             <div className="h-[57.1428571429%] w-[100%] ">
               <div className="w-full h-full border-[0.5px] rounded-lg overflow-auto remove-scroller flex flex-col items-center">
                   <div className="my-2">
-                    <img src="https://via.placeholder.com/350x225" alt="" />
+                    <img src={idCardURL} alt="idCarUrl" />
                   </div>
                   <div className="my-2">
-                    <img src="https://via.placeholder.com/350x225" alt="" />
+                    <img src={idCardURL2} alt="idCarUrl2" />
                   </div>
                   <div className="my-2">
-                    <img src="https://via.placeholder.com/350x225" alt="" />
+                    <img src={previousPassURL} alt="previousPassUrl" />
                   </div>
               </div>
             </div>
