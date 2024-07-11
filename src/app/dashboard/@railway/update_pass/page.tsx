@@ -1,3 +1,4 @@
+"use client";
 import React, { use, useEffect, useState } from "react";
 import {
   collection,
@@ -17,7 +18,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const RailwayUpdateConc = () => {
   const [passes, setPasses] = useState<any[]>([]);
-  const [passArrayLength, setPassArrayLength] = useState(null);
+  const [passArrayLength, setPassArrayLength] = useState<number | null>(null);
 
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);

@@ -18,6 +18,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "./ui/use-toast";
 import { useUser } from "@/providers/UserProvider";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 const SignIn = () => {
   const { toast } = useToast();
@@ -27,6 +28,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const { user, setUser, setLoggedIn } = useUser();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -59,52 +61,55 @@ const SignIn = () => {
 
   const loginMsg = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      setLoading(true);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
-      const facultyRef = collection(db, "Faculty");
-      const querySnapshot = await getDocs(facultyRef);
+      const facultyRef = doc(db, "Faculty", user.uid);
+      const facultyDoc = await getDoc(facultyRef);
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-
-        if (doc.id === user.uid) {
-          setUser({
-            name: data.name,
-            email: data.email,
-            type: data.type,
-            uid : user.uid
-          });
-          setLoggedIn(true);
-          if (rememberMe) {
-            localStorage.setItem("rememberMeEmail", email);
-            localStorage.setItem("rememberMePassword", password);
-          } else {
-            localStorage.removeItem("rememberMeEmail");
-            localStorage.removeItem("rememberMePassword");
-          }
-          toast({
-            title: "Sign In successful",
-            description: "Redirecting to dashboard",
-          });
-          router.push("/dashboard");
-         } else {
-          toast({
-            title: "Error signing in",
-            description: "User not found in Faculty collection",
-          });
+      if (facultyDoc.exists()) {
+        const data = facultyDoc.data();
+        setUser({
+          name: data.name,
+          email: data.email,
+          type: data.type,
+          uid: user.uid,
+        });
+        setLoggedIn(true);
+        if (rememberMe) {
+          localStorage.setItem("rememberMeEmail", email);
+          localStorage.setItem("rememberMePassword", password);
+        } else {
+          localStorage.removeItem("rememberMeEmail");
+          localStorage.removeItem("rememberMePassword");
         }
-        
-      });
+        setLoading(false);
+        toast({
+          title: "Sign In successful",
+          description: "Redirecting to dashboard",
+        });
+        router.push("/dashboard");
+      } else {
+        toast({
+          title: "Sign in successful",
+          description: "Redirecting to dashboard",
+        });
+      }
     } catch (error) {
       console.error("Error signing in: ", error);
       toast({
         title: "Error signing in",
         description: "Please check your email and password",
       });
+    } finally {
+      setLoading(false);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -145,8 +150,16 @@ const SignIn = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" onClick={loginMsg}>
-            Login
+          <Button
+            className="w-full"
+            onClick={loginMsg}
+            disabled={!email || !password || loading}
+          >
+            {loading ? (
+              <Loader className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Sign In"
+            )}
           </Button>
         </CardFooter>
       </Card>

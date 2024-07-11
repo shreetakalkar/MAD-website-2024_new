@@ -42,7 +42,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
       )}
       {userType === "admin" && (
         <Link
-          href="#"
+          href="/dashboard"
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
         >
           <ShoppingCart className="h-4 w-4" />
@@ -52,28 +52,28 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
       {userType === "railway" && (
         <>
           <Link
-            href="#"
+            href="/dashboard/create_pass"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
             <FilePlus className="h-4 w-4" />
             Create New Pass
           </Link>
           <Link
-            href="#"
+            href="/dashboard/update_pass"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
             <ClipboardEdit className="h-4 w-4" />
             Update Pass
           </Link>
           <Link
-            href="#"
+            href="/dashboard/pending_req"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
             <FileStack className="h-4 w-4" />
             Pending Requests
           </Link>
           <Link
-            href="#"
+            href="/dashboard/approved_rejected"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
             <GitPullRequestClosed className="h-4 w-4" />

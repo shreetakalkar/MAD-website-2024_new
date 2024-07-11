@@ -1,3 +1,4 @@
+"use client";
 import CreateNewPass from "@/components/CreateNewPass";
 import { toast } from "@/components/ui/use-toast";
 import { db } from "@/config/firebase";
