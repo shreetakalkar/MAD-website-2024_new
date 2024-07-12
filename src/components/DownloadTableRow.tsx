@@ -17,6 +17,8 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
   handleDownloadBatchExcel,
   theme,
 }) => {
+  const datePart = date.date.split(" at ")[0];
+  const parsedDate = new Date(datePart);
   return (
     <TableRow>
       <TableCell>
@@ -50,7 +52,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
           "text-gray-700": theme === "light",
         })}
       >
-        {date && new Date(date.date).toLocaleDateString()}
+        {date && parsedDate.toLocaleDateString()}
       </TableCell>
     </TableRow>
   );

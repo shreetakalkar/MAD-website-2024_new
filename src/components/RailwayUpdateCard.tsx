@@ -82,7 +82,7 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
           !values[field] ||
           (typeof values[field] === "string" && values[field].trim() === "")
       );
-      
+
       if (emptyFields.length > 0) {
         // Display error toast if any required field is empty
         toast({
@@ -116,15 +116,15 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
       const newReqData = {
         passCollected: {
           collected: "1",
-          date: new Date()
-        }
-      }
+          date: new Date(),
+        },
+      };
 
       const concessionRef = doc(db, "ConcessionDetails", studentId);
       await updateDoc(concessionRef, newData);
       const concessionReqRef = doc(db, "ConcessionRequest", studentId);
       await updateDoc(concessionReqRef, newReqData);
-      
+
       toast({ description: "Document updated successfully!" });
     } catch (error) {
       toast({
@@ -361,10 +361,7 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                                         field.onChange
                                         // Handle selecting date here if needed
                                       }
-                                      disabled={(date) =>
-                                        date > new Date() ||
-                                        date < new Date("2000-01-01")
-                                      }
+                                      disabled={(date) => date < new Date()}
                                       initialFocus
                                     />
                                   </PopoverContent>

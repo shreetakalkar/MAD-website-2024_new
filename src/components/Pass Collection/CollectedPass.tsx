@@ -126,7 +126,6 @@ const CollectedPassTable: React.FC = () => {
         );
 
         const querySnapshot = await getDocs(q);
-
         for (const requestDoc of querySnapshot.docs) {
           const id = requestDoc.id;
           const concessionDetailsRef = doc(db, "ConcessionDetails", id);
@@ -134,7 +133,7 @@ const CollectedPassTable: React.FC = () => {
 
           if (detailsDoc.exists()) {
             const detailsData = detailsDoc.data();
-            const collectedValue = requestDoc.data().passCollected.collected;
+            const collectedValue = requestDoc.data().passCollected?.collected;
             const studentDetails: Data = {
               certNo: requestDoc.data().passNum,
               name:
@@ -146,10 +145,11 @@ const CollectedPassTable: React.FC = () => {
               status: collectedValue === "1" ? "Collected" : "Not Collected",
               branch: detailsData?.branch || "",
               gradYear: currentUserYear(detailsData?.gradyear) || "",
-              lastPassIssued: detailsData.lastPassIssued.toDate(),
+              lastPassIssued: detailsData.lastPassIssued?.toDate(),
             };
             fetchedData.push(studentDetails);
           }
+          console.log(fetchedData);
         }
         fetchedData.sort(
           (a, b) => b.lastPassIssued.getTime() - a.lastPassIssued.getTime()

@@ -106,7 +106,7 @@ const Modal: React.FC<ModalProps> = ({
               placeholder="Enter Cetificate Number..."
               value={certificateNumber}
               onChange={(e) => setCertificateNumber(e.target.value)}
-              className="w-full text-black p-2 border rounded"
+              className="w-full  p-2 border rounded"
             />
           </div>
         ) : null}
@@ -156,6 +156,7 @@ interface PendingCardProps {
   gender: string;
   from: string;
   to: string;
+  travelLane: string;
   travelClass: string;
   duration: string;
   lastPassIssued: string;
@@ -182,6 +183,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
   from,
   to,
   travelClass,
+  travelLane,
   duration,
   branch,
   gradyear,
@@ -211,7 +213,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
     setIsModalOpen(true);
   };
 
-
   const handleSubmit = async (certificateNumber: string) => {
     setIsModalOpen(false);
     let statMessage = reason || "Your Form has been Rejected";
@@ -232,8 +233,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
       notificationTime: currentDate,
       passCollected: {
         date: null,
-        collected: "0"
-      }
+        collected: "0",
+      },
     };
 
     try {
@@ -329,7 +330,12 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Last Name`} input={lastName} />
               </div>
               <div className="w-[50%] h-full">
-                <InputWithLabel label={`Certificate Number`} input={`TESTZ123`} />
+                {" "}
+                <InputWithLabel label={`Phone Number`} input={phoneNum} />
+                {/* <InputWithLabel
+                  label={`Certificate Number`}
+                  input={}
+                /> */}
               </div>
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
@@ -365,11 +371,11 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
-              <div className="w-[50%] h-full">
+              {/* <div className="w-[50%] h-full">
                 <InputWithLabel label={`Phone Number`} input={phoneNum} />
-              </div>
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Travel Lane`} input={`var?`} />
+              </div> */}
+              <div className="w-[100%] h-full">
+                <InputWithLabel label={`Travel Lane`} input={travelLane} />
               </div>
             </div>
           </div>
@@ -383,15 +389,15 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
             <div className="h-[57.1428571429%] w-[100%] ">
               <div className="w-full h-full border-[0.5px] rounded-lg overflow-auto remove-scroller flex flex-col items-center">
-                  <div className="my-2">
-                    <img src={idCardURL} alt="idCarUrl" />
-                  </div>
-                  <div className="my-2">
-                    <img src={idCardURL2} alt="idCarUrl2" />
-                  </div>
-                  <div className="my-2">
-                    <img src={previousPassURL} alt="previousPassUrl" />
-                  </div>
+                <div className="my-2">
+                  <img src={idCardURL} alt="idCarUrl" />
+                </div>
+                <div className="my-2">
+                  <img src={idCardURL2} alt="idCarUrl2" />
+                </div>
+                <div className="my-2">
+                  <img src={previousPassURL} alt="previousPassUrl" />
+                </div>
               </div>
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
@@ -414,8 +420,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
           </div>
         </div>
-        
-        
       </div>
 
       {/* Approve/Reject modal */}
