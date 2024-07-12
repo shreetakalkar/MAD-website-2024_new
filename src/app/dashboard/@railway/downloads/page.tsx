@@ -45,7 +45,7 @@ const Downloads: React.FC = () => {
   const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
-  const limit = 100; 
+  const limit = 100;
   const [date, setDate] = useState<any>([]);
 
   const fetchEnquiries = async () => {
@@ -63,7 +63,8 @@ const Downloads: React.FC = () => {
       console.error("Error fetching ConcessionHistory:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch ConcessionHistory. Please try again later.",
+        description:
+          "Failed to fetch ConcessionHistory. Please try again later.",
       });
     }
   };
@@ -86,7 +87,10 @@ const Downloads: React.FC = () => {
     setFilteredBatches(batches);
   };
 
-  const handleDownloadBatchExcel = async (batchIndex: number, fileName: string) => {
+  const handleDownloadBatchExcel = async (
+    batchIndex: number,
+    fileName: string
+  ) => {
     try {
       const enquiriesSubset = batchedEnquiries[batchIndex];
 
@@ -133,7 +137,9 @@ const Downloads: React.FC = () => {
     <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
       <div className="flex items-center justify-between mb-4 p-5">
         <div className="flex w-full justify-between flex-wrap items-center">
-          <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">Downloads</h2>
+          <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">
+            Downloads
+          </h2>
           <div>
             <Input
               className="ring-1 ring-gray-400 focus:ring-gray-400"
@@ -145,10 +151,10 @@ const Downloads: React.FC = () => {
           </div>
         </div>
       </div>
-      <DownloadTable 
-        batches={filteredBatches} 
-        date={date} 
-        handleDownloadBatchExcel={handleDownloadBatchExcel} 
+      <DownloadTable
+        batches={filteredBatches}
+        date={date}
+        handleDownloadBatchExcel={handleDownloadBatchExcel}
         theme={theme || "dark"}
       />
     </div>
