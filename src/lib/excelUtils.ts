@@ -1,7 +1,10 @@
+import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 import ExcelJS from "exceljs";
 
-export const createExcelFile = async (enquiries: any[]): Promise<Blob | null> => {
-  console.log(enquiries); 
+export const createExcelFile = async (
+  enquiries: BatchElement
+): Promise<Blob | null> => {
+  console.log(enquiries);
   try {
     const workbook = new ExcelJS.Workbook();
     const westernWorksheet = workbook.addWorksheet("Western");
@@ -38,44 +41,52 @@ export const createExcelFile = async (enquiries: any[]): Promise<Blob | null> =>
       };
 
       // Title row
-      worksheet.mergeCells('A1:K1');
-      worksheet.getCell('A1').value = 'Thadomal Shahani Engineering College';
-      worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
+      worksheet.mergeCells("A1:K1");
+      worksheet.getCell("A1").value = "Thadomal Shahani Engineering College";
+      worksheet.getCell("A1").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
       worksheet.getRow(1).height = 30;
-      worksheet.getCell('A1').font = { size: 20, bold: true };
+      worksheet.getCell("A1").font = { size: 20, bold: true };
 
       // Subheading row
-      worksheet.mergeCells('A2:K2');
-      worksheet.getCell('A2').alignment = { vertical: 'middle', horizontal: 'center' };
+      worksheet.mergeCells("A2:K2");
+      worksheet.getCell("A2").alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
       worksheet.getRow(2).height = 20;
-      worksheet.getCell('A2').font = { size: 14 };
+      worksheet.getCell("A2").font = { size: 14 };
 
       worksheet.columns.forEach((column) => {
-        column.style = { font: { size: 12 }};  // Set default font size and alignment for all columns
+        column.style = { font: { size: 12 } }; // Set default font size and alignment for all columns
       });
 
-      worksheet.addRow(columns.map(col => col.header));
+      worksheet.addRow(columns.map((col) => col.header));
       // Apply wrapText only to the header row
       worksheet.getRow(3).eachCell((cell) => {
-        cell.alignment = { wrapText: true, horizontal: 'center', };
+        cell.alignment = { wrapText: true, horizontal: "center" };
       });
       worksheet.getRow(3).commit();
-      worksheet.getRow(3).height = 45; //self 
+      worksheet.getRow(3).height = 45; //self
     });
 
-    westernWorksheet.getCell('A2').value = 'Railway Concessions for Western Railway';
-    centralWorksheet.getCell('A2').value = 'Railway Concessions for Central Railway';
+    westernWorksheet.getCell("A2").value =
+      "Railway Concessions for Western Railway";
+    centralWorksheet.getCell("A2").value =
+      "Railway Concessions for Central Railway";
 
     // Add the data rows to the appropriate worksheets
-    let harborIndex = 1;
+    let westernIndex = 1;
     let centralIndex = 1;
 
-    enquiries.forEach((enquiry, index) => {
+    enquiries.westernEnquiries.forEach((enquiry, index) => {
       const formatDate = (date: Date) => {
         const d = new Date(date);
         const year = d.getFullYear().toString().substr(-2); // Get last 2 digits of the year
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
         return `${day}/${month}/${year}`;
       };
 
@@ -83,29 +94,88 @@ export const createExcelFile = async (enquiries: any[]): Promise<Blob | null> =>
         srno: index + 1,
         passNum: enquiry.passNum,
         name: `${enquiry.lastName} ${enquiry.firstName} ${enquiry.middleName}`,
-        gender: enquiry.gender === 'Male' ? 'M' : 'F',
+        gender: enquiry.gender === "Male" ? "M" : "F",
         dob: formatDate(enquiry.dob.toDate()),
         from: enquiry.from,
         to: enquiry.to,
         class: enquiry.class,
-        mode: enquiry.duration === 'Monthly' ? 'Mly' : 'Qty',
-        lastPassIssued: enquiry.lastPassIssued ? formatDate(enquiry.lastPassIssued.toDate()) : "",
+        mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
+        lastPassIssued: enquiry.lastPassIssued
+          ? formatDate(enquiry.lastPassIssued.toDate())
+          : "",
         address: enquiry.address,
       };
 
-      const travelLane = enquiry.travelLane.toLowerCase();
-      if (travelLane === 'harbor' || travelLane === 'western' || travelLane === 'harbour') {
-        westernWorksheet.addRow(rowData);
-        harborIndex++;
-      } else {
-        centralWorksheet.addRow(rowData);
-        centralIndex++;
-      }
+      westernWorksheet.addRow(rowData);
+      westernIndex++;
     });
 
-    const buffer = await workbook.xlsx.writeBuffer();
-    return new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    enquiries.centralEnquiries.forEach((enquiry, index) => {
+      const formatDate = (date: Date) => {
+        const d = new Date(date);
+        const year = d.getFullYear().toString().substr(-2); // Get last 2 digits of the year
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${day}/${month}/${year}`;
+      };
 
+      const rowData = {
+        srno: index + 1,
+        passNum: enquiry.passNum,
+        name: `${enquiry.lastName} ${enquiry.firstName} ${enquiry.middleName}`,
+        gender: enquiry.gender === "Male" ? "M" : "F",
+        dob: formatDate(enquiry.dob.toDate()),
+        from: enquiry.from,
+        to: enquiry.to,
+        class: enquiry.class,
+        mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
+        lastPassIssued: enquiry.lastPassIssued
+          ? formatDate(enquiry.lastPassIssued.toDate())
+          : "",
+        address: enquiry.address,
+      };
+
+      centralWorksheet.addRow(rowData);
+      centralIndex++;
+    });
+
+    // enquiries.forEach((enquiry, index) => {
+    //   const formatDate = (date: Date) => {
+    //     const d = new Date(date);
+    //     const year = d.getFullYear().toString().substr(-2); // Get last 2 digits of the year
+    //     const month = String(d.getMonth() + 1).padStart(2, '0');
+    //     const day = String(d.getDate()).padStart(2, '0');
+    //     return `${day}/${month}/${year}`;
+    //   };
+
+    //   const rowData = {
+    //     srno: index + 1,
+    //     passNum: enquiry.passNum,
+    //     name: `${enquiry.lastName} ${enquiry.firstName} ${enquiry.middleName}`,
+    //     gender: enquiry.gender === 'Male' ? 'M' : 'F',
+    //     dob: formatDate(enquiry.dob.toDate()),
+    //     from: enquiry.from,
+    //     to: enquiry.to,
+    //     class: enquiry.class,
+    //     mode: enquiry.duration === 'Monthly' ? 'Mly' : 'Qty',
+    //     lastPassIssued: enquiry.lastPassIssued ? formatDate(enquiry.lastPassIssued.toDate()) : "",
+    //     address: enquiry.address,
+    //   };
+
+    //   const travelLane = enquiry.travelLane.toLowerCase();
+    //   if (travelLane === 'harbor' || travelLane === 'western' || travelLane === 'harbour') {
+    //     westernWorksheet.addRow(rowData);
+    //     westernIndex++;
+    //   } else {
+    //     centralWorksheet.addRow(rowData);
+    //     centralIndex++;
+    //   }
+    // });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
   } catch (error) {
     console.error("Error creating Excel file:", error);
     return null;

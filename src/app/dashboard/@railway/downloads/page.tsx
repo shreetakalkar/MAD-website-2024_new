@@ -35,7 +35,8 @@ export interface Enquiry {
 }
 
 export interface BatchElement {
-  enquiries: Enquiry[];
+  centralEnquiries: Enquiry[];
+  westernEnquiries: Enquiry[];
   fileName: string;
 }
 
@@ -45,7 +46,7 @@ const Downloads: React.FC = () => {
   const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
-  const limit = 100;
+  const limit = 2;
   const [date, setDate] = useState<any>([]);
 
   const fetchEnquiries = async () => {
@@ -75,10 +76,22 @@ const Downloads: React.FC = () => {
 
     while (i < data.length) {
       const currentBatch = data.slice(i, i + limit);
+      const currentBatchWestern = [];
+      const  currentBatchCentral = [];
+      
       if (currentBatch.length === limit) {
+        for(let j = 0; j < currentBatch.length; j++) {
+          if(currentBatch[j].travelLane === "Western" || currentBatch[j].travelLane === "Harbour") {
+            currentBatchWestern.push(currentBatch[j]);
+          }
+          if(currentBatch[j].travelLane === "Central") {
+            currentBatchCentral.push(currentBatch[j]);
+          }
+        }
         batches.push({
-          enquiries: currentBatch,
-          fileName: `Z${i}-Z${i + limit - 1}.xlsx`,
+          centralEnquiries: currentBatchCentral,
+          westernEnquiries: currentBatchWestern,
+          fileName: `Z${i}-Z${i + limit - 1}`,
         });
       }
       i += limit;
@@ -102,7 +115,7 @@ const Downloads: React.FC = () => {
         return;
       }
 
-      const excelContent = await createExcelFile(enquiriesSubset.enquiries);
+      const excelContent = await createExcelFile(enquiriesSubset);
 
       if (!excelContent) {
         toast({
