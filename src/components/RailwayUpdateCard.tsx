@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
@@ -34,13 +33,14 @@ import { branches } from "@/constants/branches";
 import useGradYear from "@/constants/gradYearList";
 import { Textarea } from "@/components/ui/textarea";
 import { travelFromLocations } from "@/constants/travelFromLocations";
-import { collection, doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { calculateAge } from "@/constants/AgeCalc";
 
-const RailwayUpdateCard = ({ formSchema, passData }) => {
+const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData: any }) => {
   const [isEditable, setIsEditable] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
   const gradYearList = useGradYear();
   const { toast } = useToast();
   const { control } = useForm();
@@ -58,7 +58,7 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
     }
     setIsEditable(!isEditable);
   };
-  const extractRequiredFields = (schema) => {
+  const extractRequiredFields = (schema: any) => {
     const requiredFields = [];
 
     for (const key in schema.shape) {
@@ -105,8 +105,7 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
         return; // Exit early, do not submit
       }
 
-      const { doi, phoneNum, uid, lastPassIssued, certNo, ...formData } =
-        values;
+      const { doi, phoneNum, uid, lastPassIssued, certNo, ...formData } = values;
       const newData = {
         ...formData,
         lastPassIssued: values.doi,
@@ -138,6 +137,40 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
     }
   };
 
+  const cancelForm = async () => {
+    try {
+      const concessionRef = doc(db, "ConcessionDetails", passData.uid);
+      await updateDoc(concessionRef, {
+        status: "rejected",
+        statusMessage: statusMessage || "Your form has been cancelled",
+      });
+
+      const concessionReqRef = doc(db, "ConcessionRequest", passData.uid);
+      await updateDoc(concessionReqRef, {
+        status: "rejected",
+        statusMessage: statusMessage || "Your form has been cancelled",
+        passCollected:null
+      });
+    }
+    catch (error) {
+      console.error("Error ", error);
+    }
+
+    setIsEditable(false);
+    setLoading(false);
+  };
+
+  const handleSave = (message : string) => {
+    setIsDialogOpen(false);
+    setStatusMessage(message);
+    cancelForm();
+    handleCancel();
+  };
+
+  const handleCancel = () => {
+    setIsDialogOpen(false);
+  };
+
   return (
     <>
       <Card className="mx-auto ml-[1%]  mt-2">
@@ -145,6 +178,8 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
           <Form {...form}>
             <form method="post" className="space-y-8">
               <div className="grid gap-4 ">
+
+                {/* Heading */}
                 <div className="card-head-wrapper w-[100%]  flex justify-between items-center">
                   <div className="flex gap-2 w-[55%]">
                     {" "}
@@ -219,7 +254,9 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                     </div>{" "}
                   </div>
                 </div>{" "}
+
                 <div className="card-other-details flex justify-between">
+                  {/* Other Details */}
                   <div className="personal-details gap-6">
                     <div className="grid grid-cols-3 gap-2 w-[100%] mb-2">
                       <div className="grid gap-2">
@@ -487,7 +524,11 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                       />
                     </div>
                   </div>
+
+                  {/* Rail Details Section */}
                   <div className="rail-details w-[40%] flex flex-col  justify-between	">
+
+                    {/* Concession Details Section */}
                     <div>
                       <div className="grid grid-cols-2 gap-4 mb-2">
                         <div className="grid gap-2">
@@ -649,7 +690,9 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                         />{" "}
                       </div>{" "}
                     </div>
-                    <div className="buttons w-[100%] flex justify-end ">
+
+                    {/* Buttons */}
+                    <div className="buttons w-[100%] flex justify-end space-x-4">
                       <Button
                         type="button"
                         onClick={() => {
@@ -672,14 +715,43 @@ const RailwayUpdateCard = ({ formSchema, passData }) => {
                           "Edit Details"
                         )}
                       </Button>
+
+                      {isEditable === false ? (
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            setIsDialogOpen(true);
+                            // cancelForm();
+                          }}
+                          className="w-[50%]"
+                        >
+                          Cancel
+                        </Button>
+                      ) : null}
+
+                      <div>
+                        {isDialogOpen === true && (
+                          <div className="dialog">
+                            <input
+                              type="text"
+                              value={statusMessage}
+                              onChange={(e) => setStatusMessage(e.target.value)}
+                              placeholder="Enter status message"
+                            />
+                            <button onClick={() => handleSave(statusMessage)}>Save</button>
+                            <button onClick={handleCancel}>Cancel</button>
+                          </div>
+                        )}
                     </div>
+
                   </div>
                 </div>
               </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card >
     </>
   );
 };
