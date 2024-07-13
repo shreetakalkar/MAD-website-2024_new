@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DownloadTableRow from "@/components/DownloadTableRow";
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
+import { useEffect, useState } from "react";
 
 
 interface DownloadTableProps {
@@ -10,13 +11,17 @@ interface DownloadTableProps {
   theme: string;
 }
 
+
 const DownloadTable: React.FC<DownloadTableProps> = ({ batches, date, handleDownloadBatchExcel, theme }) => {
+  
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Batch</TableHead>
           <TableHead>Actions</TableHead>
+          <TableHead>Western</TableHead>
+          <TableHead>Central</TableHead>
           <TableHead>Date</TableHead>
         </TableRow>
       </TableHeader>

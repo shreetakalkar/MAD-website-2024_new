@@ -17,23 +17,21 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
   handleDownloadBatchExcel,
   theme,
 }) => {
-  const datePart = date.date.split(" at ")[0];
+  const datePart = date?.date?.split(" at ")[0];
   const parsedDate = new Date(datePart);
   return (
-    <TableRow>
-      <TableCell>
+    <TableRow className={cn("text-sm font-medium", {
+      "text-gray-300": theme === "dark",
+      "text-gray-700": theme === "light",
+    })}>
+      <TableCell className="text-left text-sm font-medium">
         <div className="flex items-center">
-          <div className="ml-4">
-            <div
-              className={cn("text-sm font-medium", {
-                "text-gray-300": theme === "dark",
-                "text-gray-700": theme === "light",
-              })}
-            >
+          <div>
+            <div>
               {batch.fileName}
             </div>
             <div className="text-sm text-gray-500">
-              {batch.enquiries.length} items
+              {batch.centralEnquiries.length + batch.westernEnquiries.length} items
             </div>
           </div>
         </div>
@@ -45,6 +43,12 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
         >
           Download
         </button>
+      </TableCell>
+      <TableCell className="text-left text-sm font-medium ml-4">
+      <span className="ml-4">{batch.westernEnquiries.length}</span>
+      </TableCell>
+      <TableCell className="text-left text-sm font-medium light:text-gray-700">
+        <span className="ml-4">{batch.centralEnquiries.length}</span>
       </TableCell>
       <TableCell
         className={cn("text-left text-sm font-medium", {
