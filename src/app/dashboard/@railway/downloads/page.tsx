@@ -71,31 +71,51 @@ const Downloads: React.FC = () => {
   };
 
   const makeBatches = (data: Enquiry[]) => {
+    // for(let i = 0; i < data.length; i++) {
+    //   console.log("data", data[i].passNum);
+    // }
+  
+    const seenPassNums = new Set<string>();
+    const uniqueData: Enquiry[] = [];
+  
+    // iterates through the data in reverse order, ensuring that the latest entry for each passNum is kept
+    for (let i = data.length - 1; i >= 0; i--) {
+      const enquiry = data[i];
+      if (!seenPassNums.has(enquiry.passNum)) {
+        seenPassNums.add(enquiry.passNum);
+        uniqueData.unshift(enquiry);
+      }
+    }
+  
     const batches: BatchElement[] = [];
     let i = 0;
-
-    while (i < data.length) {
-      const currentBatch = data.slice(i, i + limit);
-      const currentBatchWestern = [];
-      const  currentBatchCentral = [];
-      
-      if (currentBatch.length === limit) {
-        for(let j = 0; j < currentBatch.length; j++) {
-          if(currentBatch[j].travelLane === "Western" || currentBatch[j].travelLane === "Harbour") {
-            currentBatchWestern.push(currentBatch[j]);
-          }
-          if(currentBatch[j].travelLane === "Central") {
-            currentBatchCentral.push(currentBatch[j]);
-          }
+  
+    while (i < uniqueData.length) {
+      const currentBatchWestern: Enquiry[] = [];
+      const currentBatchCentral: Enquiry[] = [];
+      let j = i;
+  
+      while (j - i < limit && j < uniqueData.length) {
+        const enquiry = uniqueData[j];
+        if (enquiry.travelLane === "Western" || enquiry.travelLane === "Harbour") {
+          currentBatchWestern.push(enquiry);
+        } else if (enquiry.travelLane === "Central") {
+          currentBatchCentral.push(enquiry);
         }
+        j++;
+      }
+      if(currentBatchCentral.length + currentBatchWestern.length == limit) {
         batches.push({
           centralEnquiries: currentBatchCentral,
           westernEnquiries: currentBatchWestern,
           fileName: `Z${i}-Z${i + limit - 1}`,
         });
       }
-      i += limit;
+  
+      i = j;
     }
+  
+    console.log("batches", batches);
     setBatchedEnquiries(batches);
     setFilteredBatches(batches);
   };
