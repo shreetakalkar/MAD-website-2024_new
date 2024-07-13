@@ -6,6 +6,37 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon } from "lucide-react";
 import testimg from "../../public/images/OnlineTraining.png";
 
+const currentUserYear = (gradyear: string) => {
+  // const gradYearList = useGradYear();
+  // console.log(gradYearList);
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const gradYear = parseInt(gradyear);
+
+  if (
+    (currentMonth >= 6 && gradYear == currentYear + 4) ||
+    (currentMonth <= 5 && gradYear == currentYear + 3)
+  ) {
+    return "FE";
+  } else if (
+    (currentMonth >= 6 && gradYear == currentYear + 3) ||
+    (currentMonth <= 5 && gradYear == currentYear + 2)
+  ) {
+    return "SE";
+  } else if (
+    (currentMonth >= 6 && gradYear == currentYear + 2) ||
+    (currentMonth <= 5 && gradYear == currentYear + 1)
+  ) {
+    return "TE";
+  } else if (
+    (currentMonth >= 6 && gradYear == currentYear + 1) ||
+    (currentMonth <= 5 && gradYear == currentYear)
+  ) {
+    return "BE";
+  }
+};
+
 function InputWithLabel({ label, input }: { label: any; input: any }) {
   return (
     <div className="flex flex-col h-[100%]">
@@ -203,6 +234,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // State for image modal
   const [imageSrc, setImageSrc] = useState(""); // State for image source
 
+  const currentYear = currentUserYear(gradyear);
+
   const handleApprove = () => {
     setModalAction("Approve");
     setIsModalOpen(true);
@@ -226,15 +259,21 @@ const PendingCard: React.FC<PendingCardProps> = ({
         modalAction === "Approve" ? "Your Form has been Approved" : statMessage,
     };
 
+    let passCollected = null;
+
+    if (modalAction=="Approve") {
+      passCollected = {
+        date: null,
+        collected: "0",
+      }
+    }
+
     const updatedConcessionRequestFields = {
       status: modalAction === "Approve" ? "serviced" : "rejected",
       passNum: certificateNumber,
       statusMessage: updatedConcessionDetailsFields.statusMessage,
       notificationTime: currentDate,
-      passCollected: {
-        date: null,
-        collected: "0",
-      },
+      passCollected: passCollected,
     };
 
     try {
@@ -359,7 +398,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Branch`} input={branch} />
               </div>
               <div className="w-[50%] h-full">
-                <InputWithLabel label={`Graduation Year`} input={gradyear} />
+                <InputWithLabel label={`Graduation Year`} input={currentYear} />
               </div>
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
