@@ -167,7 +167,8 @@ const CollectedPassTable: React.FC = () => {
     fetchUserData();
   }, []);
 
-  const updateCollectedField = async (certNo: string) => {
+  
+  const updateCollectedField = async (certNo: any) => {
     try {
       const concessionRequestRef = collection(db, "ConcessionRequest");
       const q = query(
@@ -205,18 +206,19 @@ const CollectedPassTable: React.FC = () => {
     }
   };
 
-  const handleCheckboxChange = async (row: any, value: boolean) => {
+  const handleCheckboxChange = async (row: any, value: any) => {
     const certNoToUpdate = data.find(
       (item) => item.certNo === row.original.certNo
     )?.certNo;
 
-    const updatedData = data.map((item) =>
+    const updatedData: Data[] = data.map((item) =>
       item.certNo === row.original.certNo
         ? { ...item, status: value ? "Collected" : "Not Collected" }
         : item
     );
 
     setData(updatedData);
+
     await updateCollectedField(certNoToUpdate);
   };
 

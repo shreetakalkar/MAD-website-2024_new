@@ -1,6 +1,7 @@
 "use client";
 import CollectedPassTable from "@/components/Pass Collection/CollectedPass";
 
-export const Page = () => {
+const Page = () => {
   return <CollectedPassTable />;
 };
+export default Page;

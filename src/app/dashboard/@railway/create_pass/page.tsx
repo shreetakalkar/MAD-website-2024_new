@@ -70,7 +70,15 @@ const RailwayEntryInterface = () => {
   return (
     <>
       {loading && <p>Loading...</p>}
-      <div>
+      <div
+        style={{
+          overflow: "auto",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+        className="flex justify-center p-10 "
+      >
         <CreateNewPass formSchema={formSchema} emails={emails} />
       </div>
     </>

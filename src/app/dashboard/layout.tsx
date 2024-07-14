@@ -72,11 +72,11 @@ export default function Home({
         className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${theme}`}
       >
         {/* Left Side Block */}
-        <div className={`hidden border-r md:block`}>
-          <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className={` hidden border-r md:block`}>
+          <div className="flex h-full max-h-screen  flex-col gap-2">
             {/* Mode Toggle */}
-            <div className="h-[10%] flex justify-between">
-              <div className="mt-2 ml-5">
+            <div className="h-[10%] flex justify-between ">
+              <div className="mt-2 ml-5 ">
                 <Image
                   src={theme == "dark" ? DevsDark : DevsLight}
                   alt="logo"
@@ -90,7 +90,7 @@ export default function Home({
             </div>
 
             {/* Links */}
-            <div className="flex-1 mt-5">
+            <div className="flex-1 mt-5  flex items-center">
               <LeftSideLinks userType={userType ? userType : ""} />
             </div>
 
