@@ -9,6 +9,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import "@/app/globals.css";
 import { db } from "@/config/firebase";
 import { z } from "zod";
 import RailwayUpdateCard from "@/components/RailwayUpdateCard";
@@ -160,10 +161,11 @@ const RailwayUpdateConc = () => {
   return (
     <>
       {loading && <p>Loading...</p>}
-      <div className="w-[75%] flex flex-col gap-[5rem]">
-        <div className="flex w-full max-w-sm items-center space-x-2">
+      <div className="w-[95%] flex flex-col gap-[5rem] p-4 ">
+        <div className="flex w-full max-w-sm items-center ml-[1%]">
           <Input
             type="text"
+            className="shadow-box mt-10"
             placeholder="Certificate No"
             onChange={(e) => setSearchInput(e.target.value)}
           />

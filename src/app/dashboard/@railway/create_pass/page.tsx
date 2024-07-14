@@ -70,7 +70,7 @@ const RailwayEntryInterface = () => {
   return (
     <>
       {loading && <p>Loading...</p>}
-      <div>
+      <div className=" flex justify-center  p-4">
         <CreateNewPass formSchema={formSchema} emails={emails} />
       </div>
     </>
