@@ -1,4 +1,4 @@
-const calculateAge = (dob) => {
+const calculateAge = (dob: any) => {
   const dobDate = new Date(dob);
   const today = new Date();
 

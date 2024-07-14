@@ -67,7 +67,19 @@ import { branches } from "@/constants/branches";
 import { travelFromLocations } from "@/constants/travelFromLocations";
 import { calculateAge } from "@/constants/AgeCalc";
 import "@/app/globals.css";
-const CreateNewPass = ({ formSchema, emails }) => {
+import { ZodSchema, infer as zodInfer } from "zod";
+
+type CreateNewPassProps = {
+  formSchema: ZodSchema<any>; // Adjust any to the appropriate schema type
+  emails: string[];
+};
+
+const CreateNewPass: React.FC<CreateNewPassProps> = ({
+  formSchema,
+  emails,
+}) => {
+  type FormValues = z.infer<typeof formSchema>; // Define FormValues using formSchema
+
   const [value, setValue] = useState<string>("");
   const [studentId, setStudentId] = useState("");
   const [diffInDays, setDiffInDays] = useState<number | null>(null);
@@ -99,7 +111,7 @@ const CreateNewPass = ({ formSchema, emails }) => {
     },
   });
 
-  const setStudentData = async (value) => {
+  const setStudentData = async (value: string) => {
     if (!value) {
       form.reset();
       return;
@@ -195,7 +207,10 @@ const CreateNewPass = ({ formSchema, emails }) => {
     form.reset();
   }, [value]);
 
-  const createConcDetailsAndRequestDocs = async (studentId, values) => {
+  const createConcDetailsAndRequestDocs = async (
+    studentId: string,
+    values: FormValues
+  ) => {
     setLoading(true);
     try {
       const { ageYears, ageMonths } = calculateAge(values.dob);
@@ -250,7 +265,7 @@ const CreateNewPass = ({ formSchema, emails }) => {
     }
   };
 
-  const appendFEDataInConcHistory = async (values) => {
+  const appendFEDataInConcHistory = async (values: FormValues) => {
     const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
     setLoading(true);
     try {
@@ -291,7 +306,11 @@ const CreateNewPass = ({ formSchema, emails }) => {
     }
   };
 
-  const canIssuePass = async (lastPass, status, duration) => {
+  const canIssuePass = async (
+    lastPass: Date,
+    status: string,
+    duration: string
+  ): Promise<boolean> => {
     if (status.toLowerCase() === "rejected") {
       return true;
     } else if (status.toLowerCase() === "unserviced") {
@@ -303,7 +322,7 @@ const CreateNewPass = ({ formSchema, emails }) => {
       return false;
     } else {
       const today = new Date();
-      const diffInMs = today - lastPass;
+      const diffInMs: number = today.getTime() - lastPass.getTime();
       const differenceInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
       const futurePass = new Date(lastPass);
@@ -314,7 +333,7 @@ const CreateNewPass = ({ formSchema, emails }) => {
       }
 
       const daysRemaining = Math.ceil(
-        (futurePass - today) / (1000 * 60 * 60 * 24)
+        (futurePass.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
       );
 
       if (duration === "Monthly" && differenceInDays < 26) {
@@ -334,7 +353,6 @@ const CreateNewPass = ({ formSchema, emails }) => {
       return true;
     }
   };
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!canRenewPass) {
       toast({
@@ -373,8 +391,16 @@ const CreateNewPass = ({ formSchema, emails }) => {
   return (
     <>
       {" "}
-      {loading && <p>Loading...</p>}
-      <Card className="w-[100%] shadow-box">
+      <Card
+        style={{
+          overflow: "auto",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+        className="w-[100%] no-scrollbar shadow-box"
+      >
+        {loading && <p>Loading...</p>}
         <CardHeader>
           <CardTitle className="text-3xl">Railway Concession Entry</CardTitle>
         </CardHeader>
