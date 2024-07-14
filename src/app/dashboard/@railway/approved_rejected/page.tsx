@@ -49,7 +49,7 @@ const Approved_Rejected = () => {
     },
     {
       accessorKey: "gender",
-      header: "gender",
+      header: "Gender",
       cell: ({ row }) => {
         let cellData = row.getValue("class") as string;
         return (
@@ -133,7 +133,7 @@ const Approved_Rejected = () => {
     },
     {
       accessorKey: "address",
-      header: () => <div className="w-[200px]">Address</div>,
+      header: () => <div className="w-[200px] text-center">Address</div>,
       cell: ({ row }) => {
         let cellData = row.getValue("address") as string;
         return (
@@ -204,10 +204,10 @@ const Approved_Rejected = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
+//test123
   return (
     <div>
-      <div className="w-[85vw] h-[100vh] flex flex-col">
+      <div className="w-[73vw] h-[99vh] flex flex-col">
         <div className="h-[100%] flex items-center justify-center">
           <div className="overflow-auto m-2 w-[100%] h-[100%]">
             <DataTable data={data} columns={columns} />
