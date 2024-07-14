@@ -55,7 +55,6 @@ import { db } from "@/config/firebase";
 import { error } from "console";
 import { Value } from "@radix-ui/react-select";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import {
   Command,
   CommandEmpty,
@@ -67,7 +66,7 @@ import {
 import { branches } from "@/constants/branches";
 import { travelFromLocations } from "@/constants/travelFromLocations";
 import { calculateAge } from "@/constants/AgeCalc";
-
+import "@/app/globals.css";
 const CreateNewPass = ({ formSchema, emails }) => {
   const [value, setValue] = useState<string>("");
   const [studentId, setStudentId] = useState("");
@@ -375,7 +374,7 @@ const CreateNewPass = ({ formSchema, emails }) => {
     <>
       {" "}
       {loading && <p>Loading...</p>}
-      <Card className="mx-auto max-w-[70%] ">
+      <Card className="w-[100%] shadow-box">
         <CardHeader>
           <CardTitle className="text-3xl">Railway Concession Entry</CardTitle>
         </CardHeader>
@@ -390,7 +389,8 @@ const CreateNewPass = ({ formSchema, emails }) => {
               <div className="grid gap-4">
                 {" "}
                 <div className="grid gap-2 mt-[2.5%] mb-[2.5%]">
-                  <Command className={cn(" h-[10rem] bg-gray-800")}>
+                  <Command className={cn(" h-[10rem] bg-[#6c6c6c67]")}>
+                    {/* 52525267 */}
                     <CommandInput placeholder="Search email..." />
                     <CommandList
                       style={{

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import "@/app/globals.css";
 import {
   Form,
   FormControl,
@@ -36,7 +37,13 @@ import { travelFromLocations } from "@/constants/travelFromLocations";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
-const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData: any }) => {
+const RailwayUpdateCard = ({
+  formSchema,
+  passData,
+}: {
+  formSchema: any;
+  passData: any;
+}) => {
   const [isEditable, setIsEditable] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -105,7 +112,8 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
         return; // Exit early, do not submit
       }
 
-      const { doi, phoneNum, uid, lastPassIssued, certNo, ...formData } = values;
+      const { doi, phoneNum, uid, lastPassIssued, certNo, ...formData } =
+        values;
       const newData = {
         ...formData,
         lastPassIssued: values.doi,
@@ -149,10 +157,9 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
       await updateDoc(concessionReqRef, {
         status: "rejected",
         statusMessage: statusMessage || "Your form has been cancelled",
-        passCollected:null
+        passCollected: null,
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error ", error);
     }
 
@@ -160,7 +167,7 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
     setLoading(false);
   };
 
-  const handleSave = (message : string) => {
+  const handleSave = (message: string) => {
     setIsDialogOpen(false);
     setStatusMessage(message);
     cancelForm();
@@ -173,17 +180,16 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
 
   return (
     <>
-      <Card className="mx-auto ml-[1%]  mt-2">
+      <Card className="mx-auto ml-[1%] shadow-box mt-2">
         <CardContent className="p-6">
           <Form {...form}>
             <form method="post" className="space-y-8">
               <div className="grid gap-4 ">
-
                 {/* Heading */}
                 <div className="card-head-wrapper w-[100%]  flex justify-between items-center">
                   <div className="flex gap-2 w-[55%]">
                     {" "}
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 ">
                       <FormField
                         control={form.control}
                         name="firstName"
@@ -191,7 +197,11 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
                           <FormItem>
                             <FormLabel>First Name</FormLabel>
                             <FormControl>
-                              <Input {...field} readOnly={!isEditable} />
+                              <Input
+                                // className="shadow-box"
+                                {...field}
+                                readOnly={!isEditable}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -254,7 +264,6 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
                     </div>{" "}
                   </div>
                 </div>{" "}
-
                 <div className="card-other-details flex justify-between">
                   {/* Other Details */}
                   <div className="personal-details gap-6">
@@ -527,7 +536,6 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
 
                   {/* Rail Details Section */}
                   <div className="rail-details w-[40%] flex flex-col  justify-between	">
-
                     {/* Concession Details Section */}
                     <div>
                       <div className="grid grid-cols-2 gap-4 mb-2">
@@ -654,7 +662,7 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
                           />
                         </div>
                       </div>{" "}
-                      <div className="grid gap-2">
+                      <div className="grid gap-2 disabled:cursor-pointer">
                         <FormField
                           control={form.control}
                           name="travelLane"
@@ -738,20 +746,21 @@ const RailwayUpdateCard = ({ formSchema, passData }: { formSchema: any, passData
                               onChange={(e) => setStatusMessage(e.target.value)}
                               placeholder="Enter status message"
                             />
-                            <button onClick={() => handleSave(statusMessage)}>Save</button>
+                            <button onClick={() => handleSave(statusMessage)}>
+                              Save
+                            </button>
                             <button onClick={handleCancel}>Cancel</button>
                           </div>
                         )}
+                      </div>
                     </div>
-
                   </div>
                 </div>
               </div>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card >
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </>
   );
 };
