@@ -6,6 +6,7 @@ import {
   FileStack,
   GitPullRequestClosed,
   Download,
+  FileBadge,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -14,7 +15,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
   return (
     <nav className=" grid items-start px-2 text-sm font-medium lg:px-4 h-[70%]">
       <Link
-        href="#"
+        href="/dashboard"
         className="flex items-center gap-3 rounded-lg px-3 py-2  text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
       >
         <Home className="h-4 w-4" />
@@ -72,6 +73,13 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
           >
             <ClipboardEdit className="h-4 w-4" />
             Update Pass
+          </Link>
+          <Link
+            href="/dashboard/collected_pass"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+          >
+            <FileBadge className="h-4 w-4" />
+            Collected Pass
           </Link>
           <Link
             href="/dashboard/pending_req"
