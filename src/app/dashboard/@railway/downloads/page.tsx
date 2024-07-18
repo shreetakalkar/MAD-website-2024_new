@@ -1,7 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { collection, getDocs, Timestamp } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { createExcelFile, downloadExcelFile } from "@/lib/excelUtils";
 import { useTheme } from "next-themes";
@@ -20,6 +29,14 @@ export interface BatchElement {
   fileName: string;
   lane: "Central" | "Western";
   isDownloaded: boolean;
+  date: Date | null;
+}
+
+export interface Download {
+  from: number;
+  to: number;
+  date: Date;
+  filename: string;
 }
 
 const Downloads: React.FC = () => {
@@ -37,31 +54,46 @@ const Downloads: React.FC = () => {
   >("All");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
   const limit = 2;
-  const [date, setDate] = useState<any>([]);
+  // const [downloadDate, setDownloadDate] = useState<any>([]);
+
+  const fetchDownloadHistory = async () => {
+    try {
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
+      const docSnap = await getDoc(concessionHistoryRef);
+      if (docSnap.exists() && docSnap.data().downloaded) {
+        return docSnap.data().downloaded;
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching download history:", error);
+      return [];
+    }
+  };
 
   const fetchEnquiries = async () => {
     try {
-      const concessionHistoryRef = collection(db, "ConcessionHistory");
-      const querySnapshot = await getDocs(concessionHistoryRef);
-      const data = querySnapshot.docs.map((doc) => doc.data());
+      const [historyData, downloadHistory] = await Promise.all([
+        getDocs(collection(db, "ConcessionHistory")),
+        fetchDownloadHistory(),
+      ]);
+
+      const data = historyData.docs.map((doc) => doc.data());
       if (data.length > 0 && data[0].history) {
-        makeBatches(data[0].history);
-        setDate(data[0].csvUpdatedDate);
+        makeBatches(data[0].history, downloadHistory);
       } else {
         setWesternBatchedEnquiries([]);
         setCentralBatchedEnquiries([]);
       }
     } catch (error) {
-      console.error("Error fetching ConcessionHistory:", error);
+      console.error("Error fetching data:", error);
       toast({
         title: "Error",
-        description:
-          "Failed to fetch ConcessionHistory. Please try again later.",
+        description: "Failed to fetch data. Please try again later.",
       });
     }
   };
 
-  const makeBatches = (data: Enquiry[]) => {
+  const makeBatches = (data: Enquiry[], downloadHistory: Download[]) => {
     const seenPassNums = new Set<string>();
     const uniqueData: Enquiry[] = [];
 
@@ -81,6 +113,15 @@ const Downloads: React.FC = () => {
     let westernIndex = 0;
     let centralIndex = 0;
 
+    const isDownloaded = (fileName: string) => {
+      return downloadHistory.some((d) => d.filename === fileName);
+    };
+
+    const getDownloadDate = (fileName: string) => {
+      const download = downloadHistory.find((d) => d.filename === fileName);
+      return download ? new Date(download.date) : null;
+    };
+
     for (let i = 0; i < uniqueData.length; i++) {
       const enquiry = uniqueData[i];
 
@@ -92,12 +133,17 @@ const Downloads: React.FC = () => {
           westernBatches.length === 0 ||
           westernBatches[westernBatches.length - 1].enquiries.length === limit
         ) {
+          // const isDownload = downloadDate.find((d : any)=> d.from === westernIndex+1 && d.to === westernIndex+limit)
+          const fileName = `W${westernIndex + 1}-${westernIndex + limit}`;
+
           westernBatches.push({
             enquiries: [enquiry],
-            fileName: `W${westernIndex + 1}-${westernIndex + limit}`,
+            fileName: fileName,
             lane: "Western",
-            isDownloaded: false,
+            isDownloaded: isDownloaded(fileName),
+            date: getDownloadDate(fileName),
           });
+
           westernIndex += limit;
         } else {
           westernBatches[westernBatches.length - 1].enquiries.push(enquiry);
@@ -110,11 +156,13 @@ const Downloads: React.FC = () => {
           centralBatches.length === 0 ||
           centralBatches[centralBatches.length - 1].enquiries.length === limit
         ) {
+          const fileName = `C${centralIndex + 1}-${centralIndex + limit}`;
           centralBatches.push({
             enquiries: [enquiry],
-            fileName: `C${centralIndex + 1}-${centralIndex + limit}`,
+            fileName,
             lane: "Central",
-            isDownloaded: false,
+            isDownloaded: isDownloaded(fileName),
+            date: getDownloadDate(fileName),
           });
           centralIndex += limit;
         } else {
@@ -152,20 +200,52 @@ const Downloads: React.FC = () => {
 
       downloadExcelFile(excelContent, batch.fileName);
 
-      // Update the isDownloaded status
-      if (batch.lane === "Western") {
-        setWesternBatchedEnquiries((prev) =>
-          prev.map((b) =>
-            b.fileName === batch.fileName ? { ...b, isDownloaded: true } : b
-          )
+      const newDownload = {
+        from: batch.enquiries[0].passNum,
+        to: batch.enquiries[batch.enquiries.length - 1].passNum,
+        date: new Date().toISOString(),
+        filename: batch.fileName,
+      };
+
+      batch.date = new Date();
+      batch.isDownloaded = true;
+
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
+
+      // Fetch the current document
+      const docSnap = await getDoc(concessionHistoryRef);
+
+      if (docSnap.exists()) {
+        let downloadedArray = docSnap.data().downloaded || [];
+        const existingIndex = downloadedArray.findIndex(
+          (item: any) => item.filename === newDownload.filename
         );
+
+        if (existingIndex !== -1) {
+          downloadedArray[existingIndex] = newDownload;
+        } else {
+          downloadedArray.push(newDownload);
+        }
+
+        await updateDoc(concessionHistoryRef, {
+          downloaded: downloadedArray,
+        });
       } else {
-        setCentralBatchedEnquiries((prev) =>
-          prev.map((b) =>
-            b.fileName === batch.fileName ? { ...b, isDownloaded: true } : b
-          )
-        );
+        await setDoc(concessionHistoryRef, {
+          downloaded: [newDownload],
+        });
       }
+
+      //updating local state
+      const updateBatches = (batches: BatchElement[]) =>
+        batches.map((b) =>
+          b.fileName === batch.fileName
+            ? { ...b, isDownloaded: true, date: new Date() }
+            : b
+        );
+
+      setWesternBatchedEnquiries(updateBatches(westernBatchedEnquiries));
+      setCentralBatchedEnquiries(updateBatches(centralBatchedEnquiries));
     } catch (error) {
       console.error("Error handling Excel download:", error);
       toast({
@@ -233,7 +313,6 @@ const Downloads: React.FC = () => {
       </div>
       <DownloadTable
         batches={filteredBatches}
-        date={date}
         handleDownloadBatchExcel={handleDownloadBatchExcel}
         theme={theme || "dark"}
       />

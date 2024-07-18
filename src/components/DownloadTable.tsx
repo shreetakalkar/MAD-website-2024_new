@@ -4,12 +4,11 @@ import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 
 interface DownloadTableProps {
   batches: BatchElement[];
-  date: string;
   handleDownloadBatchExcel: (batch: BatchElement) => void;
   theme: string;
 }
 
-const DownloadTable: React.FC<DownloadTableProps> = ({ batches, date, handleDownloadBatchExcel, theme }) => {
+const DownloadTable: React.FC<DownloadTableProps> = ({ batches, handleDownloadBatchExcel, theme }) => {
   return (
     <Table>
       <TableHeader>
@@ -29,7 +28,6 @@ const DownloadTable: React.FC<DownloadTableProps> = ({ batches, date, handleDown
               key={index}
               srNo={index + 1}
               batch={batch}
-              date={date}
               handleDownloadBatchExcel={handleDownloadBatchExcel}
               theme={theme}
             />
