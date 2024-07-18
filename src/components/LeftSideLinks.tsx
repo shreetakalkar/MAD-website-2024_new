@@ -68,6 +68,13 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
             Create New Pass
           </Link>
           <Link
+            href="/dashboard/pending_req"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+          >
+            <FileStack className="h-4 w-4" />
+            Pending Requests
+          </Link>
+          <Link
             href="/dashboard/update_pass"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
@@ -82,25 +89,18 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
             Collected Pass
           </Link>
           <Link
-            href="/dashboard/pending_req"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <FileStack className="h-4 w-4" />
-            Pending Requests
-          </Link>
-          <Link
             href="/dashboard/approved_rejected"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
             <GitPullRequestClosed className="h-4 w-4" />
-            Approved/Rejected Requests
+            Approved/Rejected Passes
           </Link>
           <Link
             href="/dashboard/downloads"
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
           >
             <Download className="h-4 w-4" />
-            Download
+            Download Files
           </Link>
         </>
       )}
