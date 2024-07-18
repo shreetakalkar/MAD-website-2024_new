@@ -182,7 +182,6 @@ import ExcelJS from "exceljs";
 //   }
 // };
 
-
 export const createExcelFile = async (
   batch: BatchElement
 ): Promise<Blob | null> => {
@@ -231,7 +230,9 @@ export const createExcelFile = async (
 
     // Subheading row
     worksheet.mergeCells("A2:K2");
-    worksheet.getCell("A2").value = `Railway Concessions for ${batch.lane} Railway`;
+    worksheet.getCell(
+      "A2"
+    ).value = `Railway Concessions for ${batch.lane} Railway`;
     worksheet.getCell("A2").alignment = {
       vertical: "middle",
       horizontal: "center",
@@ -289,7 +290,6 @@ export const createExcelFile = async (
     return null;
   }
 };
-
 
 export const downloadExcelFile = (content: Blob, fileName: string): void => {
   const link = document.createElement("a");

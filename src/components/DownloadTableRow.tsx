@@ -5,7 +5,6 @@ import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 interface DownloadTableRowProps {
   srNo: number;
   batch: BatchElement;
-  date: string;
   handleDownloadBatchExcel: (batch: BatchElement) => void;
   theme: string;
 }
@@ -13,7 +12,6 @@ interface DownloadTableRowProps {
 const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
   srNo,
   batch,
-  date,
   handleDownloadBatchExcel,
   theme,
 }) => {
@@ -32,7 +30,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
         </Button>
       </TableCell>
       <TableCell>{batch.isDownloaded ? 'Yes' : 'No'}</TableCell>
-      <TableCell>{date}</TableCell>
+      <TableCell className="pl-[2rem]">{batch.date ? batch.date.toLocaleDateString() : '-'}</TableCell>
     </TableRow>
   );
 };
