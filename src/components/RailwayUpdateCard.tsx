@@ -731,9 +731,9 @@ const RailwayUpdateCard = ({
                             setIsDialogOpen(true);
                             // cancelForm();
                           }}
-                          className="w-[50%]"
+                          className="w-[50%] bg-red-500"
                         >
-                          Cancel
+                          Cancel Pass
                         </Button>
                       ) : null}
 

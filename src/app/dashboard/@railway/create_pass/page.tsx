@@ -77,7 +77,7 @@ const RailwayEntryInterface = () => {
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
-        className="flex justify-center p-10 "
+        className="flex justify-center p-10"
       >
         <CreateNewPass formSchema={formSchema} emails={emails} />
       </div>

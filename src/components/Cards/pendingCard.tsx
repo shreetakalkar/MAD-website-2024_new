@@ -96,7 +96,7 @@ interface ModalProps {
     middleName: string;
     lastName: string;
     from: string;
-    to: string;
+    duration: string;
     reason: string;
     setReason: React.Dispatch<React.SetStateAction<string>>;
   };
@@ -114,60 +114,53 @@ const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-      <div className="bg-neutral-900 p-8 rounded shadow-md">
-        <h2 className="text-xl text-white mb-4">
-          {action} Concession Request?
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+      <div className={`p-8 rounded-lg shadow-xl w-full max-w-md ${action==="Approve" ? "bg-green-100" : action==="Reject" ? "bg-red-100" : "bg-white"}`}>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+          {action} Concession Request
         </h2>
-        <div className="mb-4 text-white">
-          <strong>Name:</strong> {data.firstName} {data.middleName}{" "}
-          {data.lastName}
+        <div className="mb-4 text-gray-700">
+          <p><strong>Name:</strong> {data.firstName} {data.middleName} {data.lastName}</p>
         </div>
-        <div className="mb-4 text-white">
-          <strong>From:</strong> {data.from}
+        <div className="mb-4 text-gray-700">
+          <p><strong>From:</strong> {data.from}</p>
         </div>
-        <div className="mb-4 text-white">
-          <strong>To:</strong> {data.to}
+        <div className="mb-4 text-gray-700">
+          <p><strong>Duration:</strong> {data.duration}</p>
         </div>
-        {action === "Approve" ? (
-          <div className="mb-4 text-white">
-            <label className="block mb-2 ">Certificate Number:</label>
+        {action === "Approve" && (
+          <div className="mb-6">
+            <label className="block text-gray-700 mb-2"><strong>Certificate Number:</strong></label>
             <input
               type="text"
-              placeholder="Enter Cetificate Number..."
+              placeholder="Enter Certificate Number..."
               value={certificateNumber}
               onChange={(e) => setCertificateNumber(e.target.value)}
-              className="w-full  p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-        ) : null}
-
-        <div className="flex space-x-4">
-          {action === "Approve" ? (
-            <button
-              className="bg-green-500 text-white py-2 px-4 rounded"
-              onClick={() => onSubmit(certificateNumber)}
-            >
-              Approve
-            </button>
-          ) : (
-            <button
-              className="bg-red-500 text-white py-2 px-4 rounded"
-              onClick={() => onSubmit(certificateNumber)}
-            >
-              Reject
-            </button>
-          )}
-          {action === "Reject" ? (
+        )}
+        {action === "Reject" && (
+          <div className="mb-6">
+            <label className="block text-gray-700 mb-2"><strong>Reason:</strong></label>
             <input
-              placeholder="Enter Reason"
+              type="text"
+              placeholder="Enter Reason..."
               value={data.reason}
-              className="w-full p-2 border rounded"
               onChange={(e) => data.setReason(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
-          ) : null}
+          </div>
+        )}
+        <div className="flex justify-between items-center">
           <button
-            className="bg-gray-500 text-white py-2 px-4 rounded"
+            className={`w-1/3 py-2 px-4 rounded-lg text-white ${action === "Approve" ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+            onClick={() => onSubmit(certificateNumber)}
+          >
+            {action}
+          </button>
+          <button
+            className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
             onClick={onClose}
           >
             Go Back
@@ -176,6 +169,7 @@ const Modal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
+  
 };
 
 // PendingCard component
@@ -353,12 +347,12 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div> */}
 
-      <div className="p-[0.8%] flex rounded-md border-[0.5px] border-[#E2E8F0] w-[70vw] h-[90vh] temp-> ml-[20px] my-[20px] ">
+      <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[70vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="flex flex-col w-1/2 h-full">
           <div className="h-[100%] w-[100%] flex flex-col  ">
-            <div className="h-[14.2857142857%] flex w-[100%] ">
+            <div className="h-[14.2857142857%] flex w-[100%] "> 
               <div className="w-[50%] h-full">
-                <InputWithLabel label={`First Name`} input={firstName} />
+                <InputWithLabel label={`Name`} input={firstName}/>
               </div>
               <div className="w-[50%] h-full">
                 <InputWithLabel label={`Middle Name`} input={middleName} />
@@ -439,22 +433,22 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 </div>
               </div>
             </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
+            <div className="h-[14.2857142857%] flex w-[100%]">
               <div className="w-[50%] flex items-center  justify-center">
-                <button
-                  className="bg-green-500 w-[80%] h-[50%] text-white bg- py-2 px-4 rounded hover:bg-green-600"
-                  onClick={handleApprove}
-                >
-                  Approve
-                </button>
+              <button
+                className="bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
+                onClick={handleApprove}
+              >
+                Approve
+              </button>
               </div>
               <div className="w-[50%]   flex items-center justify-center">
-                <button
-                  className="bg-red-500 text-white  w-[80%] h-[50%] py-2 px-4 rounded hover:bg-red-600"
-                  onClick={handleReject}
-                >
-                  Reject
-                </button>
+              <button
+                className="bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
+                onClick={handleReject}
+              >
+                Reject
+              </button>
               </div>
             </div>
           </div>
@@ -467,7 +461,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
         action={modalAction}
-        data={{ firstName, middleName, lastName, from, to, reason, setReason }}
+        data={{ firstName, middleName, lastName, from, duration, reason, setReason }}
       />
 
       {/* Image modal */}
