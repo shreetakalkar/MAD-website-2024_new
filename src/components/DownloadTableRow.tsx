@@ -1,63 +1,38 @@
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
-import { TableRow, TableCell } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 
 interface DownloadTableRowProps {
-  index: number;
+  srNo: number;
   batch: BatchElement;
-  date: any;
-  handleDownloadBatchExcel: (batchIndex: number, fileName: string) => void;
+  date: string;
+  handleDownloadBatchExcel: (batch: BatchElement) => void;
   theme: string;
 }
 
 const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
-  index,
+  srNo,
   batch,
   date,
   handleDownloadBatchExcel,
   theme,
 }) => {
-  const datePart = date?.date?.split(" at ")[0];
-  const parsedDate = new Date(datePart);
   return (
-    <TableRow className={cn("text-sm font-medium", {
-      "text-gray-300": theme === "dark",
-      "text-gray-700": theme === "light",
-    })}>
-      <TableCell className="text-left text-sm font-medium">
-        <div className="flex items-center">
-          <div>
-            <div>
-              {batch.fileName}
-            </div>
-            <div className="text-sm text-gray-500">
-              {batch.centralEnquiries.length + batch.westernEnquiries.length} items
-            </div>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell className="text-left text-sm font-medium">
-        <button
-          className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-          onClick={() => handleDownloadBatchExcel(index, batch.fileName)}
+    <TableRow>
+      <TableCell>{srNo}</TableCell>
+      <TableCell>{batch.fileName}</TableCell>
+      <TableCell>{batch.lane}</TableCell>
+      <TableCell>
+        <Button 
+          onClick={() => handleDownloadBatchExcel(batch)}
+          variant="outline"
+          className={`${theme === "dark" ? "text-white" : "text-black"}`}
         >
           Download
-        </button>
+        </Button>
       </TableCell>
-      <TableCell className="text-left text-sm font-medium ml-4">
-      <span className="ml-4">{batch.westernEnquiries.length}</span>
-      </TableCell>
-      <TableCell className="text-left text-sm font-medium light:text-gray-700">
-        <span className="ml-4">{batch.centralEnquiries.length}</span>
-      </TableCell>
-      <TableCell
-        className={cn("text-left text-sm font-medium", {
-          "text-gray-300": theme === "dark",
-          "text-gray-700": theme === "light",
-        })}
-      >
-        {date && parsedDate.toLocaleDateString()}
-      </TableCell>
+      <TableCell>{batch.isDownloaded ? 'Yes' : 'No'}</TableCell>
+      <TableCell>{date}</TableCell>
     </TableRow>
   );
 };

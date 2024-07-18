@@ -7,44 +7,34 @@ import { createExcelFile, downloadExcelFile } from "@/lib/excelUtils";
 import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
 import DownloadTable from "@/components/DownloadTable";
-
-export interface Enquiry {
-  id: string;
-  address: string;
-  ageMonths: number;
-  ageYears: number;
-  branch: string;
-  class: string;
-  dob: Timestamp;
-  duration: string;
-  firstName: string;
-  from: string;
-  gender: string;
-  gradyear: string;
-  idCardURL: string;
-  lastName: string;
-  lastPassIssued: Timestamp;
-  middleName: string;
-  passNum: string;
-  phoneNum: number;
-  previousPassURL: string;
-  status: string;
-  statusMessage: string;
-  to: string;
-  travelLane: string;
-}
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Enquiry } from "@/constants/types/userTypes";
 export interface BatchElement {
-  centralEnquiries: Enquiry[];
-  westernEnquiries: Enquiry[];
+  enquiries: Enquiry[];
   fileName: string;
+  lane: "Central" | "Western";
+  isDownloaded: boolean;
 }
 
 const Downloads: React.FC = () => {
   const { theme } = useTheme();
   const { toast } = useToast();
-  const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
+  const [westernBatchedEnquiries, setWesternBatchedEnquiries] = useState<
+    BatchElement[]
+  >([]);
+  const [centralBatchedEnquiries, setCentralBatchedEnquiries] = useState<
+    BatchElement[]
+  >([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedLane, setSelectedLane] = useState<
+    "All" | "Central" | "Western"
+  >("All");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
   const limit = 2;
   const [date, setDate] = useState<any>([]);
@@ -58,7 +48,8 @@ const Downloads: React.FC = () => {
         makeBatches(data[0].history);
         setDate(data[0].csvUpdatedDate);
       } else {
-        setBatchedEnquiries([]);
+        setWesternBatchedEnquiries([]);
+        setCentralBatchedEnquiries([]);
       }
     } catch (error) {
       console.error("Error fetching ConcessionHistory:", error);
@@ -71,71 +62,85 @@ const Downloads: React.FC = () => {
   };
 
   const makeBatches = (data: Enquiry[]) => {
-    // for(let i = 0; i < data.length; i++) {
-    //   console.log("data", data[i].passNum);
-    // }
-  
     const seenPassNums = new Set<string>();
     const uniqueData: Enquiry[] = [];
-  
-    // iterates through the data in reverse order, ensuring that the latest entry for each passNum is kept
+
+    console.log("raw data", data);
     for (let i = data.length - 1; i >= 0; i--) {
       const enquiry = data[i];
       if (!seenPassNums.has(enquiry.passNum)) {
         seenPassNums.add(enquiry.passNum);
-        uniqueData.unshift(enquiry);
+        uniqueData.push(enquiry); // making the array in reverse order to get the latest enquiry first
       }
     }
-  
-    const batches: BatchElement[] = [];
-    let i = 0;
-  
-    while (i < uniqueData.length) {
-      const currentBatchWestern: Enquiry[] = [];
-      const currentBatchCentral: Enquiry[] = [];
-      let j = i;
-  
-      while (j - i < limit && j < uniqueData.length) {
-        const enquiry = uniqueData[j];
-        if (enquiry.travelLane === "Western" || enquiry.travelLane === "Harbour") {
-          currentBatchWestern.push(enquiry);
-        } else if (enquiry.travelLane === "Central") {
-          currentBatchCentral.push(enquiry);
+    console.log("unique data", uniqueData);
+
+    const westernBatches: BatchElement[] = [];
+    const centralBatches: BatchElement[] = [];
+
+    let westernIndex = 0;
+    let centralIndex = 0;
+
+    for (let i = 0; i < uniqueData.length; i++) {
+      const enquiry = uniqueData[i];
+
+      if (
+        enquiry.status === "serviced" &&
+        (enquiry.travelLane === "Western" || enquiry.travelLane === "Harbour")
+      ) {
+        if (
+          westernBatches.length === 0 ||
+          westernBatches[westernBatches.length - 1].enquiries.length === limit
+        ) {
+          westernBatches.push({
+            enquiries: [enquiry],
+            fileName: `W${westernIndex + 1}-${westernIndex + limit}`,
+            lane: "Western",
+            isDownloaded: false,
+          });
+          westernIndex += limit;
+        } else {
+          westernBatches[westernBatches.length - 1].enquiries.push(enquiry);
         }
-        j++;
+      } else if (
+        enquiry.status === "serviced" &&
+        enquiry.travelLane === "Central"
+      ) {
+        if (
+          centralBatches.length === 0 ||
+          centralBatches[centralBatches.length - 1].enquiries.length === limit
+        ) {
+          centralBatches.push({
+            enquiries: [enquiry],
+            fileName: `C${centralIndex + 1}-${centralIndex + limit}`,
+            lane: "Central",
+            isDownloaded: false,
+          });
+          centralIndex += limit;
+        } else {
+          centralBatches[centralBatches.length - 1].enquiries.push(enquiry);
+        }
       }
-      if(currentBatchCentral.length + currentBatchWestern.length == limit) {
-        batches.push({
-          centralEnquiries: currentBatchCentral,
-          westernEnquiries: currentBatchWestern,
-          fileName: `Z${i}-Z${i + limit - 1}`,
-        });
-      }
-  
-      i = j;
     }
-  
-    console.log("batches", batches);
-    setBatchedEnquiries(batches);
-    setFilteredBatches(batches);
+
+    if (westernBatches[westernBatches.length - 1].enquiries.length < limit) {
+      westernBatches.pop();
+    }
+
+    if (centralBatches[centralBatches.length - 1].enquiries.length < limit) {
+      centralBatches.pop();
+    }
+
+    console.log("western batches", westernBatches);
+    console.log("central batches", centralBatches);
+
+    setWesternBatchedEnquiries(westernBatches);
+    setCentralBatchedEnquiries(centralBatches);
   };
 
-  const handleDownloadBatchExcel = async (
-    batchIndex: number,
-    fileName: string
-  ) => {
+  const handleDownloadBatchExcel = async (batch: BatchElement) => {
     try {
-      const enquiriesSubset = batchedEnquiries[batchIndex];
-
-      if (!enquiriesSubset) {
-        toast({
-          title: "Error",
-          description: "Batch not found.",
-        });
-        return;
-      }
-
-      const excelContent = await createExcelFile(enquiriesSubset);
+      const excelContent = await createExcelFile(batch);
 
       if (!excelContent) {
         toast({
@@ -145,7 +150,22 @@ const Downloads: React.FC = () => {
         return;
       }
 
-      downloadExcelFile(excelContent, fileName);
+      downloadExcelFile(excelContent, batch.fileName);
+
+      // Update the isDownloaded status
+      if (batch.lane === "Western") {
+        setWesternBatchedEnquiries((prev) =>
+          prev.map((b) =>
+            b.fileName === batch.fileName ? { ...b, isDownloaded: true } : b
+          )
+        );
+      } else {
+        setCentralBatchedEnquiries((prev) =>
+          prev.map((b) =>
+            b.fileName === batch.fileName ? { ...b, isDownloaded: true } : b
+          )
+        );
+      }
     } catch (error) {
       console.error("Error handling Excel download:", error);
       toast({
@@ -160,11 +180,23 @@ const Downloads: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = batchedEnquiries.filter((batch) =>
+    let allBatches = [...westernBatchedEnquiries, ...centralBatchedEnquiries];
+
+    if (selectedLane !== "All") {
+      allBatches = allBatches.filter((batch) => batch.lane === selectedLane);
+    }
+
+    const filtered = allBatches.filter((batch) =>
       batch.fileName.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     setFilteredBatches(filtered);
-  }, [searchTerm, batchedEnquiries]);
+  }, [
+    searchTerm,
+    selectedLane,
+    westernBatchedEnquiries,
+    centralBatchedEnquiries,
+  ]);
 
   return (
     <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
@@ -173,7 +205,22 @@ const Downloads: React.FC = () => {
           <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">
             Downloads
           </h2>
-          <div>
+          <div className="flex space-x-4">
+            <Select
+              value={selectedLane}
+              onValueChange={(value: "All" | "Central" | "Western") =>
+                setSelectedLane(value)
+              }
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Lane" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Central">Central</SelectItem>
+                <SelectItem value="Western">Western</SelectItem>
+              </SelectContent>
+            </Select>
             <Input
               className="ring-1 ring-gray-400 focus:ring-gray-400"
               type="text"

@@ -1,27 +1,24 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DownloadTableRow from "@/components/DownloadTableRow";
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
-import { useEffect, useState } from "react";
-
 
 interface DownloadTableProps {
   batches: BatchElement[];
-  date: any[];
-  handleDownloadBatchExcel: (batchIndex: number, fileName: string) => void;
+  date: string;
+  handleDownloadBatchExcel: (batch: BatchElement) => void;
   theme: string;
 }
 
-
 const DownloadTable: React.FC<DownloadTableProps> = ({ batches, date, handleDownloadBatchExcel, theme }) => {
-  
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Batch</TableHead>
-          <TableHead>Actions</TableHead>
-          <TableHead>Western</TableHead>
-          <TableHead>Central</TableHead>
+          <TableHead>Sr No</TableHead>
+          <TableHead>Filename</TableHead>
+          <TableHead>Lane</TableHead>
+          <TableHead>Action</TableHead>
+          <TableHead>Is Downloaded</TableHead>
           <TableHead>Date</TableHead>
         </TableRow>
       </TableHeader>
@@ -30,16 +27,16 @@ const DownloadTable: React.FC<DownloadTableProps> = ({ batches, date, handleDown
           batches.map((batch, index) => (
             <DownloadTableRow
               key={index}
-              index={index}
+              srNo={index + 1}
               batch={batch}
-              date={date[index]}
+              date={date}
               handleDownloadBatchExcel={handleDownloadBatchExcel}
               theme={theme}
             />
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={2} className="px-6 py-4 text-gray-600">No enquiries available.</TableCell>
+            <TableCell colSpan={6} className="px-6 py-4 text-gray-600">No enquiries available.</TableCell>
           </TableRow>
         )}
       </TableBody>
