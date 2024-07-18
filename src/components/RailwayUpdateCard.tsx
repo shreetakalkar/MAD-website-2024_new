@@ -51,6 +51,7 @@ const RailwayUpdateCard = ({
   const gradYearList = useGradYear();
   const { toast } = useToast();
   const { control } = useForm();
+  const [isModalOpen , setIsModalOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -168,6 +169,7 @@ const RailwayUpdateCard = ({
   };
 
   const handleSave = (message: string) => {
+    setIsModalOpen(false)
     setIsDialogOpen(false);
     setStatusMessage(message);
     cancelForm();
@@ -176,6 +178,7 @@ const RailwayUpdateCard = ({
 
   const handleCancel = () => {
     setIsDialogOpen(false);
+    setIsModalOpen(false)
   };
 
   return (
@@ -729,15 +732,16 @@ const RailwayUpdateCard = ({
                           type="button"
                           onClick={() => {
                             setIsDialogOpen(true);
+                            setIsModalOpen(true)
                             // cancelForm();
                           }}
                           className="w-[50%] bg-red-500"
                         >
-                          Cancel Pass
+                          Delete
                         </Button>
                       ) : null}
 
-                      <div>
+                      {/* <div>
                         {isDialogOpen === true && (
                           <div className="dialog">
                             <input
@@ -752,7 +756,7 @@ const RailwayUpdateCard = ({
                             <button onClick={handleCancel}>Cancel</button>
                           </div>
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -761,6 +765,41 @@ const RailwayUpdateCard = ({
           </Form>
         </CardContent>
       </Card>
+
+
+      {
+        isModalOpen ? (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white dark:bg-gray-400 p-6 rounded-lg shadow-lg h-[30vh] w-[60vh]">
+              <input
+                type="text"
+                value={statusMessage}
+                onChange={(e) => setStatusMessage(e.target.value)}
+                placeholder="Enter status message"
+                className="border rounded-lg w-[100%] p-2"
+              />
+              <div className="flex items-center justify-start mt-5">
+                <button
+                  onClick={() => handleSave(statusMessage)}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mr-5"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                >
+                  Cancel
+              </button>
+
+              </div>
+
+            </div>
+          </div>
+        ) : null
+      }
+
+
     </>
   );
 };
