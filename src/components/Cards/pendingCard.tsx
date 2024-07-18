@@ -40,12 +40,12 @@ const currentUserYear = (gradyear: string) => {
 function InputWithLabel({ label, input }: { label: any; input: any }) {
   return (
     <div className="flex flex-col h-[100%]">
-      <div className=" h-[35%] text-[0.94rem] xl:text-sm font-[550] pt-[2%]">
+      <div className=" h-[35%] text-[0.94rem] xl:text-sm font-[550] pt-1">
         {label}
       </div>
       <div className=" h-[65%] overflow-auto">
         <div
-          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[4.5%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `}
+          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `}
         >
           {input}
         </div>
@@ -285,6 +285,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
     }
   };
 
+  
   return (
     <>
       {/* MAYURESH KA COMPONENT */}
@@ -347,7 +348,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div> */}
 
-      <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[70vw] h-[90vh] temp-> ml-[20px] my-[20px]">
+
+      {/* <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[90vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="flex flex-col w-1/2 h-full">
           <div className="h-[100%] w-[100%] flex flex-col  ">
             <div className="h-[14.2857142857%] flex w-[100%] "> 
@@ -365,10 +367,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
               <div className="w-[50%] h-full">
                 {" "}
                 <InputWithLabel label={`Phone Number`} input={phoneNum} />
-                {/* <InputWithLabel
-                  label={`Certificate Number`}
-                  input={}
-                /> */}
+
               </div>
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
@@ -404,9 +403,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
-              {/* <div className="w-[50%] h-full">
-                <InputWithLabel label={`Phone Number`} input={phoneNum} />
-              </div> */}
+
               <div className="w-[100%] h-full">
                 <InputWithLabel label={`Travel Lane`} input={travelLane} />
               </div>
@@ -451,6 +448,99 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </button>
               </div>
             </div>
+          </div>
+        </div>
+      </div> */}
+      
+      <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
+        <div className="w-[70%] h-full flex flex-col">
+          <div className=" flex h-[20%]">
+            <div className="h-full w-1/2 ">
+              <InputWithLabel label={`Name`} input={`${lastName} ${firstName} ${middleName}`} />
+            </div>
+            <div className="h-full w-1/2 flex ">
+              <div className="h-full w-1/2 ">
+                <InputWithLabel label={`DOB`} input={dob} />
+              </div>
+              <div className="h-full w-1/2">
+                <InputWithLabel label={`Gender`} input={gender} />
+              </div>
+            </div>
+
+          </div>
+          <div className=" flex h-[20%]">
+            <div className="h-full w-1/2 flex ">
+              <div className="h-full w-1/2 ">
+                <InputWithLabel label={`From`} input={from} />
+              </div>
+              <div className="h-full w-1/2">
+                <InputWithLabel label={`To`} input={to} />
+              </div>
+            </div>
+            <div className="h-full w-1/2 flex ">
+              <div className="h-full w-1/2 ">
+                <InputWithLabel label={`Class`} input={travelClass} />
+              </div>
+              <div className="h-full w-1/2">
+                <InputWithLabel label={`Duration`} input={duration} />
+              </div>
+            </div>
+
+          </div>
+          <div className=" flex h-[20%]">
+            <div className="h-full w-1/2 flex ">
+              <div className="h-full w-1/2 ">
+                <InputWithLabel label={`Branch`} input={branch} />
+              </div>
+              <div className="h-full w-1/2">
+                <InputWithLabel label={`Graduation Year`} input={gradyear} />
+              </div>
+            </div>
+            <div className="h-full w-1/2 flex ">
+              <div className="h-full w-1/2 ">
+                <InputWithLabel label={`Phone Number`} input={phoneNum} />
+              </div>
+              <div className="h-full w-1/2">
+                <InputWithLabel label={`Travel Lane`} input={travelLane} />
+              </div>
+            </div>
+          </div>
+          <div className="h-[40%] flex ">
+            <div className="h-full w-1/2">
+              <InputWithLabel label={`Address`} input={address} />
+            </div>
+            <div className="h-full w-1/2 flex flex-col">
+              <div className="w-full h-1/2 flex items-end justify-center">
+                <button
+                  className="bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
+                  onClick={handleApprove}
+                  >
+                  Approve
+                </button>
+              </div>
+              <div className="w-full h-1/2 flex items-center justify-center">
+                <button
+                  className="bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
+                  onClick={handleReject}
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+        <div className="w-[30%] h-full flex flex-col  overflow-auto">
+          <div className="m-2 h-[33.333%]">
+            <img className="rounded-lg" src={idCardURL} alt="idCarUrl" />
+          </div>
+          <div className="m-2 h-[33.333%]">
+            <img className="rounded-lg" src={idCardURL2} alt="idCarUrl2" />
+          </div>
+          <div className="m-2 h-[33.333%]">
+            <img className="rounded-lg" src={previousPassURL} alt="previousPassUrl" />
           </div>
         </div>
       </div>
