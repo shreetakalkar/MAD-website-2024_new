@@ -491,7 +491,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
         </div>
       </div> */}
 
-      <div className="p-[0.8%] flex rounded-xl bg-white border-[2px] border-[#bfc3c7] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
+      <div className="p-[0.8%] flex rounded-xl border-[2px] border-[#bfc3c7] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="w-[70%] h-full flex flex-col">
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 ">
