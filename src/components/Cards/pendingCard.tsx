@@ -254,8 +254,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // State for image modal
   const [imageSrc, setImageSrc] = useState(""); // State for image source
 
-  const currentYear = currentUserYear(gradyear);
-
   const handleApprove = () => {
     setModalAction("Approve");
     setIsModalOpen(true);
@@ -461,6 +459,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
             <div className="h-[14.2857142857%] flex w-[100%] ">
               <div className="w-[50%] flex items-center  justify-center">
+
                 <button
                   disabled={isButtonDisabled()}
                   className="disabled:opacity-80 disabled:cursor-not-allowed bg-green-500 w-[80%] h-[50%] text-white bg- py-2 px-4 rounded hover:bg-green-600"
