@@ -36,6 +36,26 @@ const currentUserYear = (gradyear: string) => {
     return "BE";
   }
 };
+const isButtonDisabled = () => {
+  const now = new Date();
+  const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const hour = now.getHours();
+
+  // Disable button from Friday 2 PM to Monday 8 AM
+  if (day === 5 && hour >= 14) {
+    // Friday after 2 PM
+    return true;
+  }
+  if (day === 6 || (day === 0 && hour < 8)) {
+    // Saturday or Sunday before 8 AM
+    return true;
+  }
+  if (day === 1 && hour < 8) {
+    // Monday before 8 AM
+    return true;
+  }
+  return false;
+};
 
 function InputWithLabel({ label, input }: { label: any; input: any }) {
   return (
@@ -261,11 +281,11 @@ const PendingCard: React.FC<PendingCardProps> = ({
 
     let passCollected = null;
 
-    if (modalAction=="Approve") {
+    if (modalAction == "Approve") {
       passCollected = {
         date: null,
         collected: "0",
-      }
+      };
     }
 
     const updatedConcessionRequestFields = {
@@ -442,7 +462,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
             <div className="h-[14.2857142857%] flex w-[100%] ">
               <div className="w-[50%] flex items-center  justify-center">
                 <button
-                  className="bg-green-500 w-[80%] h-[50%] text-white bg- py-2 px-4 rounded hover:bg-green-600"
+                  disabled={isButtonDisabled()}
+                  className="disabled:opacity-80 disabled:cursor-not-allowed bg-green-500 w-[80%] h-[50%] text-white bg- py-2 px-4 rounded hover:bg-green-600"
                   onClick={handleApprove}
                 >
                   Approve
@@ -450,7 +471,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
               <div className="w-[50%]   flex items-center justify-center">
                 <button
-                  className="bg-red-500 text-white  w-[80%] h-[50%] py-2 px-4 rounded hover:bg-red-600"
+                  disabled={isButtonDisabled()}
+                  className="disabled:opacity-80 disabled:cursor-not-allowed bg-red-500 text-white  w-[80%] h-[50%] py-2 px-4 rounded hover:bg-red-600"
                   onClick={handleReject}
                 >
                   Reject
