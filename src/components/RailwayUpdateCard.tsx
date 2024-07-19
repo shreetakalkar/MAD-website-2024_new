@@ -481,7 +481,7 @@ const RailwayUpdateCard = ({
                                         key={index}
                                         value={year.gradYear}
                                       >
-                                        {year.gradYear}
+                                        {year.year}
                                       </SelectItem>
                                     );
                                   })}

@@ -533,6 +533,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
             <div className="h-full w-1/2 flex flex-col">
               <div className="w-full h-1/2 flex items-end justify-center">
+
                 <button
                   className="bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleApprove}
