@@ -6,7 +6,12 @@ import DevsDark from "@/public/images/devs-dark.png";
 import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
 import { LogOut, User } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useUser } from "@/providers/UserProvider";
 import { auth } from "@/config/firebase";
 import { useRouter } from "next/navigation";
@@ -35,7 +40,12 @@ const Header = ({ userType }: { userType: string }) => {
     <div className={`w-full border-b ${theme} hidden md:flex`}>
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center">
-          <Image src={theme == "dark" ? DevsDark : DevsLight} alt="logo" width={65} height={65} />
+          <Image
+            src={theme == "dark" ? DevsDark : DevsLight}
+            alt="logo"
+            width={65}
+            height={65}
+          />
           <div className="ml-5 space-x-6">
             <LeftSideLinks userType={userType} />
           </div>
