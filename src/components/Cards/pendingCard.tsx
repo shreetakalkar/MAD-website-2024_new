@@ -228,8 +228,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // State for image modal
   const [imageSrc, setImageSrc] = useState(""); // State for image source
 
-  const currentYear = currentUserYear(gradyear);
-
   const handleApprove = () => {
     setModalAction("Approve");
     setIsModalOpen(true);
@@ -493,7 +491,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Branch`} input={branch} />
               </div>
               <div className="h-full w-1/2">
-                <InputWithLabel label={`Graduation Year`} input={gradyear} />
+                <InputWithLabel label={`Graduation Year`} input={currentUserYear(gradyear)} />
               </div>
             </div>
             <div className="h-full w-1/2 flex ">
