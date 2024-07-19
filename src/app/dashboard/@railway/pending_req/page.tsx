@@ -103,11 +103,16 @@ const PendingRequests = () => {
   };
 
   return (
-    <div>
+    <div className="p-2">
       {loading ? (
         <p>Loading...</p>
       ) : data.length > 0 ? (
         <div className="flex flex-col space-y-2">
+          <div className="w-[100%] text-right">
+            <h2 className=" float-right p-3 rounded-md  bg-[#6c6c6c67]">
+              Passes remaining : {data.length}
+            </h2>
+          </div>
           {data.map((item, index) => (
             <PendingCard
               key={index}
@@ -117,7 +122,7 @@ const PendingRequests = () => {
               lastName={item.lastName}
               gender={item.gender}
               from={item.from}
-              to={item.to}  
+              to={item.to}
               travelLane={item.travelLane}
               travelClass={item.class}
               duration={item.duration}

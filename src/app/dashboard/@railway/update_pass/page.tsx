@@ -86,9 +86,6 @@ const RailwayUpdateConc = () => {
     const fetchAllRecentPasses = async () => {
       setLoading(true);
       try {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
         const concessionDetailsRef = collection(db, "ConcessionDetails");
         const q = query(
           concessionDetailsRef,
@@ -101,25 +98,22 @@ const RailwayUpdateConc = () => {
 
             for (const docSnap of snapshot.docs) {
               const enquiry = docSnap.data();
-              const lastPassIssued = enquiry.lastPassIssued?.toDate();
 
-              if (lastPassIssued >= sevenDaysAgo) {
-                const concessionRequestRef = doc(
-                  db,
-                  "ConcessionRequest",
-                  docSnap.id
-                );
-                const requestDocSnap = await getDoc(concessionRequestRef);
+              const concessionRequestRef = doc(
+                db,
+                "ConcessionRequest",
+                docSnap.id
+              );
+              const requestDocSnap = await getDoc(concessionRequestRef);
 
-                if (requestDocSnap.exists()) {
-                  enquiry.certNo = requestDocSnap.data().passNum;
-                  enquiry.uid = requestDocSnap.data().uid;
-                  enquiry.dob = enquiry.dob.toDate();
-                  enquiry.doi = enquiry.lastPassIssued.toDate();
-                  enquiry.gradyear = enquiry.gradyear.toString();
+              if (requestDocSnap.exists()) {
+                enquiry.certNo = requestDocSnap.data().passNum;
+                enquiry.uid = requestDocSnap.data().uid;
+                enquiry.dob = enquiry.dob.toDate();
+                enquiry.doi = enquiry.lastPassIssued.toDate();
+                enquiry.gradyear = enquiry.gradyear.toString();
 
-                  fetchedPasses.push(enquiry);
-                }
+                fetchedPasses.push(enquiry);
               }
             }
 
