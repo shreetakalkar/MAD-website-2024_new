@@ -41,7 +41,7 @@ export default function Home({
 
   return (
     <ProtectionProvider>
-      <div className={`min-h-screen j w-full ${theme}`}>
+      <div className={`min-h-screen w-full ${theme}`}>
         <Header userType={userType ? userType : ""} />
         <MobileHeader userType={userType ? userType : ""} />
         <div className="min-h-screen flex flex-col mt-4">
