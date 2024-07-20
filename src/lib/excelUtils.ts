@@ -1,3 +1,4 @@
+
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 import ExcelJS from "exceljs";
 
@@ -262,23 +263,41 @@ export const createExcelFile = async (
         return `${day}/${month}/${year}`;
       };
 
-      const rowData = {
-        srno: index + 1,
-        passNum: enquiry.passNum,
-        name: `${enquiry.lastName} ${enquiry.firstName} ${enquiry.middleName}`,
-        gender: enquiry.gender === "Male" ? "M" : "F",
-        dob: formatDate(enquiry.dob.toDate()),
-        from: enquiry.from,
-        to: enquiry.to,
-        class: enquiry.class,
-        mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
-        lastPassIssued: enquiry.lastPassIssued
-          ? formatDate(enquiry.lastPassIssued.toDate())
-          : "",
-        address: enquiry.address,
-      };
-
-      worksheet.addRow(rowData);
+      if (enquiry.status === 'cancelled') {
+        const row = worksheet.addRow({
+          srno: index + 1,
+          passNum: enquiry.passNum,
+          name: '',
+          gender: '',
+          dob: '',
+          from: '',
+          to: '',
+          class: '',
+          mode: '',
+          lastPassIssued: '',
+          address: '',
+        });
+        worksheet.mergeCells(`C${row.number}:K${row.number}`);
+        worksheet.getCell(`C${row.number}`).value = 'Cancelled';
+        worksheet.getCell(`C${row.number}`).alignment = { horizontal: 'center' };
+      } else {
+        const rowData = {
+          srno: index + 1,
+          passNum: enquiry.passNum,
+          name: `${enquiry.lastName} ${enquiry.firstName} ${enquiry.middleName}`,
+          gender: enquiry.gender === "Male" ? "M" : "F",
+          dob: formatDate(enquiry.dob.toDate()),
+          from: enquiry.from,
+          to: enquiry.to,
+          class: enquiry.class,
+          mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
+          lastPassIssued: enquiry.lastPassIssued
+            ? formatDate(enquiry.lastPassIssued.toDate())
+            : "",
+          address: enquiry.address,
+        };
+        worksheet.addRow(rowData);
+      }
     });
 
     const buffer = await workbook.xlsx.writeBuffer();

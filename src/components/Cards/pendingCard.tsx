@@ -37,26 +37,26 @@ const currentUserYear = (gradyear: string) => {
   }
 };
 
-const isButtonDisabled = () => {
-  const now = new Date();
-  const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const hour = now.getHours();
+// const isButtonDisabled = () => {
+//   const now = new Date();
+//   const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+//   const hour = now.getHours();
 
-  // Disable button from Friday 2 PM to Monday 8 AM
-  if (day === 5 && hour >= 14) {
-    // Friday after 2 PM
-    return true;
-  }
-  if (day === 6 || (day === 0 && hour < 8)) {
-    // Saturday or Sunday before 8 AM
-    return true;
-  }
-  if (day === 1 && hour < 8) {
-    // Monday before 8 AM
-    return true;
-  }
-  return false;
-};
+//   // Disable button from Friday 2 PM to Monday 8 AM
+//   if (day === 5 && hour >= 14) {
+//     // Friday after 2 PM
+//     return true;
+//   }
+//   if (day === 6 || (day === 0 && hour < 8)) {
+//     // Saturday or Sunday before 8 AM
+//     return true;
+//   }
+//   if (day === 1 && hour < 8) {
+//     // Monday before 8 AM
+//     return true;
+//   }
+//   return false;
+// };
 
 function InputWithLabel({ label, input }: { label: any; input: any }) {
   return (
@@ -555,7 +555,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
             <div className="h-full w-1/2 flex flex-col">
               <div className="w-full h-1/2 flex items-end justify-center">
                 <button
-                  disabled={isButtonDisabled()}
+                  // disabled={isButtonDisabled()}
                   className="disabled:opacity-85 disabled:cursor-not-allowed disabled:hover:bg-green-500 bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleApprove}
                 >
@@ -564,7 +564,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
               <div className="w-full h-1/2 flex items-center justify-center">
                 <button
-                  disabled={isButtonDisabled()}
+                  // disabled={isButtonDisabled()}
                   className="disabled:opacity-85 disabled:cursor-not-allowed  disabled:hover:bg-red-500 bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleReject}
                 >
