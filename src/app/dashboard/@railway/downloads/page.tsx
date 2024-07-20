@@ -126,7 +126,7 @@ const Downloads: React.FC = () => {
       const enquiry = uniqueData[i];
 
       if (
-        enquiry.status === "serviced" &&
+        (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
         (enquiry.travelLane === "Western" || enquiry.travelLane === "Harbour")
       ) {
         if (

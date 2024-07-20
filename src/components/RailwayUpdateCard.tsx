@@ -34,7 +34,7 @@ import { branches } from "@/constants/branches";
 import useGradYear from "@/constants/gradYearList";
 import { Textarea } from "@/components/ui/textarea";
 import { travelFromLocations } from "@/constants/travelFromLocations";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 const RailwayUpdateCard = ({
@@ -160,6 +160,37 @@ const RailwayUpdateCard = ({
         statusMessage: statusMessage || "Your form has been cancelled",
         passCollected: null,
       });
+
+      // Update history array in concessionHistory
+      const historyRef = doc(db, "ConcessionHistory", "History");
+      const historySnap = await getDoc(historyRef);
+
+      if (historySnap.exists()) {
+        let history = historySnap.data().history;
+
+        let updated = false;
+
+        console.log("Pass: ", passData.certNo)
+
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].passNum === passData.certNo) {
+            history[i].status = "cancelled";
+            updated = true;
+            break;
+          }
+        }
+
+        if (updated) {
+          await updateDoc(historyRef, {
+            history: history,
+          });
+        } else {
+          console.error("Pass number not found in history.");
+        }
+
+      } else {
+        console.error("History document does not exist.");
+      }
     } catch (error) {
       console.error("Error ", error);
     }
@@ -167,6 +198,54 @@ const RailwayUpdateCard = ({
     setIsEditable(false);
     setLoading(false);
   };
+
+  // const cancelForm = async () => {
+  //   try {
+  //     // Update ConcessionDetails
+  //     const concessionRef = doc(db, "ConcessionDetails", passData.uid);
+  //     await updateDoc(concessionRef, {
+  //       status: "rejected",
+  //       statusMessage: statusMessage || "Your form has been cancelled",
+  //     });
+  
+  //     // Update ConcessionRequest
+  //     const concessionReqRef = doc(db, "ConcessionRequest", passData.uid);
+  //     await updateDoc(concessionReqRef, {
+  //       status: "rejected",
+  //       statusMessage: statusMessage || "Your form has been cancelled",
+  //       passCollected: null,
+  //     });
+  
+  //     // Update history array in concessionHistory
+  //     const historyRef = doc(db, "concessionHistory", "History");
+  //     const historySnap = await getDoc(historyRef);
+  
+  //     if (historySnap.exists()) {
+  //       let history = historySnap.data().history as { passNum: string; status: string }[];
+  //       const passIndex = history.findIndex((entry) => entry.passNum === "Z123");
+  
+  //       if (passIndex !== -1) {
+  //         history[passIndex].status = "cancelled";
+  
+  //         await updateDoc(historyRef, {
+  //           history: history,
+  //         });
+  //       } else {
+  //         console.error("Pass number not found in history.");
+  //       }
+  //     } else {
+  //       console.error("History document does not exist.");
+  //     }
+  
+  //   } catch (error) {
+  //     console.error("Error ", error);
+  //   }
+  
+  //   setIsEditable(false);
+  //   setLoading(false);
+  // };
+  
+
 
   const handleSave = (message: string) => {
     setIsModalOpen(false);
@@ -768,32 +847,32 @@ const RailwayUpdateCard = ({
 
       {isModalOpen ? (
         <div className="fixed inset-0 flex items-center z-[100] justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-400 p-6 rounded-lg shadow-lg flex flex-col justify-between h-[30vh] w-[60vh]">
-            <input
-              type="text"
-              value={statusMessage}
-              onChange={(e) => setStatusMessage(e.target.value)}
-              placeholder="Enter status message"
-              className="border rounded-lg w-[100%] p-2"
-            />
-            <div className="flex w-[100%] items-center justify-end">
-              <div className="">
-                <button
-                  onClick={() => handleSave(statusMessage)}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-blue-400 mr-5"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col justify-between h-[40vh] w-[50vw] max-w-md">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-4">Delete Pass</h2>
+          <input
+            type="text"
+            value={statusMessage}
+            onChange={(e) => setStatusMessage(e.target.value)}
+            placeholder="Enter Reason for Cancellation"
+            className="border border-gray-300 dark:border-gray-700 rounded-lg w-full p-3 mb-4 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+          />
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={() => handleSave(statusMessage)}
+              className="bg-red-500 text-white px-5 py-3 rounded-lg shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              Delete Pass
+            </button>
+            <button
+              onClick={handleCancel}
+              className="bg-gray-100 text-gray-800 px-5 py-3 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              Cancel
+            </button>
           </div>
         </div>
+      </div>
+
       ) : null}
     </>
   );
