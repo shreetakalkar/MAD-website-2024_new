@@ -1,3 +1,5 @@
+// TABLE FOR APPROVE_REJECTED COMPONENT
+
 "use client";
 
 import {

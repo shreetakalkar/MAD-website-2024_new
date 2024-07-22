@@ -1,6 +1,7 @@
 
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 import ExcelJS from "exceljs";
+import { Bold } from "lucide-react";
 
 // export const createExcelFile = async (
 //   enquiries: BatchElement
@@ -193,23 +194,23 @@ export const createExcelFile = async (
 
     // Define the columns for the worksheet
     const columns = [
-      { header: "Sr no", key: "srno", width: 3.86 },
-      { header: "Certificate number", key: "passNum", width: 10.57 },
-      { header: "Name", key: "name", width: 26.43 },
-      { header: "M/F", key: "gender", width: 2.67 },
-      { header: "Date of Birth", key: "dob", width: 9.57 },
-      { header: "From", key: "from", width: 10.86 },
-      { header: "To", key: "to", width: 10.86 },
-      { header: "Class I/II", key: "class", width: 6 },
-      { header: "Mode M / Q", key: "mode", width: 6.17 },
-      { header: "Date of Issue", key: "lastPassIssued", width: 9.57 },
-      { header: "Address", key: "address", width: 38.57 },
+      { header: "Sr no", key: "srno", width: 4.725 },
+      { header: "Certificate number", key: "passNum", width: 13.2 },
+      { header: "Name", key: "name", width: 32.9125 },
+      { header: "M/F", key: "gender", width: 3.2 },
+      { header: "Date of Birth", key: "dob", width: 11.95 },
+      { header: "From", key: "from", width: 13.475 },
+      { header: "To", key: "to", width: 13.475 },
+      { header: "Class I/II", key: "class", width: 7.3625 },
+      { header: "Mode M / Q", key: "mode", width: 7.3625 },
+      { header: "Date of Issue", key: "lastPassIssued", width: 11.95 },
+      { header: "Address", key: "address", width: 48.2 },
     ];
 
     worksheet.columns = columns;
 
     // Set row height and margins
-    worksheet.properties.defaultRowHeight = 30;
+    worksheet.properties.defaultRowHeight = 39.375;
     worksheet.pageSetup.margins = {
       top: 0.3,
       left: 0.5,
@@ -226,32 +227,51 @@ export const createExcelFile = async (
       vertical: "middle",
       horizontal: "center",
     };
-    worksheet.getRow(1).height = 30;
+    worksheet.getRow(1).height = 32.25;
     worksheet.getCell("A1").font = { size: 20, bold: true };
 
     // Subheading row
     worksheet.mergeCells("A2:K2");
     worksheet.getCell(
       "A2"
-    ).value = `Railway Concessions for ${batch.lane} Railway`;
+    ).value = `Railway Concession for ${batch.lane} Railway`;
     worksheet.getCell("A2").alignment = {
       vertical: "middle",
       horizontal: "center",
     };
-    worksheet.getRow(2).height = 20;
-    worksheet.getCell("A2").font = { size: 14 };
+    worksheet.getRow(2).height = 22.5;
+    worksheet.getCell("A2").font = { size: 14, bold: true };
+
+    const applyBorders = (row: ExcelJS.Row) => {
+      row.eachCell((cell: ExcelJS.Cell) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    };
+    applyBorders(worksheet.getRow(1));
+    applyBorders(worksheet.getRow(2));
 
     worksheet.columns.forEach((column) => {
       column.style = { font: { size: 12 } };
     });
 
-    worksheet.addRow(columns.map((col) => col.header));
-    // Apply wrapText only to the header row
-    worksheet.getRow(3).eachCell((cell) => {
+    // Add the header row and apply bold font style
+    const headerRow = worksheet.addRow(columns.map((col) => col.header));
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, size: 12 };
       cell.alignment = { wrapText: true, horizontal: "center" };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
     });
-    worksheet.getRow(3).commit();
-    worksheet.getRow(3).height = 45;
+    headerRow.height = 36;
 
     // Add the data rows to the worksheet
     batch.enquiries.forEach((enquiry, index) => {
@@ -278,13 +298,23 @@ export const createExcelFile = async (
           address: '',
         });
         worksheet.mergeCells(`C${row.number}:K${row.number}`);
-        worksheet.getCell(`C${row.number}`).value = 'Cancelled';
-        worksheet.getCell(`C${row.number}`).alignment = { horizontal: 'center' };
+        worksheet.getCell(`C${row.number}`).value = '----------------------------------------------------------------------------------------------------C-A-N-C-E-L-L-E-D----------------------------------------------------------------------------------------------------';
+        worksheet.getRow(row.number).alignment = { horizontal: 'center', vertical: 'middle'};
+        worksheet.getRow(row.number).height = 39.375;
+
+        row.eachCell((cell) => {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+        });
       } else {
         const rowData = {
           srno: index + 1,
           passNum: enquiry.passNum,
-          name: `${enquiry.lastName} ${enquiry.firstName} ${enquiry.middleName}`,
+          name: `${enquiry.lastName.toUpperCase()} ${enquiry.firstName.toUpperCase()} ${enquiry.middleName.toUpperCase()}`,
           gender: enquiry.gender === "Male" ? "M" : "F",
           dob: formatDate(enquiry.dob.toDate()),
           from: enquiry.from,
@@ -296,7 +326,18 @@ export const createExcelFile = async (
             : "",
           address: enquiry.address,
         };
-        worksheet.addRow(rowData);
+        const row = worksheet.addRow(rowData);
+        worksheet.getRow(row.number).alignment = { horizontal: 'center', vertical: "top", wrapText: true};
+        worksheet.getRow(row.number).height = 39.375;
+
+        row.eachCell((cell) => {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+        });
       }
     });
 

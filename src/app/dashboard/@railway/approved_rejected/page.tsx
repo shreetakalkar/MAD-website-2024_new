@@ -6,6 +6,7 @@ import { db } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { dateFormat} from "@/constants/dateFormat"
 
 const Approved_Rejected = () => {
   interface Data {
@@ -167,35 +168,65 @@ const Approved_Rejected = () => {
       try {
         const concessionHistoryRef = collection(db, "ConcessionHistory");
         const querySnapshot = await getDocs(concessionHistoryRef);
-
-        const userList = querySnapshot.docs.flatMap((doc) =>
-          doc.data().history.map((item: any) => ({
-            certificateNumber: item.passNum || "N/A",
-            name: item.firstName || "N/A",
-            gender: item.gender || "N/A",
-            dob: item.dob?.seconds
-              ? new Date(item.dob.seconds * 1000).toLocaleDateString()
-              : "N/A",
-            from: item.from || "N/A",
-            to: item.to || "N/A",
-            class: item.class || "N/A",
-            mode: item.duration || "N/A",
-            dateOfIssue: item.lastPassIssued?.seconds
-              ? new Date(
-                  item.lastPassIssued.seconds * 1000
-                ).toLocaleDateString()
-              : "N/A",
-            address: item.address || "N/A",
-            status: item.status || "N/A",
-          }))
-        );
-
+      
+        const userMap = new Map<string, {
+          certificateNumber: string;
+          name: string;
+          gender: string;
+          dob: string;
+          from: string;
+          to: string;
+          class: string;
+          mode: string;
+          dateOfIssue: string;
+          address: string;
+          status: string;
+          index: number;
+        }>();
+      
+        querySnapshot.docs.forEach((doc) => {
+          const history = doc.data().history;
+      
+          history.forEach((item: any, index: number) => {
+            if (item.status === "serviced" || item.status === "cancelled") {
+              const existingItem = userMap.get(item.passNum);
+      
+              if (!existingItem || existingItem.index < index) {
+                userMap.set(item.passNum, {
+                  certificateNumber: item.passNum || "N/A",
+                  name: item.firstName || "N/A",
+                  gender: item.gender || "N/A",
+                  dob: item.dob?.seconds
+                    ? dateFormat(item.dob.seconds)
+                    : "N/A",
+                  from: item.from || "N/A",
+                  to: item.to || "N/A",
+                  class: item.class || "N/A",
+                  mode: item.duration || "N/A",
+                  dateOfIssue: item.lastPassIssued?.seconds
+                    ? dateFormat(item.lastPassIssued.seconds)
+                    : "N/A",
+                  address: item.address || "N/A",
+                  status: item.status || "N/A",
+                  index: index
+                });
+              }
+            }
+          });
+        });
+      
+        const userList = Array.from(userMap.values()).map((item) => {
+          const { index, ...rest } = item;
+          return rest;
+        });
+      
         setData(userList);
       } catch (err) {
         console.error("Error fetching data: ", err);
       } finally {
         setLoading(false);
       }
+          
     };
 
     fetchUserData();
@@ -207,7 +238,7 @@ const Approved_Rejected = () => {
 //test123
   return (
     <div>
-      <div className="w-[73vw] h-[99vh] flex flex-col">
+      <div className="w-[99vw] h-[99vh] flex flex-col">
         <div className="h-[100%] flex items-center justify-center">
           <div className="overflow-auto m-2 w-[100%] h-[100%]">
             <DataTable data={data} columns={columns} />

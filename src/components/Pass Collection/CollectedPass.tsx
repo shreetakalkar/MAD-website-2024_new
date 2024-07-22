@@ -18,6 +18,7 @@ import { CollectionDisplayTable } from "./CollectionDisplayTable";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import useGradYear from "@/constants/gradYearList";
+import { dateFormat } from "@/constants/dateFormat";
 
 interface Data {
   certNo: string;
@@ -26,6 +27,7 @@ interface Data {
   branch: string;
   gradYear: string;
   lastPassIssued: Date;
+  collectedDate: Date | string;
 }
 
 const CollectedPassTable: React.FC = () => {
@@ -109,6 +111,10 @@ const CollectedPassTable: React.FC = () => {
       accessorKey: "gradYear",
       header: "Year",
     },
+    {
+      accessorKey: "collectedDate",
+      header: "Collected Date"
+    }
   ];
 
   const [data, setData] = useState<Data[]>([]);
@@ -146,6 +152,7 @@ const CollectedPassTable: React.FC = () => {
               branch: detailsData?.branch || "",
               gradYear: currentUserYear(detailsData?.gradyear) || "",
               lastPassIssued: detailsData.lastPassIssued?.toDate(),
+              collectedDate: collectedValue === "1" ? dateFormat(requestDoc.data().passCollected.date.toDate()) : "-"
             };
             fetchedData.push(studentDetails);
           }
@@ -227,7 +234,7 @@ const CollectedPassTable: React.FC = () => {
   }
 
   return (
-    <div className="w-[75%] h-[90%] flex flex-col">
+    <div className="w-[99%] h-[90%] flex flex-col">
       <div className="flex items-center justify-center h-full">
         <div className="m-2 w-full h-full">
           <CollectionDisplayTable data={data} columns={columns} />
