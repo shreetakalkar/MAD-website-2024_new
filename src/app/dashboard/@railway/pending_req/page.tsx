@@ -4,6 +4,8 @@ import { db } from "@/config/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import PendingCard from "@/components/Cards/pendingCard";
+import { ClipLoader } from "react-spinners";
+
 
 const PendingRequests = () => {
   const [data, setData] = useState<Data[]>([]);
@@ -127,9 +129,11 @@ const PendingRequests = () => {
   };
 
   return (
-    <div className="p-2 flex items-center justify-center h-screen">
+    <div className="p-2">
       {loading ? (
-        <p>Loading...</p>
+          <div className="flex items-center justify-center h-screen">
+            <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
       ) : data.length > 0 ? (
         <div className="flex flex-col space-y-2">
           <div className="w-[100%] text-right">
