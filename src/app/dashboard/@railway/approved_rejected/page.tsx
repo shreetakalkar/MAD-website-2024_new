@@ -7,6 +7,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { dateFormat} from "@/constants/dateFormat"
+import { ClipLoader } from "react-spinners";
+
 
 const Approved_Rejected = () => {
   interface Data {
@@ -233,7 +235,9 @@ const Approved_Rejected = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return         <div className="flex items-center justify-center h-screen">
+                      <ClipLoader size={50} color={"#123abc"} loading={loading} />
+                  </div>
   }
 //test123
   return (

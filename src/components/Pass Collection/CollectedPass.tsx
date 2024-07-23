@@ -19,6 +19,8 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import useGradYear from "@/constants/gradYearList";
 import { dateFormat } from "@/constants/dateFormat";
+import { ClipLoader } from "react-spinners";
+
 
 interface Data {
   certNo: string;
@@ -230,7 +232,9 @@ const CollectedPassTable: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return   <div className="flex items-center justify-center h-screen">
+                <ClipLoader size={50} color={"#123abc"} loading={loading} />
+             </div>
   }
 
   return (
