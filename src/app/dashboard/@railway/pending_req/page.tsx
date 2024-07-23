@@ -1,9 +1,11 @@
 "use client";
 
 import { db } from "@/config/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import PendingCard from "@/components/Cards/pendingCard";
+import { ClipLoader } from "react-spinners";
+
 
 const PendingRequests = () => {
   const [data, setData] = useState<Data[]>([]);
@@ -41,11 +43,10 @@ const PendingRequests = () => {
         const concessionDetailsRef = collection(db, "ConcessionDetails");
         const querySnapshot = await getDocs(concessionDetailsRef);
         console.log(querySnapshot);
-
+    
         const userList = querySnapshot.docs
           .map((doc) => {
             const data = doc.data();
-            console.log(data.travelLane);
             return {
               id: doc.id,
               address: data.address || "N/A",
@@ -65,9 +66,7 @@ const PendingRequests = () => {
               lastName: data.lastName || "N/A",
               lastPassIssued:
                 data.lastPassIssued && data.lastPassIssued.seconds
-                  ? new Date(
-                      data.lastPassIssued.seconds * 1000
-                    ).toLocaleDateString()
+                  ? new Date(data.lastPassIssued.seconds * 1000).toLocaleDateString()
                   : "N/A",
               middleName: data.middleName || "N/A",
               phoneNum: data.phoneNum || 0,
@@ -81,12 +80,39 @@ const PendingRequests = () => {
             };
           })
           .filter((item) => item.status === "unserviced");
-
+    
         userList.forEach((item) => {
           console.log(item.id);
         });
-
-        setData(userList);
+        
+        //Fetching to sort acc to time of application
+        const userWithTimes = await Promise.all(userList.map(async (item) => {
+          try {
+            const docRef = doc(db, "ConcessionRequest", item.id);
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+              const time = docSnap.data().time;
+              return {
+                ...item,
+                time: time ? new Date(time.seconds * 1000) : new Date(0),
+              };
+            } else {
+              console.log(`No data found for user ${item.id}`);
+              return { ...item, time: new Date(0) };
+            }
+          } catch (error) {
+            console.error(`Error fetching data for user ${item.id}:`, error);
+            return { ...item, time: new Date(0) };
+          }
+        }));
+    
+        //sorting
+        const sortedUserList = userWithTimes.sort((a, b) => {
+          return a.time.getTime() - b.time.getTime();
+        });
+    
+        setData(sortedUserList);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -103,11 +129,18 @@ const PendingRequests = () => {
   };
 
   return (
-    <div>
+    <div className="p-2">
       {loading ? (
-        <p>Loading...</p>
+          <div className="flex items-center justify-center h-screen">
+            <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
       ) : data.length > 0 ? (
         <div className="flex flex-col space-y-2">
+          <div className="w-[100%] text-right">
+            <h2 className="float-right p-3 rounded-md text-[#3a3737b1]">
+              Passes remaining : {data.length}
+            </h2>
+          </div>
           {data.map((item, index) => (
             <PendingCard
               key={index}
@@ -117,7 +150,7 @@ const PendingRequests = () => {
               lastName={item.lastName}
               gender={item.gender}
               from={item.from}
-              to={item.to}  
+              to={item.to}
               travelLane={item.travelLane}
               travelClass={item.class}
               duration={item.duration}
@@ -138,10 +171,11 @@ const PendingRequests = () => {
           ))}
         </div>
       ) : (
-        <p>No pending requests</p>
+        <p className="text-center">No pending requests</p>
       )}
     </div>
   );
+  
 };
 
 export default PendingRequests;

@@ -1,3 +1,5 @@
+// TABLE FOR APPROVE_REJECTED COMPONENT
+
 "use client";
 
 import {
@@ -69,6 +71,20 @@ export default function DataTable<TData, TValue>({
               ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
+        />
+        <Input
+          placeholder="Filter Name..."
+          value={
+            (table
+              .getColumn("name")
+              ?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table
+              .getColumn("name")
+              ?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm ml-2"
         />
       </div>
       <div className="rounded-md border">

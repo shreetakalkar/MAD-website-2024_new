@@ -5,6 +5,8 @@ import { db } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import { ClipLoader } from "react-spinners";
+
 
 const RailwayEntryInterface = () => {
   const [emails, setEmails] = useState<string[]>([]);
@@ -69,18 +71,24 @@ const RailwayEntryInterface = () => {
 
   return (
     <>
-      {loading && <p>Loading...</p>}
-      <div
-        style={{
-          overflow: "auto",
-          WebkitOverflowScrolling: "touch",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-        className="flex justify-center p-10 "
-      >
-        <CreateNewPass formSchema={formSchema} emails={emails} />
-      </div>
+      {loading && (
+        <div className="flex items-center justify-center h-screen">
+          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
+      )}
+      {!loading && (
+        <div
+          style={{
+            overflow: "auto",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+          className="flex justify-center p-10"
+        >
+          <CreateNewPass formSchema={formSchema} emails={emails} />
+        </div>
+      )}
     </>
   );
 };
