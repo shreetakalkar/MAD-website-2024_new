@@ -25,7 +25,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
     <nav className="flex items-center px-2 text-sm font-medium lg:px-4 space-x-6">
       <Link
         href="/dashboard"
-        className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+        className={getLinkClasses("/dashboard")}
       >
         <Home className="h-4 w-4" />
         Home
