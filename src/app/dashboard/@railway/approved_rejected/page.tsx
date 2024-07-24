@@ -123,13 +123,15 @@ const Approved_Rejected = () => {
     },
     {
       accessorKey: "dateOfIssue",
-      header: "Date of Issue",
-      cell: ({ row }) => {
-        let cellData = row.getValue("dateOfIssue") as string;
+      header: ({ column }) => {
         return (
-          <div className="flex h-[6vh] text-center items-center justify-center ">
-            {cellData}
-          </div>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+           Date of Issue
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
         );
       },
     },
@@ -164,6 +166,7 @@ const Approved_Rejected = () => {
   const [data, setData] = useState<Data[]>([]);
   const [loading, setLoading] = useState(true);
 
+<<<<<<< HEAD
     useEffect(() => {
       const fetchUserData = async () => {
         try {
@@ -384,6 +387,7 @@ const Approved_Rejected = () => {
 
       fetchUserData();
     }, []);
+
 
   if (loading) {
     return (
