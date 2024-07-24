@@ -99,10 +99,18 @@ const RailwayUpdateConc = () => {
             for (const docSnap of snapshot.docs) {
               const enquiry = docSnap.data();
 
-              const concessionRequestRef = doc(db,"ConcessionRequest",docSnap.id);
+              const concessionRequestRef = doc(
+                db,
+                "ConcessionRequest",
+                docSnap.id
+              );
               const requestDocSnap = await getDoc(concessionRequestRef);
 
-              if (requestDocSnap.exists() && (requestDocSnap.data().passCollected.collected.toString()==="1")) {
+              if (
+                requestDocSnap.exists() &&
+                requestDocSnap.data().passCollected?.collected?.toString() ===
+                  "1"
+              ) {
                 enquiry.certNo = requestDocSnap.data().passNum;
                 enquiry.uid = requestDocSnap.data().uid;
                 enquiry.dob = enquiry.dob.toDate();
@@ -152,7 +160,7 @@ const RailwayUpdateConc = () => {
     <>
       {loading && <p>Loading...</p>}
       <div className="w-[95%] flex flex-col gap-[5rem] p-4">
-        {( passArrayLength && (passArrayLength>0) ) ? (
+        {passArrayLength && passArrayLength > 0 ? (
           <div className="flex w-full max-w-sm items-center ml-[1%]">
             <Input
               type="text"
@@ -176,6 +184,5 @@ const RailwayUpdateConc = () => {
       </div>
     </>
   );
-  
 };
 export default RailwayUpdateConc;
