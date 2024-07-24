@@ -67,7 +67,7 @@ const PendingRequests = () => {
               lastPassIssued:
                 data.lastPassIssued && data.lastPassIssued.seconds
                   ? new Date(data.lastPassIssued.seconds * 1000).toLocaleDateString()
-                  : "N/A",
+                  : "No pass",
               middleName: data.middleName || "N/A",
               phoneNum: data.phoneNum || 0,
               status: data.status || "N/A",

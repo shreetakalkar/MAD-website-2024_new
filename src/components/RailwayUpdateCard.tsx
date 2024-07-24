@@ -34,8 +34,9 @@ import { branches } from "@/constants/branches";
 import useGradYear from "@/constants/gradYearList";
 import { Textarea } from "@/components/ui/textarea";
 import { travelFromLocations } from "@/constants/travelFromLocations";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
+import { dateFormat } from "@/constants/dateFormat";
 
 const RailwayUpdateCard = ({
   formSchema,
@@ -133,6 +134,35 @@ const RailwayUpdateCard = ({
       const concessionReqRef = doc(db, "ConcessionRequest", studentId);
       await updateDoc(concessionReqRef, newReqData);
 
+      // For Stats UPDATE PASS
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryRef);
+      const currentDate = dateFormat(new Date())
+  
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+  
+        if (dateIndex >= 0) {
+          statsArray[dateIndex].updatedPass += 1;
+        } else {
+          statsArray.push({
+            date: currentDate,
+            updatedPass: 1,
+          });
+        }
+  
+        await updateDoc(concessionHistoryRef, { stats: statsArray });
+      } else {
+        await setDoc(concessionHistoryRef, {
+          stats: [{
+            date: currentDate,
+            updatedPass: 1,
+          }],
+        });
+      }
+
       toast({ description: "Document updated successfully!" });
     } catch (error) {
       toast({
@@ -190,6 +220,40 @@ const RailwayUpdateCard = ({
       } else {
         console.error("History document does not exist.");
       }
+
+      // For Stats UPDATE PASS
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryRef);
+      const currentDate = dateFormat(new Date());
+  
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+  
+        if (dateIndex >= 0) {
+          if (typeof statsArray[dateIndex].cancelledPass !== 'number') {
+            statsArray[dateIndex].cancelledPass = 0;
+          }
+          statsArray[dateIndex].cancelledPass += 1;
+        } else {
+          statsArray.push({
+            date: currentDate,
+            cancelledPass: 1,
+          });
+        }
+  
+        await updateDoc(concessionHistoryRef, { stats: statsArray });
+      } else {
+        await setDoc(concessionHistoryRef, {
+          stats: [{
+            date: currentDate,
+            cancelledPass: 1
+          }],
+        });
+      }
+
+    toast({ description: "Pass Deleted Successfully !" });
     } catch (error) {
       console.error("Error ", error);
     }

@@ -223,6 +223,140 @@ const Approved_Rejected = () => {
               );
             }
           });
+=======
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const concessionHistoryRef = collection(db, "ConcessionHistory");
+
+  //       const querySnapshot = await getDocs(concessionHistoryRef);
+      
+  //       const userMap = new Map<string, {
+  //         certificateNumber: string;
+  //         name: string;
+  //         gender: string;
+  //         dob: string;
+  //         from: string;
+  //         to: string;
+  //         class: string;
+  //         mode: string;
+  //         dateOfIssue: string;
+  //         address: string;
+  //         status: string;
+  //         index: number;
+  //       }>();
+      
+  //       querySnapshot.docs.forEach((doc) => {
+  //         const history = doc.data().history;
+      
+  //         history.forEach((item: any, index: number) => {
+  //           if (item.status === "serviced" || item.status === "cancelled") {
+  //             const existingItem = userMap.get(item.passNum);
+      
+  //             if (!existingItem || existingItem.index < index) {
+  //               userMap.set(item.passNum, {
+  //                 certificateNumber: item.passNum || "N/A",
+  //                 name: item.firstName || "N/A",
+  //                 gender: item.gender || "N/A",
+  //                 dob: item.dob?.seconds
+  //                   ? dateFormat(item.dob.seconds)
+  //                   : "N/A",
+  //                 from: item.from || "N/A",
+  //                 to: item.to || "N/A",
+  //                 class: item.class || "N/A",
+  //                 mode: item.duration || "N/A",
+  //                 dateOfIssue: item.lastPassIssued?.seconds
+  //                   ? dateFormat(item.lastPassIssued.seconds)
+  //                   : "N/A",
+  //                 address: item.address || "N/A",
+  //                 status: item.status || "N/A",
+  //                 index: index
+  //               });
+  //             }
+  //           }
+  //         });
+  //       });
+
+  //       const parseDate = (dateStr: string): Date => {
+  //         const [day, month, year] = dateStr.split("/").map(Number);
+  //         return new Date(year, month - 1, day);
+  //       };
+
+  //       const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
+  //         const dateA =
+  //           a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
+  //         const dateB =
+  //           b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
+  //         return dateA - dateB; 
+  //       });
+
+  //       const userList = sortedUserArray.map(({ index, ...rest }) => rest);
+      
+      
+  //       setData(userList);
+  //     } catch (err) {
+  //       console.error("Error fetching data: ", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+          
+  //   };
+
+  //   fetchUserData();
+  // }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const concessionHistoryDoc = doc(db, 'ConcessionHistory', 'History');
+        const docSnapshot = await getDoc(concessionHistoryDoc);
+        
+        if (docSnapshot.exists()) {
+          const history = docSnapshot.data().history || [];
+
+          const userMap = new Map();
+          
+          history.forEach((item: any, index: number) => {
+            if (item.status === 'serviced' || item.status === 'cancelled') {
+              const existingItem = userMap.get(item.passNum);
+              
+              if (!existingItem || existingItem.index < index) {
+                userMap.set(item.passNum, {
+                  certificateNumber: item.passNum || 'N/A',
+                  name: item.firstName || 'N/A',
+                  gender: item.gender || 'N/A',
+                  dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : 'N/A',
+                  from: item.from || 'N/A',
+                  to: item.to || 'N/A',
+                  class: item.class || 'N/A',
+                  mode: item.duration || 'N/A',
+                  dateOfIssue: item.lastPassIssued?.seconds ? dateFormat(item.lastPassIssued.seconds) : 'N/A',
+                  address: item.address || 'N/A',
+                  status: item.status || 'N/A',
+                  index: index
+                });
+              }
+            }
+          });
+
+          const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
+            const dateA = a.dateOfIssue !== 'N/A' ? parseDate(a.dateOfIssue).getTime() : 0;
+            const dateB = b.dateOfIssue !== 'N/A' ? parseDate(b.dateOfIssue).getTime() : 0;
+            return dateA - dateB;
+          });
+
+          const userList = sortedUserArray.map(({ index, ...rest }) => rest);
+          setData(userList);
+        } else {
+          console.error('Document does not exist');
+        }
+      } catch (err) {
+        console.error('Error fetching data: ', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+>>>>>>> 791331ee3b902927aa682a4f9a435d48a741e308
 
           const parseDate = (dateStr: string): Date => {
             const [day, month, year] = dateStr.split("/").map(Number);
