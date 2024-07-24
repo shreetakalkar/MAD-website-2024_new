@@ -70,16 +70,38 @@ const Downloads: React.FC = () => {
     }
   };
 
+  // const fetchEnquiries = async () => {
+  //   try {
+  //     const [historyData, downloadHistory] = await Promise.all([
+  //       getDocs(collection(db, "ConcessionHistory")),
+  //       fetchDownloadHistory(),
+  //     ]);
+
+  //     const data = historyData.docs.map((doc) => doc.data());
+  //     if (data.length > 0 && data[0].history) {
+  //       makeBatches(data[0].history, downloadHistory);
+  //     } else {
+  //       setWesternBatchedEnquiries([]);
+  //       setCentralBatchedEnquiries([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch data. Please try again later.",
+  //     });
+  //   }
+  // };
+
   const fetchEnquiries = async () => {
     try {
-      const [historyData, downloadHistory] = await Promise.all([
-        getDocs(collection(db, "ConcessionHistory")),
-        fetchDownloadHistory(),
-      ]);
-
-      const data = historyData.docs.map((doc) => doc.data());
-      if (data.length > 0 && data[0].history) {
-        makeBatches(data[0].history, downloadHistory);
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
+      const docSnap = await getDoc(concessionHistoryRef);
+  
+      const downloadHistory = await fetchDownloadHistory();
+  
+      if (docSnap.exists() && docSnap.data().history) {
+        makeBatches(docSnap.data().history, downloadHistory);
       } else {
         setWesternBatchedEnquiries([]);
         setCentralBatchedEnquiries([]);
@@ -92,6 +114,7 @@ const Downloads: React.FC = () => {
       });
     }
   };
+  
 
   const makeBatches = (data: Enquiry[], downloadHistory: Download[]) => {
     const seenPassNums = new Set<string>();

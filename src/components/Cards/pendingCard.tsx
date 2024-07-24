@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon } from "lucide-react";
 import testimg from "../../public/images/OnlineTraining.png";
+import { dateFormat} from "@/constants/dateFormat"
 
 const currentUserYear = (gradyear: string) => {
   // const gradYearList = useGradYear();
@@ -262,6 +263,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
   idCardURL2,
   previousPassURL,
   onCardUpdate,
+  lastPassIssued,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"Approve" | "Reject">(
@@ -295,7 +297,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
     };
 
     let passCollected = null;
-
+    
     if (modalAction == "Approve") {
       passCollected = {
         date: null,
@@ -318,10 +320,79 @@ const PendingCard: React.FC<PendingCardProps> = ({
       const concessionRequestRef = doc(db, "ConcessionRequest", id);
       await updateDoc(concessionRequestRef, updatedConcessionRequestFields);
 
+      // For Stats UPDATE PASS
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryRef);
+      const currentDate = dateFormat(new Date());
+
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+
+        if (dateIndex >= 0) {
+
+          if (modalAction==="Approve"){
+
+            // Initialize Approved if it doesn't exist
+            if (typeof statsArray[dateIndex].approvedPass !== 'number') {
+              statsArray[dateIndex].approvedPass = 0;
+            }
+            statsArray[dateIndex].approvedPass += 1;
+          } else if (modalAction==="Reject") {
+
+            // Initialize Rejected if it doesn't exist
+            if (typeof statsArray[dateIndex].rejectedPass !== 'number') {
+              statsArray[dateIndex].rejectedPass = 0;
+            }
+            statsArray[dateIndex].rejectedPass += 1;
+          }
+
+        } else {
+
+          if (modalAction==="Approve"){
+
+            // Initialize Approved if it doesn't exist
+            statsArray.push({
+              date: currentDate,
+              approvedPass: 1,
+            });
+          } else if (modalAction==="Reject") {
+
+            // Initialize Rejected if it doesn't exist
+            statsArray.push({
+              date: currentDate,
+              rejectedPass: 1,
+            });
+          }
+        }
+
+        await updateDoc(concessionHistoryRef, { stats: statsArray });
+      } else {
+
+        if (modalAction==="Approve"){
+
+          await setDoc(concessionHistoryRef, {
+            stats: [{
+              date: currentDate,
+              approvedPass: 1
+            }],
+          });
+        } else if (modalAction==="Reject") {
+          
+          await setDoc(concessionHistoryRef, {
+            stats: [{
+              date: currentDate,
+              rejectedPass: 1
+            }],
+          });
+        }
+      }
+
       // Update parent component state to remove this card from the list
       onCardUpdate(id);
       console.log("Document successfully updated");
-    } catch (error) {
+      } catch (error) {
       console.error("Error updating concession request: ", error);
     }
   };
@@ -548,11 +619,16 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div>
           </div>
-          <div className="h-[40%] flex ">
+          <div className="h-[40%] flex">
             <div className="h-full w-1/2">
               <InputWithLabel label={`Address`} input={address} />
             </div>
             <div className="h-full w-1/2 flex flex-col">
+              <div className="w-full h-1/2 flex items-center justify-center mt-4">
+                <span>
+                  <strong>Previous pass issue date: {lastPassIssued}</strong>
+                </span>
+              </div>
               <div className="w-full h-1/2 flex items-end justify-center">
                 <button
                   // disabled={isButtonDisabled()}
