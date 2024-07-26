@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon } from "lucide-react";
 import testimg from "../../public/images/OnlineTraining.png";
 import { dateFormat } from "@/constants/dateFormat";
+import { ClipLoader } from "react-spinners";
 
 const currentUserYear = (gradyear: string) => {
   // const gradYearList = useGradYear();
@@ -399,6 +400,11 @@ const PendingCard: React.FC<PendingCardProps> = ({
 
   return (
     <>
+      {loading && (
+        <div className="flex items-center justify-center h-screen">
+          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
+      )}
       {/* MAYURESH KA COMPONENT */}
       {/* <div className="mx-auto max-w-lg flex flex-col border p-4 rounded shadow">
               <h2 className="text-xl mb-4">Railway Concessions</h2>
