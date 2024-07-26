@@ -16,6 +16,7 @@ import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { ClipLoader } from "react-spinners";
 
 const RailwayUpdateConc = () => {
   const [passes, setPasses] = useState<any[]>([]);
@@ -151,7 +152,7 @@ const RailwayUpdateConc = () => {
   return (
     <>
       {loading && <p>Loading...</p>}
-      <div className="w-[95%] flex flex-col gap-[5rem] p-4">
+      <div className="w-[99%] flex flex-col gap-[5rem] p-4">
         {( passArrayLength && (passArrayLength>0) ) ? (
           <div className="flex w-full max-w-sm items-center ml-[1%]">
             <Input
@@ -162,8 +163,8 @@ const RailwayUpdateConc = () => {
             />
           </div>
         ) : (
-          <div className="flex justify-center items-center h-full">
-            <p>No pass to update</p>
+          <div className="flex justify-center items-center h-screen">
+            <ClipLoader size={50} color={"#123abc"}/>
           </div>
         )}
         {passes.map((pass, index) => {

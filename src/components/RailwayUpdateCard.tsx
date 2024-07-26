@@ -145,6 +145,9 @@ const RailwayUpdateCard = ({
         const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
   
         if (dateIndex >= 0) {
+          if (typeof statsArray[dateIndex].updatedPass !== 'number') {
+            statsArray[dateIndex].updatedPass = 0;
+          }
           statsArray[dateIndex].updatedPass += 1;
         } else {
           statsArray.push({
