@@ -136,6 +136,7 @@ const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
+    
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
       <div
         className={`p-8 rounded-lg shadow-xl w-full max-w-md ${
