@@ -100,10 +100,18 @@ const RailwayUpdateConc = () => {
             for (const docSnap of snapshot.docs) {
               const enquiry = docSnap.data();
 
-              const concessionRequestRef = doc(db,"ConcessionRequest",docSnap.id);
+              const concessionRequestRef = doc(
+                db,
+                "ConcessionRequest",
+                docSnap.id
+              );
               const requestDocSnap = await getDoc(concessionRequestRef);
 
-              if (requestDocSnap.exists() && (requestDocSnap.data().passCollected.collected.toString()==="1")) {
+              if (
+                requestDocSnap.exists() &&
+                requestDocSnap.data().passCollected?.collected?.toString() ===
+                  "1"
+              ) {
                 enquiry.certNo = requestDocSnap.data().passNum;
                 enquiry.uid = requestDocSnap.data().uid;
                 enquiry.dob = enquiry.dob.toDate();
@@ -177,6 +185,5 @@ const RailwayUpdateConc = () => {
       </div>
     </>
   );
-  
 };
 export default RailwayUpdateConc;
