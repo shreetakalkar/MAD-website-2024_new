@@ -64,6 +64,12 @@ export default function Page() {
       const filteredData =
         stats.find((stat) => stat.date === formattedDate) || {};
       const chartData = [
+        { name: "Approved", value: filteredData.approvedPass || 0, fill: "#4CAF50" }, // Green
+        { name: "Cancelled", value: filteredData.cancelledPass || 0, fill: "#F44336" }, // Red
+        { name: "Collected", value: filteredData.collectedPass || 0, fill: "#2196F3" }, // Blue
+        { name: "Created", value: filteredData.createdPass || 0, fill: "#FFC107" }, // Amber
+        { name: "Rejected", value: filteredData.rejectedPass || 0, fill: "#FF5722" }, // Deep Orange
+        { name: "Updated", value: filteredData.updatedPass || 0, fill: "#9C27B0" }  // Purple
         {
           name: "Approved",
           value: filteredData.approvedPass || 0,
@@ -230,64 +236,27 @@ export default function Page() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Approved
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Cancelled
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Collected
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Rejected
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Updated
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approved</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rejected</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collected</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cancelled</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {stats.map((stat) => (
                   <tr key={stat.date} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {stat.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.approvedPass +
-                        stat.cancelledPass +
-                        stat.collectedPass +
-                        stat.createdPass +
-                        stat.rejectedPass +
-                        stat.updatedPass || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.approvedPass || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.cancelledPass || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.collectedPass || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.createdPass || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.rejectedPass || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {stat.updatedPass || 0}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{stat.date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{( (stat.approvedPass || 0) + (stat.cancelledPass || 0) + (stat.collectedPass || 0) + (stat.createdPass || 0) + (stat.rejectedPass || 0) + (stat.updatedPass || 0 )) || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stat.createdPass || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stat.approvedPass || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stat.rejectedPass || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stat.collectedPass || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stat.updatedPass || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{stat.cancelledPass || 0}</td>
                   </tr>
                 ))}
               </tbody>
