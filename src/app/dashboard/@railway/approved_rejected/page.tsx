@@ -6,11 +6,11 @@ import { db } from "@/config/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { dateFormat } from "@/constants/dateFormat";
+import { dateFormat} from "@/constants/dateFormat"
 import { ClipLoader } from "react-spinners";
 
 const parseDate = (dateStr: any) => {
-  const [day, month, year] = dateStr.split("/").map(Number);
+  const [day, month, year] = dateStr.split('/').map(Number);
   return new Date(year, month - 1, day);
 };
 
@@ -134,7 +134,7 @@ const Approved_Rejected = () => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Date of Issue
+           Date of Issue
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -177,7 +177,7 @@ const Approved_Rejected = () => {
   //       const concessionHistoryRef = collection(db, "ConcessionHistory");
 
   //       const querySnapshot = await getDocs(concessionHistoryRef);
-
+      
   //       const userMap = new Map<string, {
   //         certificateNumber: string;
   //         name: string;
@@ -192,14 +192,14 @@ const Approved_Rejected = () => {
   //         status: string;
   //         index: number;
   //       }>();
-
+      
   //       querySnapshot.docs.forEach((doc) => {
   //         const history = doc.data().history;
-
+      
   //         history.forEach((item: any, index: number) => {
   //           if (item.status === "serviced" || item.status === "cancelled") {
   //             const existingItem = userMap.get(item.passNum);
-
+      
   //             if (!existingItem || existingItem.index < index) {
   //               userMap.set(item.passNum, {
   //                 certificateNumber: item.passNum || "N/A",
@@ -234,18 +234,19 @@ const Approved_Rejected = () => {
   //           a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
   //         const dateB =
   //           b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
-  //         return dateA - dateB;
+  //         return dateA - dateB; 
   //       });
 
   //       const userList = sortedUserArray.map(({ index, ...rest }) => rest);
-
+      
+      
   //       setData(userList);
   //     } catch (err) {
   //       console.error("Error fetching data: ", err);
   //     } finally {
   //       setLoading(false);
   //     }
-
+          
   //   };
 
   //   fetchUserData();
@@ -254,54 +255,50 @@ const Approved_Rejected = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const concessionHistoryDoc = doc(db, "ConcessionHistory", "History");
+        const concessionHistoryDoc = doc(db, 'ConcessionHistory', 'History');
         const docSnapshot = await getDoc(concessionHistoryDoc);
-
+        
         if (docSnapshot.exists()) {
           const history = docSnapshot.data().history || [];
 
           const userMap = new Map();
-
+          
           history.forEach((item: any, index: number) => {
-            if (item.status === "serviced" || item.status === "cancelled") {
+            if (item.status === 'serviced' || item.status === 'cancelled') {
               const existingItem = userMap.get(item.passNum);
-
+              
               if (!existingItem || existingItem.index < index) {
                 userMap.set(item.passNum, {
-                  certificateNumber: item.passNum || "N/A",
-                  name: item.firstName || "N/A",
-                  gender: item.gender || "N/A",
-                  dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : "N/A",
-                  from: item.from || "N/A",
-                  to: item.to || "N/A",
-                  class: item.class || "N/A",
-                  mode: item.duration || "N/A",
-                  dateOfIssue: item.lastPassIssued?.seconds
-                    ? dateFormat(item.lastPassIssued.seconds)
-                    : "N/A",
-                  address: item.address || "N/A",
-                  status: item.status || "N/A",
-                  index: index,
+                  certificateNumber: item.passNum || 'N/A',
+                  name: item.firstName || 'N/A',
+                  gender: item.gender || 'N/A',
+                  dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : 'N/A',
+                  from: item.from || 'N/A',
+                  to: item.to || 'N/A',
+                  class: item.class || 'N/A',
+                  mode: item.duration || 'N/A',
+                  dateOfIssue: item.lastPassIssued?.seconds ? dateFormat(item.lastPassIssued.seconds) : 'N/A',
+                  address: item.address || 'N/A',
+                  status: item.status || 'N/A',
+                  index: index
                 });
               }
             }
           });
 
           const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
-            const dateA =
-              a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
-            const dateB =
-              b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
+            const dateA = a.dateOfIssue !== 'N/A' ? parseDate(a.dateOfIssue).getTime() : 0;
+            const dateB = b.dateOfIssue !== 'N/A' ? parseDate(b.dateOfIssue).getTime() : 0;
             return dateA - dateB;
           });
 
           const userList = sortedUserArray.map(({ index, ...rest }) => rest);
           setData(userList);
         } else {
-          console.error("Document does not exist");
+          console.error('Document does not exist');
         }
       } catch (err) {
-        console.error("Error fetching data: ", err);
+        console.error('Error fetching data: ', err);
       } finally {
         setLoading(false);
       }
@@ -310,14 +307,13 @@ const Approved_Rejected = () => {
     fetchUserData();
   }, []);
 
+
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <ClipLoader size={50} color={"#123abc"} loading={loading} />
-      </div>
-    );
+    return         <div className="flex items-center justify-center h-screen">
+                      <ClipLoader size={50} color={"#123abc"} loading={loading} />
+                  </div>
   }
-  //test123
+//test123
   return (
     <div>
       <div className="w-[99vw] h-[99vh] flex flex-col">
