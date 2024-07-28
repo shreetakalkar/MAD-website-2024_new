@@ -45,3 +45,7 @@ references
 functions
 .firebaserc
 firebase.json
+
+#firebase_Rules
+firestoreRule.rs
+firestorageRule.rs
