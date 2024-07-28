@@ -30,16 +30,6 @@ type FormData = z.infer<typeof formSchema>;
 const ExamDept = () => {
   const { toast } = useToast();
   const gradYearList = useGradYear();
-<<<<<<< HEAD
-
-  const [currentYear, setCurrentYear] = useState<string>("All");
-  const [branch, setBranch] = useState<string>("All");
-  const [division, setDivision] = useState<string>("All");
-  const [batch, setBatch] = useState<string>("All");
-  const [docURL, setDocURL] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-
-=======
   const [loading, setLoading] = useState<boolean>(false);
 
   const methods = useForm<FormData>({
@@ -54,7 +44,6 @@ const ExamDept = () => {
     },
   });
 
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
   const additionalFields = [
     {
       name: "startDate",
@@ -76,13 +65,7 @@ const ExamDept = () => {
     },
   ];
 
-<<<<<<< HEAD
-  const handleUpload = async (data: any) => {
-    setLoading(true);
-
-=======
   const handleUpload = async (data: FormData) => {
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
     const {
       title,
       description,
@@ -95,28 +78,6 @@ const ExamDept = () => {
       file,
     } = data;
 
-<<<<<<< HEAD
-    let uploadeddocURL = docURL;
-    const currentYear = year;
-
-    if (file) {
-      try {
-        const storageRef = ref(
-          storage,
-          `ImportantNotice/ExamTimeTable/${file.name}`
-        );
-        const uploadTask = await uploadBytesResumable(storageRef, file);
-
-        uploadeddocURL = await getDownloadURL(uploadTask.snapshot.ref);
-        setDocURL(uploadeddocURL);
-      } catch (error) {
-        console.error("Error uploading file: ", error);
-        toast({
-          description: "Error uploading file.",
-          variant: "destructive",
-        });
-        setLoading(false);
-=======
     let uploadedDocURL = null;
 
     if (file) {
@@ -135,26 +96,14 @@ const ExamDept = () => {
           description: "Error uploading file. Please try again.",
           variant: "destructive",
         });
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
         return;
       }
     }
 
-<<<<<<< HEAD
-    let selectedGradYear;
-    if (currentYear !== "All") {
-      selectedGradYear = gradYearList.find(
-        (item) => item.year === currentYear
-      )?.gradYear;
-    } else {
-      selectedGradYear = "All";
-    }
-=======
     const selectedGradYear =
       year !== "All"
         ? gradYearList.find((item) => item.year === year)?.gradYear || "All"
         : "All";
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
 
     const uploadData = {
       title,
@@ -165,11 +114,7 @@ const ExamDept = () => {
       batch: batch || "All",
       startDate: startDate ? Timestamp.fromDate(startDate) : null,
       endDate: endDate ? Timestamp.fromDate(endDate) : null,
-<<<<<<< HEAD
-      docURL: uploadeddocURL,
-=======
       docURL: uploadedDocURL,
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
     };
 
     try {
@@ -177,36 +122,14 @@ const ExamDept = () => {
       await updateDoc(docRef, {
         content: arrayUnion(uploadData),
       });
-<<<<<<< HEAD
-      methods.reset();
-      toast({
-        description: "Data successfully added!",
-        variant: "success",
-=======
 
       toast({
         description: "Data successfully added!",
         variant: "default",
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
       });
     } catch (error) {
       console.error("Error adding data: ", error);
       toast({
-<<<<<<< HEAD
-        description: "Error adding data.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onSubmit = (data: any) => {
-    const missingFields = Object.keys(data).filter(
-      (key) =>
-        !data[key] || (Array.isArray(data[key]) && data[key].length === 0)
-    );
-=======
         description: "Error adding data. Please try again.",
         variant: "destructive",
       });
@@ -216,7 +139,6 @@ const ExamDept = () => {
   useEffect(() => {
     console.log(loading);
   }, [loading]);
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
@@ -240,43 +162,6 @@ const ExamDept = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="w-[100%] flex justify-center items-center">
-      <FormProvider {...methods}>
-        <Card
-          style={{
-            overflow: "auto",
-            WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-          className="w-[95%] no-scrollbar"
-        >
-          <CardHeader>
-            <CardTitle className="text-3xl">Exam Department Form</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TTForm
-              currentYear={currentYear}
-              setCurrentYear={setCurrentYear}
-              branch={branch}
-              setBranch={setBranch}
-              division={division}
-              setDivision={setDivision}
-              batch={batch}
-              setBatch={setBatch}
-              additionalFields={additionalFields}
-              onSubmit={onSubmit}
-              handleSubmit={methods.handleSubmit}
-              control={methods.control}
-              reset={methods.reset}
-              loading={loading}
-            />
-          </CardContent>
-        </Card>
-      </FormProvider>
-    </div>
-=======
     <>
       <div className="w-[100%] flex justify-center items-center">
         {loading && (
@@ -313,7 +198,6 @@ const ExamDept = () => {
         )}
       </div>
     </>
->>>>>>> e73250722bbd3f0fd49e5992e00be48b8eec6736
   );
 };
 
