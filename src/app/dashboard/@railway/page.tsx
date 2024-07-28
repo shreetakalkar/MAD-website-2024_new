@@ -94,42 +94,12 @@ export default function Page() {
           value: filteredData.updatedPass || 0,
           fill: "#9C27B0",
         }, // Purple
-        {
-          name: "Approved",
-          value: filteredData.approvedPass || 0,
-          fill: "#4CAF50",
-        },
-        {
-          name: "Cancelled",
-          value: filteredData.cancelledPass || 0,
-          fill: "#F44336",
-        },
-        {
-          name: "Collected",
-          value: filteredData.collectedPass || 0,
-          fill: "#2196F3",
-        },
-        {
-          name: "Created",
-          value: filteredData.createdPass || 0,
-          fill: "#FFC107",
-        },
-        {
-          name: "Rejected",
-          value: filteredData.rejectedPass || 0,
-          fill: "#9E9E9E",
-        },
-        {
-          name: "Updated",
-          value: filteredData.updatedPass || 0,
-          fill: "#673AB7",
-        },
       ];
       setChartData(chartData);
     }
   }, [selectedDate, stats]);
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Date) => {
     setSelectedDate(date);
   };
   const isDateAvailable = (date: any) => {
@@ -161,13 +131,13 @@ export default function Page() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) => !isDateAvailable(date)} // Disable dates not available
-                  initialFocus
-                />
+              <Calendar
+                mode="single"
+                selected={selectedDate || undefined}
+                onSelect={(date: Date | undefined) => setSelectedDate(date || null)}
+                disabled={(date) => !isDateAvailable(date)}
+                initialFocus
+              />
               </PopoverContent>
             </Popover>
             {/* <Popover>
