@@ -155,9 +155,9 @@ const TTForm: React.FC<TTFormProps> = ({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Title (Only 25 Characters)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter title" {...field} defaultValue="" />
+                <Input placeholder="Enter title" {...field} defaultValue="" maxLength={25} />
                 </FormControl>
               </FormItem>
             )}
