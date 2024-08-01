@@ -41,7 +41,7 @@ const PrincipalHodInterface = () => {
 
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: `Announcement by ${user?.name}`,
+      title: `Notice by ${user?.name}`,
       description: "",
       year: "All",
       branch: "All",
