@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 
 export const userTypes = {
     ADMIN: "admin",
-    FACULTY: "faculty",
+    HOD: "hod",
     COMMITTEE: "committee",
     STUDENT: "student",
     PRINCIPAL: "principal",
