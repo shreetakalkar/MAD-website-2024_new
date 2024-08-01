@@ -39,6 +39,7 @@ interface TTFormProps {
   handleSubmit: (data: any) => void;
   control: any;
   reset: any;
+  lockTitle?: boolean;
 }
 
 const TTForm: React.FC<TTFormProps> = ({
@@ -46,6 +47,7 @@ const TTForm: React.FC<TTFormProps> = ({
   handleSubmit,
   control,
   reset,
+  lockTitle = false,
 }: TTFormProps) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -150,6 +152,7 @@ const TTForm: React.FC<TTFormProps> = ({
     >
       <div className="grid gap-4">
         <div className="grid gap-4 grid-cols-2 mb-[2%]">
+          
           <FormField
             control={control}
             name="title"
@@ -157,11 +160,18 @@ const TTForm: React.FC<TTFormProps> = ({
               <FormItem>
                 <FormLabel>Title (Only 25 Characters)</FormLabel>
                 <FormControl>
-                <Input placeholder="Enter title" {...field} defaultValue="" maxLength={25} />
+                  <Input
+                    placeholder="Enter title"
+                    {...field}
+                    defaultValue=""
+                    maxLength={25}
+                    disabled={lockTitle}
+                  />
                 </FormControl>
               </FormItem>
             )}
           />
+
           <FormField
             control={control}
             name="description"

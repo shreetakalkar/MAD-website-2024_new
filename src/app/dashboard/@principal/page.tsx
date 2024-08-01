@@ -1,7 +1,13 @@
+import React, { use } from 'react'
+import PrincipalHodInterface from "@/components/PrincipalHodInterface";
 
-function page() {
+const page = () => {
+
   return (
-    <div>Principal</div>
+    <div>
+      <PrincipalHodInterface />
+    </div>
+
   )
 }
 
