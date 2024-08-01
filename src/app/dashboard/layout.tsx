@@ -6,7 +6,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { useTheme } from "next-themes";
 import ProtectionProvider from "@/providers/ProtectionProvider";
 import { useUser } from "@/providers/UserProvider";
-import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import MobileHeader from "@/components/Mobile-Header";
 
@@ -32,9 +31,12 @@ export default function Home({
   const [userType, setUserType] = useState(null);
 
   useEffect(() => {
+    console.log(user);
     const fetchUserType = async ({ uid }: { uid: string }) => {
-      const officailLoginRef = doc(db, "OfficialLogin", uid);
-      const docSnap = await getDoc(officailLoginRef);
+      if (!uid) return;
+      const facultyRef = doc(db, "OfficialLogin", uid);
+      const docSnap = await getDoc(facultyRef);
+      console.log(docSnap.data()?.type);
       setUserType(docSnap.data()?.type);
     };
 
