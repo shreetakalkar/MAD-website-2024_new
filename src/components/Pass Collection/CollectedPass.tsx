@@ -12,12 +12,16 @@ import {
   Timestamp,
   updateDoc,
   where,
+  setDoc,
 } from "firebase/firestore";
 import { toast } from "../ui/use-toast";
 import { CollectionDisplayTable } from "./CollectionDisplayTable";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import useGradYear from "@/constants/gradYearList";
+import { dateFormat } from "@/constants/dateFormat";
+import { ClipLoader } from "react-spinners";
+
 
 interface Data {
   certNo: string;
@@ -26,6 +30,7 @@ interface Data {
   branch: string;
   gradYear: string;
   lastPassIssued: Date;
+  collectedDate: Date | string;
 }
 
 const CollectedPassTable: React.FC = () => {
@@ -109,6 +114,10 @@ const CollectedPassTable: React.FC = () => {
       accessorKey: "gradYear",
       header: "Year",
     },
+    {
+      accessorKey: "collectedDate",
+      header: "Collected Date"
+    }
   ];
 
   const [data, setData] = useState<Data[]>([]);
@@ -146,6 +155,7 @@ const CollectedPassTable: React.FC = () => {
               branch: detailsData?.branch || "",
               gradYear: currentUserYear(detailsData?.gradyear) || "",
               lastPassIssued: detailsData.lastPassIssued?.toDate(),
+              collectedDate: collectedValue === "1" ? dateFormat(requestDoc.data().passCollected.date.toDate()) : "-"
             };
             fetchedData.push(studentDetails);
           }
@@ -188,6 +198,40 @@ const CollectedPassTable: React.FC = () => {
               date: new Date(),
             },
           });
+
+          // For Stats UPDATE PASS
+          const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+          const concessionHistorySnap = await getDoc(concessionHistoryRef);
+          const currentDate = dateFormat(new Date());
+
+          if (concessionHistorySnap.exists()) {
+            const historyData = concessionHistorySnap.data();
+            let statsArray = historyData.stats || [];
+            const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+
+            if (dateIndex >= 0) {
+              // Initialize cancelledPass if it doesn't exist
+              if (typeof statsArray[dateIndex].collectedPass !== 'number') {
+                statsArray[dateIndex].collectedPass = 0;
+              }
+              statsArray[dateIndex].collectedPass += 1;
+            } else {
+              statsArray.push({
+                date: currentDate,
+                collectedPass: 1,
+              });
+            }
+
+            await updateDoc(concessionHistoryRef, { stats: statsArray });
+          } else {
+            await setDoc(concessionHistoryRef, {
+              stats: [{
+                date: currentDate,
+                collectedPass: 1
+              }],
+            });
+          }
+
           toast({ description: "Pass marked as collected" });
         } catch (error) {
           console.error("Error updating document: ", error);
@@ -223,11 +267,13 @@ const CollectedPassTable: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return   <div className="flex items-center justify-center h-screen">
+                <ClipLoader size={50} color={"#123abc"} loading={loading} />
+             </div>
   }
 
   return (
-    <div className="w-[75%] h-[90%] flex flex-col">
+    <div className="w-[99%] h-[90%] flex flex-col">
       <div className="flex items-center justify-center h-full">
         <div className="m-2 w-full h-full">
           <CollectionDisplayTable data={data} columns={columns} />

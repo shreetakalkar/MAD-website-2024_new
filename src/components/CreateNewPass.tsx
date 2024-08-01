@@ -13,6 +13,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 import useGradYear from "@/constants/gradYearList";
+import { dateFormat } from "@/constants/dateFormat";
+
 import {
   Form,
   FormControl,
@@ -68,6 +70,7 @@ import { travelFromLocations } from "@/constants/travelFromLocations";
 import { calculateAge } from "@/constants/AgeCalc";
 import "@/app/globals.css";
 import { ZodSchema, infer as zodInfer } from "zod";
+import { ClipLoader } from "react-spinners";
 
 type CreateNewPassProps = {
   formSchema: ZodSchema<any>; // Adjust any to the appropriate schema type
@@ -128,6 +131,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
         const storedEmail = studentData?.email?.toLowerCase();
 
         if (storedEmail === lowerCaseEmail) {
+
           const studentId = studentDoc.id;
           const studentDetailsRef = doc(db, "ConcessionDetails", studentId);
           const studentDetailsDoc = await getDoc(studentDetailsRef);
@@ -250,6 +254,39 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
           collected: "1",
         },
       });
+
+          // For Stats UPDATE PASS
+        const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+        const concessionHistorySnap = await getDoc(concessionHistoryRef);
+        const currentDate = dateFormat(new Date());
+
+        if (concessionHistorySnap.exists()) {
+          const historyData = concessionHistorySnap.data();
+          let statsArray = historyData.stats || [];
+          const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+
+          if (dateIndex >= 0) {
+            // Initialize createdPass if it doesn't exist
+            if (typeof statsArray[dateIndex].createdPass !== 'number') {
+              statsArray[dateIndex].createdPass = 0;
+            }
+            statsArray[dateIndex].createdPass += 1;
+          } else {
+            statsArray.push({
+              date: currentDate,
+              createdPass: 1,
+            });
+          }
+
+          await updateDoc(concessionHistoryRef, { stats: statsArray });
+        } else {
+          await setDoc(concessionHistoryRef, {
+            stats: [{
+              date: currentDate,
+              createdPass: 1
+            }],
+          });
+        }
 
       toast({
         description: "Concession request has been created!",
@@ -387,6 +424,12 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
       console.error("Error ", error);
     }
   };
+
+  if (loading) {
+    return         <div className="flex items-center justify-center h-screen">
+                      <ClipLoader size={50} color={"#123abc"} loading={loading} />
+                  </div>
+  }
 
   return (
     <>

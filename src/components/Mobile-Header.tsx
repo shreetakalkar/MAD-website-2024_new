@@ -65,7 +65,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
             </Link>
 
             {/* Conditional Links */}
-            {userType === "faculty" && (
+            {userType === "hod" && (
               <>
                 <Link
                   href="#"
@@ -129,12 +129,12 @@ const MobileHeader = ({ userType }: { userType: string }) => {
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
                 >
                   <GitPullRequestClosed className="h-4 w-4" />
-                  Approved/Rejected Requests
+                  Approved Requests
                 </Link>
               </>
             )}
             {(userType === "admin" ||
-              userType === "faculty" ||
+              userType === "hod" ||
               userType === "principal") && (
                 <>
                   <Link

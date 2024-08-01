@@ -3,9 +3,16 @@ import React, { useEffect, useState } from "react";
 import DataTable from "@/components/datatable";
 import { ColumnDef } from "@tanstack/react-table";
 import { db } from "@/config/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { dateFormat} from "@/constants/dateFormat"
+import { ClipLoader } from "react-spinners";
+
+const parseDate = (dateStr: any) => {
+  const [day, month, year] = dateStr.split('/').map(Number);
+  return new Date(year, month - 1, day);
+};
 
 const Approved_Rejected = () => {
   interface Data {
@@ -121,13 +128,15 @@ const Approved_Rejected = () => {
     },
     {
       accessorKey: "dateOfIssue",
-      header: "Date of Issue",
-      cell: ({ row }) => {
-        let cellData = row.getValue("dateOfIssue") as string;
+      header: ({ column }) => {
         return (
-          <div className="flex h-[6vh] text-center items-center justify-center ">
-            {cellData}
-          </div>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+           Date of Issue
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
         );
       },
     },
@@ -162,37 +171,134 @@ const Approved_Rejected = () => {
   const [data, setData] = useState<Data[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const concessionHistoryRef = collection(db, "ConcessionHistory");
+
+  //       const querySnapshot = await getDocs(concessionHistoryRef);
+      
+  //       const userMap = new Map<string, {
+  //         certificateNumber: string;
+  //         name: string;
+  //         gender: string;
+  //         dob: string;
+  //         from: string;
+  //         to: string;
+  //         class: string;
+  //         mode: string;
+  //         dateOfIssue: string;
+  //         address: string;
+  //         status: string;
+  //         index: number;
+  //       }>();
+      
+  //       querySnapshot.docs.forEach((doc) => {
+  //         const history = doc.data().history;
+      
+  //         history.forEach((item: any, index: number) => {
+  //           if (item.status === "serviced" || item.status === "cancelled") {
+  //             const existingItem = userMap.get(item.passNum);
+      
+  //             if (!existingItem || existingItem.index < index) {
+  //               userMap.set(item.passNum, {
+  //                 certificateNumber: item.passNum || "N/A",
+  //                 name: item.firstName || "N/A",
+  //                 gender: item.gender || "N/A",
+  //                 dob: item.dob?.seconds
+  //                   ? dateFormat(item.dob.seconds)
+  //                   : "N/A",
+  //                 from: item.from || "N/A",
+  //                 to: item.to || "N/A",
+  //                 class: item.class || "N/A",
+  //                 mode: item.duration || "N/A",
+  //                 dateOfIssue: item.lastPassIssued?.seconds
+  //                   ? dateFormat(item.lastPassIssued.seconds)
+  //                   : "N/A",
+  //                 address: item.address || "N/A",
+  //                 status: item.status || "N/A",
+  //                 index: index
+  //               });
+  //             }
+  //           }
+  //         });
+  //       });
+
+  //       const parseDate = (dateStr: string): Date => {
+  //         const [day, month, year] = dateStr.split("/").map(Number);
+  //         return new Date(year, month - 1, day);
+  //       };
+
+  //       const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
+  //         const dateA =
+  //           a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
+  //         const dateB =
+  //           b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
+  //         return dateA - dateB; 
+  //       });
+
+  //       const userList = sortedUserArray.map(({ index, ...rest }) => rest);
+      
+      
+  //       setData(userList);
+  //     } catch (err) {
+  //       console.error("Error fetching data: ", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+          
+  //   };
+
+  //   fetchUserData();
+  // }, []);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const concessionHistoryRef = collection(db, "ConcessionHistory");
-        const querySnapshot = await getDocs(concessionHistoryRef);
+        const concessionHistoryDoc = doc(db, 'ConcessionHistory', 'History');
+        const docSnapshot = await getDoc(concessionHistoryDoc);
+        
+        if (docSnapshot.exists()) {
+          const history = docSnapshot.data().history || [];
 
-        const userList = querySnapshot.docs.flatMap((doc) =>
-          doc.data().history.map((item: any) => ({
-            certificateNumber: item.passNum || "N/A",
-            name: item.firstName || "N/A",
-            gender: item.gender || "N/A",
-            dob: item.dob?.seconds
-              ? new Date(item.dob.seconds * 1000).toLocaleDateString()
-              : "N/A",
-            from: item.from || "N/A",
-            to: item.to || "N/A",
-            class: item.class || "N/A",
-            mode: item.duration || "N/A",
-            dateOfIssue: item.lastPassIssued?.seconds
-              ? new Date(
-                  item.lastPassIssued.seconds * 1000
-                ).toLocaleDateString()
-              : "N/A",
-            address: item.address || "N/A",
-            status: item.status || "N/A",
-          }))
-        );
+          const userMap = new Map();
+          
+          history.forEach((item: any, index: number) => {
+            if (item.status === 'serviced' || item.status === 'cancelled') {
+              const existingItem = userMap.get(item.passNum);
+              
+              if (!existingItem || existingItem.index < index) {
+                userMap.set(item.passNum, {
+                  certificateNumber: item.passNum || 'N/A',
+                  name: item.firstName || 'N/A',
+                  gender: item.gender || 'N/A',
+                  dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : 'N/A',
+                  from: item.from || 'N/A',
+                  to: item.to || 'N/A',
+                  class: item.class || 'N/A',
+                  mode: item.duration || 'N/A',
+                  dateOfIssue: item.lastPassIssued?.seconds ? dateFormat(item.lastPassIssued.seconds) : 'N/A',
+                  address: item.address || 'N/A',
+                  status: item.status || 'N/A',
+                  index: index
+                });
+              }
+            }
+          });
 
-        setData(userList);
+          const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
+            const dateA = a.dateOfIssue !== 'N/A' ? parseDate(a.dateOfIssue).getTime() : 0;
+            const dateB = b.dateOfIssue !== 'N/A' ? parseDate(b.dateOfIssue).getTime() : 0;
+            return dateA - dateB;
+          });
+
+          const userList = sortedUserArray.map(({ index, ...rest }) => rest);
+          setData(userList);
+        } else {
+          console.error('Document does not exist');
+        }
       } catch (err) {
-        console.error("Error fetching data: ", err);
+        console.error('Error fetching data: ', err);
       } finally {
         setLoading(false);
       }
@@ -201,13 +307,16 @@ const Approved_Rejected = () => {
     fetchUserData();
   }, []);
 
+
   if (loading) {
-    return <div>Loading...</div>;
+    return         <div className="flex items-center justify-center h-screen">
+                      <ClipLoader size={50} color={"#123abc"} loading={loading} />
+                  </div>
   }
 //test123
   return (
     <div>
-      <div className="w-[73vw] h-[99vh] flex flex-col">
+      <div className="w-[99vw] h-[99vh] flex flex-col">
         <div className="h-[100%] flex items-center justify-center">
           <div className="overflow-auto m-2 w-[100%] h-[100%]">
             <DataTable data={data} columns={columns} />

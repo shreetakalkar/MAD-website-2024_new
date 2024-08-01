@@ -34,8 +34,9 @@ import { branches } from "@/constants/branches";
 import useGradYear from "@/constants/gradYearList";
 import { Textarea } from "@/components/ui/textarea";
 import { travelFromLocations } from "@/constants/travelFromLocations";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
+import { dateFormat } from "@/constants/dateFormat";
 
 const RailwayUpdateCard = ({
   formSchema,
@@ -51,7 +52,7 @@ const RailwayUpdateCard = ({
   const gradYearList = useGradYear();
   const { toast } = useToast();
   const { control } = useForm();
-  const [isModalOpen , setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -133,6 +134,38 @@ const RailwayUpdateCard = ({
       const concessionReqRef = doc(db, "ConcessionRequest", studentId);
       await updateDoc(concessionReqRef, newReqData);
 
+      // For Stats UPDATE PASS
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryRef);
+      const currentDate = dateFormat(new Date())
+  
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+  
+        if (dateIndex >= 0) {
+          if (typeof statsArray[dateIndex].updatedPass !== 'number') {
+            statsArray[dateIndex].updatedPass = 0;
+          }
+          statsArray[dateIndex].updatedPass += 1;
+        } else {
+          statsArray.push({
+            date: currentDate,
+            updatedPass: 1,
+          });
+        }
+  
+        await updateDoc(concessionHistoryRef, { stats: statsArray });
+      } else {
+        await setDoc(concessionHistoryRef, {
+          stats: [{
+            date: currentDate,
+            updatedPass: 1,
+          }],
+        });
+      }
+
       toast({ description: "Document updated successfully!" });
     } catch (error) {
       toast({
@@ -160,6 +193,70 @@ const RailwayUpdateCard = ({
         statusMessage: statusMessage || "Your form has been cancelled",
         passCollected: null,
       });
+
+      // Update history array in concessionHistory
+      const historyRef = doc(db, "ConcessionHistory", "History");
+      const historySnap = await getDoc(historyRef);
+
+      if (historySnap.exists()) {
+        let history = historySnap.data().history;
+
+        let updated = false;
+
+        console.log("Pass: ", passData.certNo);
+
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].passNum === passData.certNo) {
+            history[i].status = "cancelled";
+            updated = true;
+            break;
+          }
+        }
+
+        if (updated) {
+          await updateDoc(historyRef, {
+            history: history,
+          });
+        } else {
+          console.error("Pass number not found in history.");
+        }
+      } else {
+        console.error("History document does not exist.");
+      }
+
+      // For Stats UPDATE PASS
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryRef);
+      const currentDate = dateFormat(new Date());
+  
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+  
+        if (dateIndex >= 0) {
+          if (typeof statsArray[dateIndex].cancelledPass !== 'number') {
+            statsArray[dateIndex].cancelledPass = 0;
+          }
+          statsArray[dateIndex].cancelledPass += 1;
+        } else {
+          statsArray.push({
+            date: currentDate,
+            cancelledPass: 1,
+          });
+        }
+  
+        await updateDoc(concessionHistoryRef, { stats: statsArray });
+      } else {
+        await setDoc(concessionHistoryRef, {
+          stats: [{
+            date: currentDate,
+            cancelledPass: 1
+          }],
+        });
+      }
+
+    toast({ description: "Pass Deleted Successfully !" });
     } catch (error) {
       console.error("Error ", error);
     }
@@ -168,8 +265,54 @@ const RailwayUpdateCard = ({
     setLoading(false);
   };
 
+  // const cancelForm = async () => {
+  //   try {
+  //     // Update ConcessionDetails
+  //     const concessionRef = doc(db, "ConcessionDetails", passData.uid);
+  //     await updateDoc(concessionRef, {
+  //       status: "rejected",
+  //       statusMessage: statusMessage || "Your form has been cancelled",
+  //     });
+
+  //     // Update ConcessionRequest
+  //     const concessionReqRef = doc(db, "ConcessionRequest", passData.uid);
+  //     await updateDoc(concessionReqRef, {
+  //       status: "rejected",
+  //       statusMessage: statusMessage || "Your form has been cancelled",
+  //       passCollected: null,
+  //     });
+
+  //     // Update history array in concessionHistory
+  //     const historyRef = doc(db, "concessionHistory", "History");
+  //     const historySnap = await getDoc(historyRef);
+
+  //     if (historySnap.exists()) {
+  //       let history = historySnap.data().history as { passNum: string; status: string }[];
+  //       const passIndex = history.findIndex((entry) => entry.passNum === "Z123");
+
+  //       if (passIndex !== -1) {
+  //         history[passIndex].status = "cancelled";
+
+  //         await updateDoc(historyRef, {
+  //           history: history,
+  //         });
+  //       } else {
+  //         console.error("Pass number not found in history.");
+  //       }
+  //     } else {
+  //       console.error("History document does not exist.");
+  //     }
+
+  //   } catch (error) {
+  //     console.error("Error ", error);
+  //   }
+
+  //   setIsEditable(false);
+  //   setLoading(false);
+  // };
+
   const handleSave = (message: string) => {
-    setIsModalOpen(false)
+    setIsModalOpen(false);
     setIsDialogOpen(false);
     setStatusMessage(message);
     cancelForm();
@@ -178,7 +321,7 @@ const RailwayUpdateCard = ({
 
   const handleCancel = () => {
     setIsDialogOpen(false);
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   };
 
   return (
@@ -481,7 +624,7 @@ const RailwayUpdateCard = ({
                                         key={index}
                                         value={year.gradYear}
                                       >
-                                        {year.gradYear}
+                                        {year.year}
                                       </SelectItem>
                                     );
                                   })}
@@ -732,7 +875,7 @@ const RailwayUpdateCard = ({
                           type="button"
                           onClick={() => {
                             setIsDialogOpen(true);
-                            setIsModalOpen(true)
+                            setIsModalOpen(true);
                             // cancelForm();
                           }}
                           className="w-[50%] bg-red-500"
@@ -766,40 +909,36 @@ const RailwayUpdateCard = ({
         </CardContent>
       </Card>
 
-
-      {
-        isModalOpen ? (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white dark:bg-gray-400 p-6 rounded-lg shadow-lg h-[30vh] w-[60vh]">
-              <input
-                type="text"
-                value={statusMessage}
-                onChange={(e) => setStatusMessage(e.target.value)}
-                placeholder="Enter status message"
-                className="border rounded-lg w-[100%] p-2"
-              />
-              <div className="flex items-center justify-start mt-5">
-                <button
-                  onClick={() => handleSave(statusMessage)}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mr-5"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                >
-                  Cancel
+      {isModalOpen ? (
+        <div className="fixed inset-0 flex items-center z-[100] justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col justify-between h-[40vh] w-[50vw] max-w-md">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-4">
+              Delete Pass
+            </h2>
+            <input
+              type="text"
+              value={statusMessage}
+              onChange={(e) => setStatusMessage(e.target.value)}
+              placeholder="Enter Reason for Cancellation"
+              className="border border-gray-300 dark:border-gray-700 rounded-lg w-full p-3 mb-4 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+            />
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => handleSave(statusMessage)}
+                className="bg-red-500 text-white px-5 py-3 rounded-lg shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Delete Pass
               </button>
-
-              </div>
-
+              <button
+                onClick={handleCancel}
+                className="bg-gray-100 text-gray-800 px-5 py-3 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              >
+                Cancel
+              </button>
             </div>
           </div>
-        ) : null
-      }
-
-
+        </div>
+      ) : null}
     </>
   );
 };

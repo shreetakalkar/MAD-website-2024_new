@@ -16,6 +16,7 @@ import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { ClipLoader } from "react-spinners";
 
 const RailwayUpdateConc = () => {
   const [passes, setPasses] = useState<any[]>([]);
@@ -86,9 +87,6 @@ const RailwayUpdateConc = () => {
     const fetchAllRecentPasses = async () => {
       setLoading(true);
       try {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
         const concessionDetailsRef = collection(db, "ConcessionDetails");
         const q = query(
           concessionDetailsRef,
@@ -101,25 +99,26 @@ const RailwayUpdateConc = () => {
 
             for (const docSnap of snapshot.docs) {
               const enquiry = docSnap.data();
-              const lastPassIssued = enquiry.lastPassIssued?.toDate();
 
-              if (lastPassIssued >= sevenDaysAgo) {
-                const concessionRequestRef = doc(
-                  db,
-                  "ConcessionRequest",
-                  docSnap.id
-                );
-                const requestDocSnap = await getDoc(concessionRequestRef);
+              const concessionRequestRef = doc(
+                db,
+                "ConcessionRequest",
+                docSnap.id
+              );
+              const requestDocSnap = await getDoc(concessionRequestRef);
 
-                if (requestDocSnap.exists()) {
-                  enquiry.certNo = requestDocSnap.data().passNum;
-                  enquiry.uid = requestDocSnap.data().uid;
-                  enquiry.dob = enquiry.dob.toDate();
-                  enquiry.doi = enquiry.lastPassIssued.toDate();
-                  enquiry.gradyear = enquiry.gradyear.toString();
+              if (
+                requestDocSnap.exists() &&
+                requestDocSnap.data().passCollected?.collected?.toString() ===
+                  "1"
+              ) {
+                enquiry.certNo = requestDocSnap.data().passNum;
+                enquiry.uid = requestDocSnap.data().uid;
+                enquiry.dob = enquiry.dob.toDate();
+                enquiry.doi = enquiry.lastPassIssued.toDate();
+                enquiry.gradyear = enquiry.gradyear.toString();
 
-                  fetchedPasses.push(enquiry);
-                }
+                fetchedPasses.push(enquiry);
               }
             }
 
@@ -154,22 +153,28 @@ const RailwayUpdateConc = () => {
 
   useEffect(() => {
     if (passArrayLength == 0) {
-      toast({ description: "No such pass found", variant: "destructive" });
+      toast({ description: "No Passes to update", variant: "destructive" });
     }
   }, [passArrayLength]);
 
   return (
     <>
       {loading && <p>Loading...</p>}
-      <div className="w-[95%] flex flex-col gap-[5rem] p-4 ">
-        <div className="flex w-full max-w-sm items-center ml-[1%]">
-          <Input
-            type="text"
-            className="shadow-box mt-10"
-            placeholder="Certificate No"
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
+      <div className="w-[99%] flex flex-col gap-[5rem] p-4">
+        {( passArrayLength && (passArrayLength>0) ) ? (
+          <div className="flex w-full max-w-sm items-center ml-[1%]">
+            <Input
+              type="text"
+              className="shadow-box mt-10"
+              placeholder="Certificate No"
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-screen">
+            <ClipLoader size={50} color={"#123abc"}/>
+          </div>
+        )}
         {passes.map((pass, index) => {
           return (
             <div key={pass.certNo}>

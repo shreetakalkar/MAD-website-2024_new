@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon } from "lucide-react";
 import testimg from "../../public/images/OnlineTraining.png";
+import { dateFormat } from "@/constants/dateFormat";
+import { ClipLoader } from "react-spinners";
 
 const currentUserYear = (gradyear: string) => {
   // const gradYearList = useGradYear();
@@ -35,6 +37,27 @@ const currentUserYear = (gradyear: string) => {
   ) {
     return "BE";
   }
+};
+
+const isButtonDisabled = () => {
+  const now = new Date();
+  const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const hour = now.getHours();
+
+  // Disable button from Friday 2 PM to Monday 8 AM
+  if (day === 5 && hour >= 14) {
+    // Friday after 2 PM
+    return true;
+  }
+  if (day === 6 || (day === 0 && hour < 8)) {
+    // Saturday or Sunday before 8 AM
+    return true;
+  }
+  if (day === 1 && hour < 8) {
+    // Monday before 8 AM
+    return true;
+  }
+  return false;
 };
 
 function InputWithLabel({ label, input }: { label: any; input: any }) {
@@ -115,22 +138,39 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
-      <div className={`p-8 rounded-lg shadow-xl w-full max-w-md ${action==="Approve" ? "bg-green-100" : action==="Reject" ? "bg-red-100" : "bg-white"}`}>
+      <div
+        className={`p-8 rounded-lg shadow-xl w-full max-w-md ${
+          action === "Approve"
+            ? "bg-green-100"
+            : action === "Reject"
+            ? "bg-red-100"
+            : "bg-white"
+        }`}
+      >
         <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
           {action} Concession Request
         </h2>
         <div className="mb-4 text-gray-700">
-          <p><strong>Name:</strong> {data.firstName} {data.middleName} {data.lastName}</p>
+          <p>
+            <strong>Name:</strong> {data.firstName} {data.middleName}{" "}
+            {data.lastName}
+          </p>
         </div>
         <div className="mb-4 text-gray-700">
-          <p><strong>From:</strong> {data.from}</p>
+          <p>
+            <strong>From:</strong> {data.from}
+          </p>
         </div>
         <div className="mb-4 text-gray-700">
-          <p><strong>Duration:</strong> {data.duration}</p>
+          <p>
+            <strong>Duration:</strong> {data.duration}
+          </p>
         </div>
         {action === "Approve" && (
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2"><strong>Certificate Number:</strong></label>
+            <label className="block text-gray-700 mb-2">
+              <strong>Certificate Number:</strong>
+            </label>
             <input
               type="text"
               placeholder="Enter Certificate Number..."
@@ -142,7 +182,9 @@ const Modal: React.FC<ModalProps> = ({
         )}
         {action === "Reject" && (
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2"><strong>Reason:</strong></label>
+            <label className="block text-gray-700 mb-2">
+              <strong>Reason:</strong>
+            </label>
             <input
               type="text"
               placeholder="Enter Reason..."
@@ -154,7 +196,11 @@ const Modal: React.FC<ModalProps> = ({
         )}
         <div className="flex justify-between items-center">
           <button
-            className={`w-1/3 py-2 px-4 rounded-lg text-white ${action === "Approve" ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+            className={`w-1/3 py-2 px-4 rounded-lg text-white ${
+              action === "Approve"
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-red-600 hover:bg-red-700"
+            }`}
             onClick={() => onSubmit(certificateNumber)}
           >
             {action}
@@ -169,7 +215,6 @@ const Modal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
-  
 };
 
 // PendingCard component
@@ -219,6 +264,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
   idCardURL2,
   previousPassURL,
   onCardUpdate,
+  lastPassIssued,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"Approve" | "Reject">(
@@ -227,8 +273,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
   const [reason, setReason] = useState("");
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // State for image modal
   const [imageSrc, setImageSrc] = useState(""); // State for image source
-
-  const currentYear = currentUserYear(gradyear);
+  const [loading, setLoading] = useState(false);
 
   const handleApprove = () => {
     setModalAction("Approve");
@@ -242,6 +287,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
 
   const handleSubmit = async (certificateNumber: string) => {
     setIsModalOpen(false);
+
     let statMessage = reason || "Your Form has been Rejected";
     const currentDate = new Date();
 
@@ -255,11 +301,11 @@ const PendingCard: React.FC<PendingCardProps> = ({
 
     let passCollected = null;
 
-    if (modalAction=="Approve") {
+    if (modalAction == "Approve") {
       passCollected = {
         date: null,
         collected: "0",
-      }
+      };
     }
 
     const updatedConcessionRequestFields = {
@@ -271,11 +317,77 @@ const PendingCard: React.FC<PendingCardProps> = ({
     };
 
     try {
+      setLoading(true);
       const docRef = doc(db, "ConcessionDetails", id);
       await updateDoc(docRef, updatedConcessionDetailsFields);
 
       const concessionRequestRef = doc(db, "ConcessionRequest", id);
       await updateDoc(concessionRequestRef, updatedConcessionRequestFields);
+
+      // For Stats UPDATE PASS
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryRef);
+      const currentDate = dateFormat(new Date());
+
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex(
+          (entry: any) => entry.date === currentDate
+        );
+
+        if (dateIndex >= 0) {
+          if (modalAction === "Approve") {
+            // Initialize Approved if it doesn't exist
+            if (typeof statsArray[dateIndex].approvedPass !== "number") {
+              statsArray[dateIndex].approvedPass = 0;
+            }
+            statsArray[dateIndex].approvedPass += 1;
+          } else if (modalAction === "Reject") {
+            // Initialize Rejected if it doesn't exist
+            if (typeof statsArray[dateIndex].rejectedPass !== "number") {
+              statsArray[dateIndex].rejectedPass = 0;
+            }
+            statsArray[dateIndex].rejectedPass += 1;
+          }
+        } else {
+          if (modalAction === "Approve") {
+            // Initialize Approved if it doesn't exist
+            statsArray.push({
+              date: currentDate,
+              approvedPass: 1,
+            });
+          } else if (modalAction === "Reject") {
+            // Initialize Rejected if it doesn't exist
+            statsArray.push({
+              date: currentDate,
+              rejectedPass: 1,
+            });
+          }
+        }
+
+        await updateDoc(concessionHistoryRef, { stats: statsArray });
+      } else {
+        if (modalAction === "Approve") {
+          await setDoc(concessionHistoryRef, {
+            stats: [
+              {
+                date: currentDate,
+                approvedPass: 1,
+              },
+            ],
+          });
+        } else if (modalAction === "Reject") {
+          await setDoc(concessionHistoryRef, {
+            stats: [
+              {
+                date: currentDate,
+                rejectedPass: 1,
+              },
+            ],
+          });
+        }
+      }
 
       // Update parent component state to remove this card from the list
       onCardUpdate(id);
@@ -283,11 +395,16 @@ const PendingCard: React.FC<PendingCardProps> = ({
     } catch (error) {
       console.error("Error updating concession request: ", error);
     }
+    setLoading(false);
   };
 
-  
   return (
     <>
+      {loading && (
+        <div className="flex items-center justify-center h-screen">
+          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        </div>
+      )}
       {/* MAYURESH KA COMPONENT */}
       {/* <div className="mx-auto max-w-lg flex flex-col border p-4 rounded shadow">
               <h2 className="text-xl mb-4">Railway Concessions</h2>
@@ -347,7 +464,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 </div>
               </div>
             </div> */}
-
 
       {/* <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[90vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="flex flex-col w-1/2 h-full">
@@ -451,12 +567,15 @@ const PendingCard: React.FC<PendingCardProps> = ({
           </div>
         </div>
       </div> */}
-      
-      <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
+
+      <div className="p-[0.8%] flex rounded-xl border-[2px] border-[#bfc3c7] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="w-[70%] h-full flex flex-col">
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 ">
-              <InputWithLabel label={`Name`} input={`${lastName} ${firstName} ${middleName}`} />
+              <InputWithLabel
+                label={`Name`}
+                input={`${lastName} ${firstName} ${middleName}`}
+              />
             </div>
             <div className="h-full w-1/2 flex ">
               <div className="h-full w-1/2 ">
@@ -466,7 +585,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Gender`} input={gender} />
               </div>
             </div>
-
           </div>
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 flex ">
@@ -485,7 +603,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Duration`} input={duration} />
               </div>
             </div>
-
           </div>
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 flex ">
@@ -493,7 +610,10 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Branch`} input={branch} />
               </div>
               <div className="h-full w-1/2">
-                <InputWithLabel label={`Graduation Year`} input={gradyear} />
+                <InputWithLabel
+                  label={`Graduation Year`}
+                  input={currentUserYear(gradyear)}
+                />
               </div>
             </div>
             <div className="h-full w-1/2 flex ">
@@ -505,22 +625,29 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div>
           </div>
-          <div className="h-[40%] flex ">
+          <div className="h-[40%] flex">
             <div className="h-full w-1/2">
               <InputWithLabel label={`Address`} input={address} />
             </div>
             <div className="h-full w-1/2 flex flex-col">
+              <div className="w-full h-1/2 flex items-center justify-center mt-4">
+                <span>
+                  <strong>Previous pass issue date: {lastPassIssued}</strong>
+                </span>
+              </div>
               <div className="w-full h-1/2 flex items-end justify-center">
                 <button
-                  className="bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
+                  // disabled={isButtonDisabled()}
+                  className="disabled:opacity-85 disabled:cursor-not-allowed disabled:hover:bg-green-500 bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleApprove}
-                  >
+                >
                   Approve
                 </button>
               </div>
               <div className="w-full h-1/2 flex items-center justify-center">
                 <button
-                  className="bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
+                  // disabled={isButtonDisabled()}
+                  className="disabled:opacity-85 disabled:cursor-not-allowed  disabled:hover:bg-red-500 bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleReject}
                 >
                   Reject
@@ -528,9 +655,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
               </div>
             </div>
           </div>
-
-
-
         </div>
         <div className="w-[30%] h-full flex flex-col  overflow-auto">
           <div className="m-2 h-[33.333%]">
@@ -540,7 +664,11 @@ const PendingCard: React.FC<PendingCardProps> = ({
             <img className="rounded-lg" src={idCardURL2} alt="idCarUrl2" />
           </div>
           <div className="m-2 h-[33.333%]">
-            <img className="rounded-lg" src={previousPassURL} alt="previousPassUrl" />
+            <img
+              className="rounded-lg"
+              src={previousPassURL}
+              alt="previousPassUrl"
+            />
           </div>
         </div>
       </div>
@@ -551,7 +679,15 @@ const PendingCard: React.FC<PendingCardProps> = ({
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}
         action={modalAction}
-        data={{ firstName, middleName, lastName, from, duration, reason, setReason }}
+        data={{
+          firstName,
+          middleName,
+          lastName,
+          from,
+          duration,
+          reason,
+          setReason,
+        }}
       />
 
       {/* Image modal */}

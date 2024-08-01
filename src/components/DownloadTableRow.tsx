@@ -1,6 +1,7 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
+import { dateFormat } from "@/constants/dateFormat";
 
 interface DownloadTableRowProps {
   srNo: number;
@@ -30,7 +31,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
         </Button>
       </TableCell>
       <TableCell>{batch.isDownloaded ? 'Yes' : 'No'}</TableCell>
-      <TableCell className="pl-[2rem]">{batch.date ? batch.date.toLocaleDateString() : '-'}</TableCell>
+      <TableCell className="pl-[2rem]">{batch.date ?dateFormat(batch.date) : '-'}</TableCell>
     </TableRow>
   );
 };
