@@ -68,8 +68,7 @@ const SignIn = () => {
         password
       );
       const user = userCredential.user;
-
-      const facultyRef = doc(db, "Faculty", user.uid);
+      const facultyRef = doc(db, "OfficialLogin", user.uid);
       const facultyDoc = await getDoc(facultyRef);
 
       if (facultyDoc.exists()) {
