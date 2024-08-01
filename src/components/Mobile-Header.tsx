@@ -65,7 +65,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
             </Link>
 
             {/* Conditional Links */}
-            {userType === "faculty" && (
+            {userType === "hod" && (
               <>
                 <Link
                   href="#"
@@ -134,7 +134,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
               </>
             )}
             {(userType === "admin" ||
-              userType === "faculty" ||
+              userType === "hod" ||
               userType === "principal") && (
                 <>
                   <Link

@@ -31,7 +31,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         Home
       </Link>
 
-      {userType === "faculty" && (
+      {userType === "hod" && (
         <>
           <Link
             href="#"
@@ -114,7 +114,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         </>
       )}
       {(userType === "admin" ||
-        userType === "faculty" ||
+        userType === "hod" ||
         userType === "principal") && (
         <>
           <Link

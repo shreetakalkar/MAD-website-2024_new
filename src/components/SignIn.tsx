@@ -68,11 +68,12 @@ const SignIn = () => {
         password
       );
       const user = userCredential.user;
-      const facultyRef = doc(db, "OfficialLogin", user.uid);
-      const facultyDoc = await getDoc(facultyRef);
 
-      if (facultyDoc.exists()) {
-        const data = facultyDoc.data();
+      const OfficialLoginRef = doc(db, "OfficialLogin", user.uid);
+      const OfficialLoginDoc = await getDoc(OfficialLoginRef);
+
+      if (OfficialLoginDoc.exists()) {
+        const data = OfficialLoginDoc.data();
         setUser({
           name: data.name,
           email: data.email,
