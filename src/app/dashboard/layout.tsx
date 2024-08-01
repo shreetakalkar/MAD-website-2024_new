@@ -13,7 +13,7 @@ import MobileHeader from "@/components/Mobile-Header";
 export default function Home({
   admin,
   committee,
-  faculty,
+  hod,
   principal,
   student,
   railway,
@@ -21,7 +21,7 @@ export default function Home({
 }: {
   admin: React.ReactNode;
   committee: React.ReactNode;
-  faculty: React.ReactNode;
+  hod: React.ReactNode;
   principal: React.ReactNode;
   student: React.ReactNode;
   railway: React.ReactNode;
@@ -33,8 +33,8 @@ export default function Home({
 
   useEffect(() => {
     const fetchUserType = async ({ uid }: { uid: string }) => {
-      const facultyRef = doc(db, "Faculty", uid);
-      const docSnap = await getDoc(facultyRef);
+      const officailLoginRef = doc(db, "OfficialLogin", uid);
+      const docSnap = await getDoc(officailLoginRef);
       setUserType(docSnap.data()?.type);
     };
 
@@ -49,12 +49,11 @@ export default function Home({
         <div className="min-h-screen flex flex-col mt-4">
           {userType == "admin" && admin}
           {userType == "committee" && committee}
-          {userType == "faculty" && faculty}
+          {userType == "hod" && hod}
           {userType == "principal" && principal}
           {userType == "student" && student}
           {userType == "railway" && railway}
           {userType == "examdept" && examdept}
-
         </div>
       </div>
     </ProtectionProvider>
