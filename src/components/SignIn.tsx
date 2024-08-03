@@ -17,7 +17,9 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "./ui/use-toast";
 import { useUser } from "@/providers/UserProvider";
 import { useRouter } from "next/navigation";
-import { Loader } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
+import ModeToggle from "./ui/mode-toggle";
+import Link from "next/link";
 
 interface UserData {
   name: string;
@@ -116,6 +118,20 @@ const SignIn: React.FC = () => {
   };
 
   return (
+    <>            <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
+    <div className=" mx-auto ">
+      <div className="flex justify-center h-16">
+        <div className="flex-shrink-0 flex items-center gap-2">
+          <ModeToggle />
+          <Button variant={"link"} >
+          <Link href="/about">About Us</Link>
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
     <div className="flex justify-center items-center h-screen">
       <Card className="w-[350px]">
         <CardHeader>
@@ -168,6 +184,7 @@ const SignIn: React.FC = () => {
         </CardFooter>
       </Card>
     </div>
+    </>
   );
 };
 
