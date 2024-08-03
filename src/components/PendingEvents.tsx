@@ -26,14 +26,14 @@ const PendingEvents: React.FC = () => {
     if (event) {
       const addRef = doc(db, "Events", id);
       await setDoc(addRef, {
-        committeeName: event["Committee Name"],
-        eventName: event["Event Name"],
-        eventDescription: event["Event description"],
-        eventDate: event["Event Date"],
-        eventTime: event["Event Time"],
-        eventLocation: event["Event Location"],
-        eventRegistrationUrl: event["Event registration url"],
-        imageUrl: event["Image url"],
+        "Committee Name": event["Committee Name"],
+        "Event Name": event["Event Name"],
+        "Event description": event["Event description"],
+        "Event date": event["Event Date"],
+        "Event Time": event["Event Time"],
+        "Event Location": event["Event Location"],
+        "Event registration url": event["Event registration url"],
+        "Image url ": event["Image url"],
       });
     }
     console.log("Event Added to Events Collection");
