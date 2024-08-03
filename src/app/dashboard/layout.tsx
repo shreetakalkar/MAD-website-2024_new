@@ -16,7 +16,8 @@ export default function Home({
   principal,
   student,
   railway,
-  examdept
+  examdept,
+  professor
 }: {
   admin: React.ReactNode;
   committee: React.ReactNode;
@@ -25,19 +26,27 @@ export default function Home({
   student: React.ReactNode;
   railway: React.ReactNode;
   examdept:React.ReactNode;
+  professor: React.ReactNode;
 }) {
   const { theme } = useTheme();
   const { user } = useUser();
-  const [userType, setUserType] = useState(null);
+  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     console.log(user);
     const fetchUserType = async ({ uid }: { uid: string }) => {
       if (!uid) return;
-      const facultyRef = doc(db, "OfficialLogin", uid);
-      const docSnap = await getDoc(facultyRef);
+      let facultyRef = doc(db, "OfficialLogin", uid);
+      let docSnap = await getDoc(facultyRef);
       console.log(docSnap.data()?.type);
-      setUserType(docSnap.data()?.type);
+      if (!docSnap.exists()) {
+        facultyRef = doc(db, "Professors", uid);
+        docSnap = await getDoc(facultyRef);
+        console.log(docSnap.data());
+        setUserType("professor"); 
+      } else{
+        setUserType(docSnap.data()?.type);
+      };
     };
 
     fetchUserType({ uid: user?.uid || "" });
@@ -56,6 +65,7 @@ export default function Home({
           {userType == "student" && student}
           {userType == "railway" && railway}
           {userType == "examdept" && examdept}
+          {userType == "professor" && professor}
         </div>
       </div>
     </ProtectionProvider>
