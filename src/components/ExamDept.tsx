@@ -6,7 +6,6 @@ import * as z from "zod";
 import TTForm from "./TTForm";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useToast } from "@/components/ui/use-toast";
-
 import { db, storage } from "@/config/firebase";
 import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -84,7 +83,7 @@ const ExamDept = () => {
     if (file) {
       const storageRef = ref(
         storage,
-        `ImportantNotice/ExamDepartment/${file.name}`
+        `ImportantNotice/ExamTimeTable/${file.name}`
       );
       const uploadTask = uploadBytesResumable(storageRef, file);
 
