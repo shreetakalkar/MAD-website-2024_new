@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   FormControl,
   FormField,
@@ -26,6 +26,41 @@ const CommiteeForm: React.FC<CommiteeFormProps> = ({
   control,
   reset,
 }: CommiteeFormProps) => {
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const validateImageDimensions = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const { width, height } = img;
+        if (
+          (width === 1080 && height === 1350) ||
+          (width === 1080 && height === 680) ||
+          (width === 1080 && height === 1080)
+        ) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const isValid = await validateImageDimensions(file);
+      if (isValid) {
+        setImageError(null);
+        field.onChange(file);
+      } else {
+        setImageError("Invalid image dimensions. Please upload an image with dimensions 1080x1350, 1080x680, or 1080x1080.");
+        e.target.value = ""; // Clear the input
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8" noValidate>
       <div className="grid gap-6">
@@ -124,14 +159,18 @@ const CommiteeForm: React.FC<CommiteeFormProps> = ({
             name="image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Image Upload</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Image Upload</FormLabel>
+                  <p className="text-gray-500 text-sm">Size: 1080x1080 / 1080x1350 / 1080x680</p>
+                </div>
                 <FormControl>
-                  <Input type="file" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    if (e.target.files) {
-                      field.onChange(e.target.files[0]);
-                    }
-                  }} placeholder="Enter Image URL" />
+                  <Input
+                    type="file"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageChange(e, field)}
+                    placeholder="Upload Image"
+                  />
                 </FormControl>
+                {imageError && <p className="text-red-500">{imageError}</p>}
               </FormItem>
             )}
           />
