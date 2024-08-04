@@ -1,7 +1,10 @@
+import PendingEvents from "@/components/PendingEvents"
 
 function page() {
   return (
-    <div>admin</div>
+    <div>
+      <PendingEvents />
+    </div>
   )
 }
 

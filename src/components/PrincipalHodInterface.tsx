@@ -6,13 +6,16 @@ import * as z from "zod";
 import TTForm from "./TTForm";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useToast } from "@/components/ui/use-toast";
+
 import { db, storage } from "@/config/firebase";
 import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import useGradYear from "@/constants/gradYearList";
 import { ClipLoader } from "react-spinners";
+import { useUser } from "@/providers/UserProvider";
 
 // Define the schema for form validation
+
 const formSchema = z.object({
   title: z.string().nullable(),
   description: z.string().nullable(),
@@ -27,15 +30,18 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const ExamDept = () => {
+const PrincipalHodInterface = () => {
   const { toast } = useToast();
   const gradYearList = useGradYear();
   const [loading, setLoading] = useState<boolean>(false);
+  const {user} = useUser();
+  
 
   const methods = useForm<FormData>({
+
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
+      title: `Notice by ${user?.name}`,
       description: "",
       year: "All",
       branch: "All",
@@ -83,7 +89,7 @@ const ExamDept = () => {
     if (file) {
       const storageRef = ref(
         storage,
-        `ImportantNotice/ExamDepartment/${file.name}`
+        `ImportantNotice/${user?.name}/${file.name}`
       );
       const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -161,6 +167,10 @@ const ExamDept = () => {
     setLoading(false);
   };
 
+  const capitalieFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
     <>
       <div className="w-[100%] flex justify-center items-center">
@@ -183,7 +193,7 @@ const ExamDept = () => {
               className="w-[95%] no-scrollbar"
             >
               <CardHeader>
-                <CardTitle className="text-3xl">Exam Department Form</CardTitle>
+                <CardTitle className="text-3xl">{user?.name}'s Announcement Form</CardTitle>
               </CardHeader>
               <CardContent>
                 <TTForm
@@ -191,6 +201,7 @@ const ExamDept = () => {
                   handleSubmit={methods.handleSubmit(onSubmit)}
                   control={methods.control}
                   reset={methods.reset}
+                  lockTitle={!!user && (user?.type === "principal" || user?.type === "hod")}
                 />
               </CardContent>
             </Card>
@@ -201,4 +212,4 @@ const ExamDept = () => {
   );
 };
 
-export default ExamDept;
+export default PrincipalHodInterface;

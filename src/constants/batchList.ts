@@ -3,7 +3,7 @@ const useBatchList = (div: string, branch: string) => {
   if (div == null) {
     return batches;
   }
-  if (branch === "Comps") {
+  if (branch === "Comps" || branch === "Extc") {
     for (let i = 1; i <= 4; i++) {
       batches.push(`${div}${i}`);
     }

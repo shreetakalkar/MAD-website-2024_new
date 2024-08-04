@@ -8,6 +8,7 @@ import {
   Menu,
   ShoppingCart,
   User,
+  Bell
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from 'react'
@@ -65,7 +66,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
             </Link>
 
             {/* Conditional Links */}
-            {userType === "faculty" && (
+            {userType === "hod" && (
               <>
                 <Link
                   href="#"
@@ -134,7 +135,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
               </>
             )}
             {(userType === "admin" ||
-              userType === "faculty" ||
+              userType === "hod" ||
               userType === "principal") && (
                 <>
                   <Link
@@ -152,7 +153,16 @@ const MobileHeader = ({ userType }: { userType: string }) => {
                     Past Notifications
                   </Link>
                 </>
-              )}
+            )}
+            {userType === "professor" && (
+              <Link
+                href="/dashboard/notification"
+                className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+              >
+                <Bell className="h-4 w-4" />
+                Send Notification
+              </Link>
+            )}
           </nav>
 
           {/* Account Dropdown */}

@@ -1,13 +1,13 @@
-# MAD-website-2024
-## TSEC Website
+# DEVS CLUB-website-2024
+## DEVS CLUB Website
 
-This official website of [TSEC](https://tsec.edu) maintained by TSEC MAD Club.
+This official website of [TSEC](https://tsec.edu) maintained by TSEC DEVS Club.
 
 ## Code formating
 Use latest version of Prettier - Code formatter.
 ## Contributing
 
-TSEC website is a fully open-source project, and we welcome contributions. Information on how to get started can be found at our [contributor guide](./CONTRIBUTING.md).
+DEVS CLUB website is a fully open-source project, and we welcome contributions. Information on how to get started can be found at our [contributor guide](./CONTRIBUTING.md).
 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
