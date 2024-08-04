@@ -85,5 +85,12 @@ const Features = [
     darkIconLink: "assets/images/bell-dark.png",
     type: [userTypes.RAILWAY],
   },
+  {
+    mainTitle: "Notification",
+    mainLink: "/notification",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.PROFESSOR],
+  },
 ];
 export default Features;

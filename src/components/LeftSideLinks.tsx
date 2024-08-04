@@ -7,6 +7,7 @@ import {
   GitPullRequestClosed,
   Download,
   FileBadge,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -132,6 +133,15 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
             Past Notifications
           </Link>
         </>
+      )}
+      {userType === "professor" && (
+          <Link
+          href="/dashboard/notification"
+          className={getLinkClasses("/dashboard/notification")}          
+          >
+          <Bell className="h-4 w-4" />
+          Send Notification
+        </Link>
       )}
     </nav>
   );

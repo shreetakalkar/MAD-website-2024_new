@@ -118,7 +118,8 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <>            <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
+    <>            
+    <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
     <div className=" mx-auto ">
       <div className="flex justify-center h-16">
         <div className="flex-shrink-0 flex items-center gap-2">
@@ -126,7 +127,7 @@ const SignIn: React.FC = () => {
           <Button variant={"link"} >
           <Link href="/about">About Us</Link>
           <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
+          </Button>
         </div>
       </div>
     </div>
@@ -136,7 +137,7 @@ const SignIn: React.FC = () => {
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
-          <CardDescription>Welcome to the TSEC WEBSITE</CardDescription>
+          <CardDescription>Welcome to the DEVS CLUB WEBSITE</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid w-full gap-4">

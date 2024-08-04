@@ -6,7 +6,8 @@ export const userTypes = {
     COMMITTEE: "committee",
     STUDENT: "student",
     PRINCIPAL: "principal",
-    RAILWAY: "railway"
+    RAILWAY: "railway",
+    PROFESSOR: "professor",
   };
 
 

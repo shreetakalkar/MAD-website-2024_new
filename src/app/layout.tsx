@@ -10,7 +10,7 @@ import { UserProvider } from "@/providers/UserProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 const metadata: Metadata = {
-  title: "TSEC WEBSITE",
+  title: "DEVS CLUB WEBSITE",
   description: "Created by batch 2024-2025",
 };
 
