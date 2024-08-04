@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import {
   FormControl,
@@ -8,16 +8,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Calendar } from "./ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -34,7 +38,7 @@ interface AdditionalField {
   options?: string[];
 }
 
-interface TTFormProps {
+interface TestFormProps {
   additionalFields?: AdditionalField[];
   handleSubmit: (data: any) => void;
   control: any;
@@ -42,24 +46,23 @@ interface TTFormProps {
   lockTitle?: boolean;
 }
 
-const TTForm: React.FC<TTFormProps> = ({
+const TestForm: React.FC<TestFormProps> = ({
   additionalFields,
   handleSubmit,
   control,
   reset,
   lockTitle = false,
-}: TTFormProps) => {
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+}: TestFormProps) => {
+  const { handleSubmit: submitHandler } = useFormContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [currentYear, setCurrentYear] = useState<string>("All");
   const [branch, setBranch] = useState<string>("All");
   const [div, setDivision] = useState<string>("All");
-  // const [batch, setBatch] = useState<string>("All");
 
   const divisionOptions = useDivisionList(branch, currentYear);
   const batchOptions = useBatchList(div, branch);
 
-  // Options
   const yearOptions = ["All", "FE", "SE", "TE", "BE"];
   const branchOptions = ["All", ...branches];
   const divisionOptionsWithAll = ["All", ...divisionOptions];
@@ -141,12 +144,7 @@ const TTForm: React.FC<TTFormProps> = ({
 
   return (
     <form
-      onSubmit={(data) => {
-        handleSubmit(data);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-      }}
+      onSubmit={submitHandler(handleSubmit)}
       className="space-y-8"
       noValidate
     >
@@ -216,69 +214,6 @@ const TTForm: React.FC<TTFormProps> = ({
                   </FormItem>
                 )}
               />
-              {currentYear !== "FE" && currentYear !== "All" && (
-                <FormField
-                  control={control}
-                  name="branch"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Branch</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          setBranch(value);
-                          setDivision("All"); // Reset division and below
-                        }}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select branch" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {branchOptions.map((branch) => (
-                            <SelectItem key={branch} value={branch}>
-                              {branch}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {(currentYear === "FE" || branch !== "All") && (
-                <FormField
-                  control={control}
-                  name="division"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Division</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          setDivision(value);
-                          // setBatch("All");
-                        }}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select division" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {divisionOptionsWithAll.map((division) => (
-                            <SelectItem key={division} value={division}>
-                              {division}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-              )}
 
               {currentYear !== "FE" && div !== "All" && (
                 <FormField
@@ -338,4 +273,4 @@ const TTForm: React.FC<TTFormProps> = ({
   );
 };
 
-export default TTForm;
+export default TestForm;

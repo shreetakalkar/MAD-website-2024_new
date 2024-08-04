@@ -83,7 +83,7 @@ const ExamDept = () => {
     if (file) {
       const storageRef = ref(
         storage,
-        `ImportantNotice/ExamDepartment/${file.name}`
+        `ImportantNotice/ExamTimeTable/${file.name}`
       );
       const uploadTask = uploadBytesResumable(storageRef, file);
 
