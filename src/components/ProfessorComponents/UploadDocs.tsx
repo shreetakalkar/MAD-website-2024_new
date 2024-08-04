@@ -169,26 +169,6 @@ const UploadDocs = ({ name }: { name: string }) => {
               </SelectContent>
             </Select>
           </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="division">Division</Label>
-            <Select
-              disabled={!currentYear || !branch}
-              onValueChange={setDivision}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select division" />
-              </SelectTrigger>
-              <SelectContent>
-                {divisionOptions.map((division) => (
-                  <SelectItem key={division} value={division}>
-                    {division}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="grid gap-2">
             <Label htmlFor="subject">Subject</Label>
             <Select
@@ -207,6 +187,24 @@ const UploadDocs = ({ name }: { name: string }) => {
               </SelectContent>
             </Select>
           </div>
+          <div className="grid gap-2">
+            <Label htmlFor="division">Division</Label>
+            <Select
+              disabled={!currentYear || !branch}
+              onValueChange={setDivision}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select division" />
+              </SelectTrigger>
+              <SelectContent>
+                {divisionOptions.map((division) => (
+                  <SelectItem key={division} value={division}>
+                    {division}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>         
         </div>
         <div className="grid gap-2">
           <Label htmlFor="title">Title</Label>
