@@ -1,13 +1,11 @@
 import ProfessorNotification from "@/components/ProfessorComponents/ProfessorNotification";
-import YeLeBhai from "@/components/ProfessorComponents/YeLeBhai";
 
-const AnotherPage = () => {
+const NotificationPage = () => {
   return (
     <div>
-      <YeLeBhai />
-      {/* <ProfessorNotification /> */}
+      <ProfessorNotification />
     </div>
   );
 };
 
-export default AnotherPage;
+export default NotificationPage;
