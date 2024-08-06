@@ -1,4 +1,13 @@
 "use client";
+
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 import { useUser } from "@/providers/UserProvider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,19 +27,43 @@ const Team = () => {
               <Button variant={"link"} >
               <Link href="/dashboard">Dashboard</Link>
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            
-              :
-              
-              <Button variant={"link"}>
-                <Link href="/">Sign In</Link>
-                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>:<Button variant={"link"}>
+                  <Link href="/">Sign In</Link>
+                  <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               }
             </div>
           </div>
         </div>
       </nav>
+
+      <section className="mb-12 w-full">
+        <Carousel
+          opts={{ align: "center" }}
+          className="w-ful"
+        >
+          <CarouselContent className="relative">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <CarouselItem key={index} className="w-full h-[75vh] flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center p-4">
+                  <Card className="w-4/5 h-4/5">
+                    <CardContent className="flex items-center justify-center h-full p-6">
+                      <span className="text-4xl font-bold text-gray-700 dark:text-gray-300">
+                        {index + 1}
+                      </span>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-0 top-1/2 transform -translate-y-1/2" />
+          <CarouselNext className="absolute right-0 top-1/2 transform -translate-y-1/2" />
+        </Carousel>
+      </section>
+
+
+
       <h1 className="text-4xl font-bold mb-8 text-center">Our Team</h1>
 
       <div className="mb-12">
