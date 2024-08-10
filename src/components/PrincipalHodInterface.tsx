@@ -193,7 +193,7 @@ const PrincipalHodInterface = () => {
               className="w-[95%] no-scrollbar"
             >
               <CardHeader>
-                <CardTitle className="text-3xl">{user?.name}'s Announcement Form</CardTitle>
+                <CardTitle className="text-3xl">{user?.name}&apos;s Announcement Form</CardTitle>
               </CardHeader>
               <CardContent>
                 <TTForm
