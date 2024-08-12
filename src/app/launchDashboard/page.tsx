@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -48,33 +48,36 @@ const TableDemo = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 w-[100vw]">
       <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
         <div className="mx-auto">
           <div className="flex justify-center h-16">
             <div className="flex-shrink-0 flex items-center gap-2">
               <ModeToggle />
-              {user?.name ?
+              {user?.name ? (
                 <Button variant={"link"}>
                   <Link href="/dashboard">Dashboard</Link>
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Button> :
+                </Button>
+              ) : (
                 <Button variant={"link"}>
                   <Link href="/">Sign In</Link>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-              }
+              )}
             </div>
           </div>
         </div>
       </nav>
 
       <div className="flex justify-center p-10">
-        <div className="w-[75vw]">
+        <div className="w-[85vw] max-h-[85vh] overflow-y-auto rounded-[1.2rem] border-[0.1rem] dark:border-muted-foreground border-muted-950">
           <Table>
-            <TableCaption>List of Students Decocode Launch Screen</TableCaption>
+            <TableCaption className="p-4">
+              Students Who Decoded the Launch Screen
+            </TableCaption>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted hover:bg-muted">
                 <TableHead>Rank</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Year</TableHead>

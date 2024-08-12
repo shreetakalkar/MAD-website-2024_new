@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { useUser } from "@/providers/UserProvider";
@@ -24,10 +24,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -38,7 +39,7 @@ const FormSchema = z.object({
     required_error: "Please select a branch.",
   }),
   code: z.string().min(1, "Code is required"),
-  instagramId: z.string().optional()
+  instagramId: z.string().optional(),
 });
 
 const LaunchForm = () => {
@@ -49,10 +50,10 @@ const LaunchForm = () => {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const launchDocRef = doc(db, 'Launch', 'launch');
+      const launchDocRef = doc(db, "Launch", "launch");
       const launchDoc = await getDoc(launchDocRef);
       if (!launchDoc.exists()) {
-        throw new Error('Launch document not found');
+        throw new Error("Launch document not found");
       }
 
       const launchData = launchDoc.data();
@@ -60,24 +61,24 @@ const LaunchForm = () => {
       const unlocked = launchData.unlocked;
 
       if (!encryptedCode) {
-        throw new Error('Code not found in document');
+        throw new Error("Code not found in document");
       }
 
       const isMatch = await bcrypt.compare(data.code, encryptedCode);
       if (!isMatch) {
-        throw new Error('Invalid code');
+        throw new Error("Invalid code");
       }
 
       const studentData = {
         name: data.name,
         branch: data.branch,
         year: data.year,
-        instagramId: data.instagramId
+        instagramId: data.instagramId,
       };
 
       await updateDoc(launchDocRef, {
         students: arrayUnion(studentData),
-        unlocked: unlocked + 1
+        unlocked: unlocked + 1,
       });
 
       toast({
@@ -85,7 +86,7 @@ const LaunchForm = () => {
         description: "Code verified and student added successfully.",
       });
 
-      router.push('/launchDashboard')
+      router.push("/launchDashboard");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast({
@@ -109,23 +110,27 @@ const LaunchForm = () => {
           <div className="flex justify-center h-16">
             <div className="flex-shrink-0 flex items-center gap-2">
               <ModeToggle />
-              {user?.name ?
-                <Button variant={"link"} >
+              {user?.name ? (
+                <Button variant={"link"}>
                   <Link href="/dashboard">Dashboard</Link>
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Button> :
+                </Button>
+              ) : (
                 <Button variant={"link"}>
                   <Link href="/">Sign In</Link>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-              }
+              )}
             </div>
           </div>
         </div>
       </nav>
       <div className="flex justify-center p-10">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-2/3 space-y-6"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -133,59 +138,71 @@ const LaunchForm = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <input {...field} type="text" placeholder="Enter your name" />
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Enter your name"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="year"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Year</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your year" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="FE">FE</SelectItem>
-                      <SelectItem value="SE">SE</SelectItem>
-                      <SelectItem value="BE">BE</SelectItem>
-                      <SelectItem value="TE">TE</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="branch"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Branch</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your branch" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Comps">Comps</SelectItem>
-                      <SelectItem value="Aids">Aids</SelectItem>
-                      <SelectItem value="It">It</SelectItem>
-                      <SelectItem value="Extc">Extc</SelectItem>
-                      <SelectItem value="Chem">Chem</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-2">
+              <FormField
+                control={form.control}
+                name="year"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Year</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your year" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="FE">FE</SelectItem>
+                        <SelectItem value="SE">SE</SelectItem>
+                        <SelectItem value="BE">BE</SelectItem>
+                        <SelectItem value="TE">TE</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="branch"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Branch</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your branch" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Comps">Comps</SelectItem>
+                        <SelectItem value="Aids">Aids</SelectItem>
+                        <SelectItem value="It">It</SelectItem>
+                        <SelectItem value="Extc">Extc</SelectItem>
+                        <SelectItem value="Chem">Chem</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />{" "}
+            </div>
             <FormField
               control={form.control}
               name="instagramId"
@@ -193,7 +210,11 @@ const LaunchForm = () => {
                 <FormItem>
                   <FormLabel>Instagram ID (optional)</FormLabel>
                   <FormControl>
-                    <input {...field} type="text" placeholder="Enter your Instagram ID (optional)" />
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Enter your Instagram ID (optional)"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,7 +227,11 @@ const LaunchForm = () => {
                 <FormItem>
                   <FormLabel>Code</FormLabel>
                   <FormControl>
-                    <input {...field} type="text" placeholder="Enter the code" />
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Enter the code"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -217,7 +242,7 @@ const LaunchForm = () => {
         </Form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LaunchForm
+export default LaunchForm;
