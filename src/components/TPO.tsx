@@ -108,6 +108,9 @@ const TPOcomponent = () => {
       const internshipRef = collection(db, "Internship");
       await addDoc(internshipRef, uploadData);
 
+      const notificationRef = collection(db, "notifications");
+      await addDoc(notificationRef, uploadData);
+
       toast({
         description: "Internship successfully added!",
         variant: "default",
