@@ -17,7 +17,8 @@ export default function Home({
   student,
   railway,
   examdept,
-  professor
+  professor,
+  tpo
 }: {
   admin: React.ReactNode;
   committee: React.ReactNode;
@@ -27,6 +28,7 @@ export default function Home({
   railway: React.ReactNode;
   examdept:React.ReactNode;
   professor: React.ReactNode;
+  tpo: React.ReactNode;
 }) {
   const { theme } = useTheme();
   const { user } = useUser();
@@ -66,6 +68,7 @@ export default function Home({
           {userType == "railway" && railway}
           {userType == "examdept" && examdept}
           {userType == "professor" && professor}
+          {userType == "tpo" && tpo}
         </div>
       </div>
     </ProtectionProvider>

@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import TTForm from "../TTForm";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import TTForm from "./TTForm";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { db, storage } from "@/config/firebase";
 import {
@@ -38,7 +38,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const NotificationComponent = () => {
+const TPOcomponent = () => {
   const { toast } = useToast();
   const gradYearList = useGradYear();
   const [loading, setLoading] = useState<boolean>(false);
@@ -71,7 +71,7 @@ const NotificationComponent = () => {
     if (!file) throw new Error("No file provided");
     if (!user?.uid) throw new Error("User ID is not available");
     console.log("ANDAR");
-    const storageRef = ref(storage, `notification/${user.uid}/${title}`);
+    const storageRef = ref(storage, `Internship/${title}/${file}`);
     const snapshot = await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
     console.log("BAHAR");
@@ -105,15 +105,18 @@ const NotificationComponent = () => {
     };
 
     try {
-      const notificationsRef = collection(db, "notifications");
-      await addDoc(notificationsRef, uploadData);
+      const internshipRef = collection(db, "Internship");
+      await addDoc(internshipRef, uploadData);
+
+      const notificationRef = collection(db, "notifications");
+      await addDoc(notificationRef, uploadData);
 
       toast({
-        description: "Notification successfully added!",
+        description: "Internship successfully added!",
         variant: "default",
       });
     } catch (error) {
-      console.error("Error adding notification: ", error);
+      console.error("Error adding Internship: ", error);
       throw error;
     }
   };
@@ -147,13 +150,13 @@ const NotificationComponent = () => {
         }
         methods.reset();
         toast({
-          description: "Notification successfully added!",
+          description: "Internship successfully added!",
           variant: "default",
         });
       } catch (error) {
         console.error("Error submitting form: ", error);
         toast({
-          description: "Error adding notification. Please try again.",
+          description: "Error adding Internship. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -186,7 +189,7 @@ const NotificationComponent = () => {
               className="w-[95%] no-scrollbar"
             >
               <CardHeader>
-                <CardTitle className="text-3xl">Send Notification</CardTitle>
+                <CardTitle className="text-3xl">Add Internship</CardTitle>
               </CardHeader>
               <CardContent>
                 <TTForm
@@ -205,4 +208,4 @@ const NotificationComponent = () => {
   );
 };
 
-export default NotificationComponent;
+export default TPOcomponent;
