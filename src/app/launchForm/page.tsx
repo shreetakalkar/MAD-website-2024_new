@@ -32,7 +32,7 @@ import { Input } from "@/components/ui/input";
 
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  year: z.enum(["FE", "SE", "BE", "TE"], {
+  year: z.enum(["FE", "SE", "TE", "BE"], {
     required_error: "Please select a year.",
   }),
   branch: z.enum(["Comps", "Aids", "It", "Extc", "Chem"], {
@@ -168,8 +168,8 @@ const LaunchForm = () => {
                       <SelectContent>
                         <SelectItem value="FE">FE</SelectItem>
                         <SelectItem value="SE">SE</SelectItem>
-                        <SelectItem value="BE">BE</SelectItem>
                         <SelectItem value="TE">TE</SelectItem>
+                        <SelectItem value="BE">BE</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -230,7 +230,7 @@ const LaunchForm = () => {
                   <FormControl>
                     <Input
                       {...field}
-                      type="text"
+                      type="password"
                       placeholder="Enter the code"
                     />
                   </FormControl>
