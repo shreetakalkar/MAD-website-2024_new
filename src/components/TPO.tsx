@@ -71,7 +71,7 @@ const TPOcomponent = () => {
     if (!file) throw new Error("No file provided");
     if (!user?.uid) throw new Error("User ID is not available");
     console.log("ANDAR");
-    const storageRef = ref(storage, `Internship/${title}`);
+    const storageRef = ref(storage, `Internship/${title}/${file}`);
     const snapshot = await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
     console.log("BAHAR");
