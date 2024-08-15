@@ -121,6 +121,7 @@ const PrincipalHodInterface = () => {
       startDate: startDate ? Timestamp.fromDate(startDate) : null,
       endDate: endDate ? Timestamp.fromDate(endDate) : null,
       docURL: uploadedDocURL,
+      from: user?.type,
     };
 
     try {
