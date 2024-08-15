@@ -11,6 +11,7 @@ import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import useGradYear from "@/constants/gradYearList";
 import { ClipLoader } from "react-spinners";
+import { useUser } from "@/providers/UserProvider";
 
 // Define the schema for form validation
 const formSchema = z.object({
@@ -31,6 +32,7 @@ const ExamDept = () => {
   const { toast } = useToast();
   const gradYearList = useGradYear();
   const [loading, setLoading] = useState<boolean>(false);
+  const {user} = useUser();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -115,6 +117,7 @@ const ExamDept = () => {
       startDate: startDate ? Timestamp.fromDate(startDate) : null,
       endDate: endDate ? Timestamp.fromDate(endDate) : null,
       docURL: uploadedDocURL,
+      from: user?.type,
     };
 
     try {
