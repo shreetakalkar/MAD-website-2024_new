@@ -68,7 +68,7 @@ function InputWithLabel({ label, input }: { label: any; input: any }) {
       </div>
       <div className=" h-[65%] overflow-auto">
         <div
-          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `}
+          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `} 
         >
           {input}
         </div>
