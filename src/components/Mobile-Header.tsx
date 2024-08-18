@@ -8,10 +8,11 @@ import {
   Menu,
   ShoppingCart,
   User,
-  Bell
+  Bell,
+  History,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import React from 'react'
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/modeToggle";
@@ -19,7 +20,12 @@ import Image from "next/image";
 import DevsDark from "@/public/images/devs-dark.png";
 import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { useUser } from "@/providers/UserProvider";
 import { auth } from "@/config/firebase";
 import { useRouter } from "next/navigation";
@@ -44,7 +50,6 @@ const MobileHeader = ({ userType }: { userType: string }) => {
 
   return (
     <header className="flex w-screen h-14 items-center justify-between gap-4 border-b  px-4 mt-3 lg:h-[60px] lg:px-6  md:hidden lg:hidden">
-
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -54,7 +59,6 @@ const MobileHeader = ({ userType }: { userType: string }) => {
         </SheetTrigger>
 
         <SheetContent side="left" className="flex flex-col w-[50%]">
-          
           {/* Links */}
           <nav className="grid gap-2 text-sm font-medium mt-[20%] space-y-3">
             <Link
@@ -137,31 +141,40 @@ const MobileHeader = ({ userType }: { userType: string }) => {
             {(userType === "admin" ||
               userType === "hod" ||
               userType === "principal") && (
-                <>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Create New Notifications
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Past Notifications
-                  </Link>
-                </>
+              <>
+                <Link
+                  href="#"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Create New Notifications
+                </Link>
+                <Link
+                  href="#"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Past Notifications
+                </Link>
+              </>
             )}
             {userType === "professor" && (
-              <Link
-                href="/dashboard/notification"
-                className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-              >
-                <Bell className="h-4 w-4" />
-                Send Notification
-              </Link>
+              <>
+                <Link
+                  href="/dashboard/notification"
+                  className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+                >
+                  <Bell className="h-4 w-4" />
+                  Send Notification
+                </Link>
+                <Link
+                  href="/dashboard/history"
+                  className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+                >
+                  <History className="h-4 w-4" />
+                  History
+                </Link>
+              </>
             )}
           </nav>
 
@@ -183,17 +196,20 @@ const MobileHeader = ({ userType }: { userType: string }) => {
             </DropdownMenu>
           </div>
         </SheetContent>
-        
       </Sheet>
 
       <div className="flex float-right space-x-3">
-        <Image src={theme == "dark" ? DevsDark : DevsLight} alt="logo" width={60} height={60} className="justify-end" />
+        <Image
+          src={theme == "dark" ? DevsDark : DevsLight}
+          alt="logo"
+          width={60}
+          height={60}
+          className="justify-end"
+        />
         <ModeToggle />
       </div>
-
-
     </header>
-  )
-}
+  );
+};
 
 export default MobileHeader;
