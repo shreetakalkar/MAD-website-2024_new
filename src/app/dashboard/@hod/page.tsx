@@ -1,15 +1,13 @@
-import React, { use } from 'react'
+import React, { use } from "react";
 import PrincipalHodInterface from "@/components/PrincipalHodInterface";
-import ImportantNotices from '@/components/NoticePage';
+import ImportantNotices from "@/components/Notices/NoticePage";
 
 const page = () => {
-
   return (
     <div>
       <ImportantNotices />
     </div>
+  );
+};
 
-  )
-}
-
-export default page
+export default page;
