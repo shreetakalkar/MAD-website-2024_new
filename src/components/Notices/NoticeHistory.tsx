@@ -175,6 +175,7 @@ const NoticeCard: React.FC<{ notice: Notice }> = ({ notice }) => {
 interface NoticeHistoryProps {
   notices: Notice[];
 }
+
 // NoticeHistory Component
 const NoticeHistory: React.FC<NoticeHistoryProps> = ({ notices }) => {
   return (
