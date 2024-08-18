@@ -59,7 +59,7 @@ export default function Home({
       <div className={`min-h-screen w-full ${theme}`}>
         <Header userType={userType ? userType : ""} />
         <MobileHeader userType={userType ? userType : ""} />
-        <div className="min-h-screen flex flex-col mt-4">
+        <div className="flex flex-col mt-4">
           {userType == "admin" && admin}
           {userType == "committee" && committee}
           {userType == "hod" && hod}
