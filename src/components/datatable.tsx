@@ -29,11 +29,13 @@ import React from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  showFilters?: boolean;
 }
 
 export default function DataTable<TData, TValue>({
   data,
   columns,
+  showFilters = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -57,39 +59,35 @@ export default function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter Certificate Number..."
-          value={
-            (table
-              .getColumn("certificateNumber")
-              ?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("certificateNumber")
-              ?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <Input
-          placeholder="Filter Name..."
-          value={
-            (table
-              .getColumn("name")
-              ?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn("name")
-              ?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm ml-2"
-        />
-      </div>
-      <div className="rounded-md border">
+      {showFilters && ( // Conditionally render the filters
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filter Certificate Number..."
+            value={
+              (table
+                .getColumn("certificateNumber")
+                ?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table
+                .getColumn("certificateNumber")
+                ?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <Input
+            placeholder="Filter Name..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm ml-2"
+          />
+        </div>
+      )}
+      <div className="rounded-md border overflow-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted hover:bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
