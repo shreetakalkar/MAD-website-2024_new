@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import PendingEventsCard from '@/components/Cards/pendingEventsCard';
 
@@ -13,7 +13,9 @@ const PendingEvents: React.FC = () => {
       const snapshot = await getDocs(eventsRef);
       const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       console.log(events);
-      setPendingEvents(events);
+      const pendingEvents = events.filter((e : any) => e.Status === "pending")
+      // console.log(events);
+      setPendingEvents(pendingEvents);
     };
 
     fetchPendingEvents();
@@ -39,14 +41,18 @@ const PendingEvents: React.FC = () => {
     console.log("Event Added to Events Collection");
 
     const delRef = doc(db, "TempEvents", id);
-    await deleteDoc(delRef);
+    await updateDoc(delRef,{
+      "Status" : "accepted"
+    });
     console.log("Event Removed from TempEvents Collection");
     setPendingEvents(prevEvents => prevEvents.filter(event => event.id !== id));
 };
 
 const handleReject = async (id: string) => {
     const delRef = doc(db, "TempEvents", id);
-    await deleteDoc(delRef);
+    await updateDoc(delRef,{
+      "Status" : "rejected"
+    });
     setPendingEvents(prevEvents => prevEvents.filter(event => event.id !== id));
     console.log("Event Removed from TempEvents Collection");
   };
