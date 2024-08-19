@@ -111,7 +111,7 @@ export default function Page() {
   return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col lg:flex-row gap-4">
-        <div className="lg:w-1/2 p-4 bg-white shadow-lg rounded-lg">
+        <div className="lg:w-1/2 p-4 shadow-lg rounded-lg">
           <div className="mb-4">
             <Popover>
               <PopoverTrigger asChild>
@@ -131,13 +131,15 @@ export default function Page() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={selectedDate || undefined}
-                onSelect={(date: Date | undefined) => setSelectedDate(date || null)}
-                disabled={(date) => !isDateAvailable(date)}
-                initialFocus
-              />
+                <Calendar
+                  mode="single"
+                  selected={selectedDate || undefined}
+                  onSelect={(date: Date | undefined) =>
+                    setSelectedDate(date || null)
+                  }
+                  disabled={(date) => !isDateAvailable(date)}
+                  initialFocus
+                />
               </PopoverContent>
             </Popover>
             {/* <Popover>
@@ -162,7 +164,7 @@ export default function Page() {
             </Popover> */}
           </div>
           <Card className="flex flex-col shadow-lg rounded-lg overflow-hidden">
-            <CardHeader className="bg-gray-800 text-white p-4">
+            <CardHeader className="bg-gray-500 bg-opacity-50 p-4">
               <CardTitle>Concession Request Served Data</CardTitle>
               <CardDescription>
                 {selectedDate
@@ -215,8 +217,8 @@ export default function Page() {
                 </PieChart>
               </ChartContainer>
             </CardContent>
-            <CardFooter className="bg-gray-100 p-4 text-sm">
-              <div className="text-gray-500">
+            <CardFooter className="bg-gray-500 bg-opacity-50 p-4 text-sm">
+              <div className="">
                 Showing data for{" "}
                 {selectedDate
                   ? format(selectedDate, "dd/MM/yyyy")
@@ -225,44 +227,44 @@ export default function Page() {
             </CardFooter>
           </Card>
         </div>
-        <div className="lg:w-1/2 p-4 bg-white shadow-lg rounded-lg">
+        <div className="lg:w-1/2 p-4  shadow-lg rounded-lg">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Total
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Created
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Approved
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Rejected
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Collected
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Updated
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Cancelled
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className=" divide-y divide-gray-200">
                 {stats.map((stat) => (
-                  <tr key={stat.date} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={stat.date} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium ">
                       {stat.date}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {(stat.approvedPass || 0) +
                         (stat.cancelledPass || 0) +
                         (stat.collectedPass || 0) +
@@ -270,22 +272,22 @@ export default function Page() {
                         (stat.rejectedPass || 0) +
                         (stat.updatedPass || 0) || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {stat.createdPass || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {stat.approvedPass || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {stat.rejectedPass || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {stat.collectedPass || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {stat.updatedPass || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm ">
                       {stat.cancelledPass || 0}
                     </td>
                   </tr>

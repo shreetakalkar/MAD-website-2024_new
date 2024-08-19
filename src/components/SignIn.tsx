@@ -12,7 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { db, auth } from "@/config/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "./ui/use-toast";
 import { useUser } from "@/providers/UserProvider";
@@ -55,8 +63,10 @@ const SignIn: React.FC = () => {
     };
   }, [user, router]);
 
-  const handleChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: ChangeEvent<HTMLInputElement>) =>
-    setter(e.target.value);
+  const handleChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: ChangeEvent<HTMLInputElement>) =>
+      setter(e.target.value);
 
   const handleRememberMeChange = (checked: boolean) => setRememberMe(checked);
 
@@ -88,7 +98,11 @@ const SignIn: React.FC = () => {
   const loginMsg = async () => {
     try {
       setLoading(true);
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const { user } = userCredential;
 
       const collections = ["OfficialLogin", "Professors"];
@@ -111,80 +125,138 @@ const SignIn: React.FC = () => {
       toast({
         title: "Error signing in",
         description: "Please check your email and password",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <>            
-    <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
-    <div className=" mx-auto ">
-      <div className="flex justify-center h-16">
-        <div className="flex-shrink-0 flex items-center gap-2">
-          <ModeToggle />
-          <Button variant={"link"} >
-          <Link href="/about">About Us</Link>
-          <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </div>
-  </nav>
+  async function forgotPassword(event: any): Promise<void> {
+    if (email) {
+      console.log(email);
+      try {
+        // Query the OfficialLogin collection
+        let q = query(
+          collection(db, "OfficialLogin"),
+          where("email", "==", email)
+        );
+        let querySnapshot = await getDocs(q);
 
-    <div className="flex justify-center items-center h-screen">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle>Sign In</CardTitle>
-          <CardDescription>Welcome to the DEVS CLUB WEBSITE</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid w-full gap-4">
-            <div className="flex flex-col items-start space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                onChange={handleChange(setEmail)}
-              />
-            </div>
-            <div className="flex flex-col items-start space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={handleChange(setPassword)}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="remember-me"
-                checked={rememberMe}
-                onCheckedChange={handleRememberMeChange}
-              />
-              <Label htmlFor="remember-me">Remember Me</Label>
+        if (!querySnapshot.empty) {
+          toast({
+            title: "Contact DevsClub for Password Reset",
+            description: "Ask devsclub for password reset directly",
+            variant: "destructive",
+          })
+        } else {
+          // If not found in OfficialLogin, check the Professors collection
+          q = query(collection(db, "Professors"), where("email", "==", email));
+          querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            router.push(`mailto:devs@example.com?subject=Your%20Subject&body=This%20is%20the%20email%20body`);
+          } else {
+            toast({
+              title: "Error",
+              description: "No matching emails found",
+              variant: "destructive",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching document: ", error);
+        toast({
+          title: "Error",
+          description: "An error occurred while searching for the email",
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Error",
+        description: "Please enter your email",
+        variant: "destructive",
+      });
+    }
+  }
+
+  return (
+    <>
+      <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
+        <div className=" mx-auto ">
+          <div className="flex justify-center h-16">
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <ModeToggle />
+              <Button variant={"link"}>
+                <Link href="/about">About Us</Link>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </div>
           </div>
-        </CardContent>
-        <CardFooter>
-          <Button
-            className="w-full"
-            onClick={loginMsg}
-            disabled={!email || !password || loading}
-          >
-            {loading ? (
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              "Sign In"
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+        </div>
+      </nav>
+
+      <div className="flex justify-center items-center h-screen">
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Sign In</CardTitle>
+            <CardDescription>Welcome to the DEVS CLUB WEBSITE</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid w-full gap-4">
+              <div className="flex flex-col items-start space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  value={email}
+                  onChange={handleChange(setEmail)}
+                />
+              </div>
+              <div className="flex flex-col items-start space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={handleChange(setPassword)}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={handleRememberMeChange}
+                />
+                <Label htmlFor="remember-me">Remember Me</Label>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <div className="flex flex-col items-center w-full space-y-2">
+              <Button
+                className="w-full"
+                onClick={loginMsg}
+                disabled={!email || !password || loading}
+              >
+                {loading ? (
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+              <div
+                className="text-xs text-red-500 text-center hover:underline underline-offset-2"
+                onClick={forgotPassword}
+              >
+                Forgot password?
+              </div>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </>
   );
 };
