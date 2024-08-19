@@ -24,6 +24,7 @@ const HistoryPage = () => {
                   Previous Notifications
                 </button>
               </li>
+
               <li>
                 <button
                   onClick={() => setActiveTab("notes")}
