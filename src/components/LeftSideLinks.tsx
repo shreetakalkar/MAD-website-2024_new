@@ -57,21 +57,23 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         </Link>
       )}
       {userType === "admin" && (
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-        >
-          <ShoppingCart className="h-4 w-4" />
-          Approve Events
-        </Link>
-      )}{" "}
-      {userType === "examdept" && (
-        <Link
-          href="/dashboard/history"
-          className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-        >
-          Notice History
-        </Link>
+        <>
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            Approve Events
+          </Link>
+          <Link
+            href="/dashboard/history-page"
+            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            History
+          </Link>
+        </>
+
       )}
       {userType === "railway" && (
         <>
@@ -122,23 +124,23 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
       {(userType === "admin" ||
         userType === "hod" ||
         userType === "principal") && (
-        <>
-          <Link
-            href="#"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Create New Notifications
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Past Notifications
-          </Link>
-        </>
-      )}
+          <>
+            <Link
+              href="#"
+              className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              Create New Notifications
+            </Link>
+            <Link
+              href="#"
+              className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              Past Notifications
+            </Link>
+          </>
+        )}
       {userType === "professor" && (
         <>
           <Link
