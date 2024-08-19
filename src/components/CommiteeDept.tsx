@@ -7,13 +7,11 @@ import CommiteeForm from "./CommiteeForm";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { db, storage } from "@/config/firebase";
-import { Timestamp, collection, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { ClipLoader } from "react-spinners";
 import { useUser } from "@/providers/UserProvider";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { format } from "path";
 
-// Define the schema for form validation
 const formSchema = z.object({
   eventName: z.string().min(1, "Event Name is required"),
   eventLocation: z.string().min(1, "Event Location is required"),
@@ -22,6 +20,7 @@ const formSchema = z.object({
   eventDescription: z.string().min(1, "Event Description is required"),
   eventRegistrationUrl: z.string().url("Invalid URL").min(1, "Registration URL is required"),
   image: z.instanceof(File).optional().nullable(),
+  status:z.enum(["pending","accepted","rejected"])
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -41,6 +40,7 @@ const CommiteeDept = () => {
       eventDescription: "",
       eventRegistrationUrl: "",
       image: null,
+      status: "pending"
     },
   });
 
@@ -71,8 +71,9 @@ const CommiteeDept = () => {
         "Event Time": data.eventTime,
         "Event description": data.eventDescription,
         "Event registration url": data.eventRegistrationUrl,
+        "Status": "pending"
     });
-      console.log("data",data);
+      // console.log("data",data);
       toast({
         description: "Event successfully added!",
         variant: "default",
