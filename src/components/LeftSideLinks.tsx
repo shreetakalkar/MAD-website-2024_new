@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import React from "react";
 import { usePathname } from "next/navigation";
+import ImportantNotices from "./Notices/NoticePage";
 
 const LeftSideLinks = ({ userType }: { userType: string }) => {
   const pathname = usePathname();
@@ -28,7 +29,6 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         <Home className="h-4 w-4" />
         Home
       </Link>
-
       {userType === "hod" && (
         <>
           <Link
