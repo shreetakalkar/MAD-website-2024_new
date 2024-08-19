@@ -13,7 +13,7 @@ interface AdminHistoryCardProps {
   status: string;
 }
 
-const AdminHistoryCard: React.FC<AdminHistoryCardProps> = ({
+const HistoryCard: React.FC<AdminHistoryCardProps> = ({
   id,
   eventName,
   committeeName,
@@ -51,4 +51,4 @@ const AdminHistoryCard: React.FC<AdminHistoryCardProps> = ({
   );
 };
 
-export default AdminHistoryCard;
+export default HistoryCard;
