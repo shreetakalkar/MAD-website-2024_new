@@ -1,10 +1,8 @@
-import ExamDept from '@/components/ExamDept'
-import React from 'react'
+import ExamDept from "@/components/ExamDept";
+import React from "react";
 
 const page = () => {
-  return (
-    <ExamDept />
-  )
-}
+  return <ExamDept />;
+};
 
-export default page
+export default page;
