@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { useUser } from "@/providers/UserProvider";
 import NoticeHistory from "./NoticeHistory";
+import { ClipLoader } from "react-spinners";
 
 export interface Notice {
   id: string;
@@ -53,6 +54,7 @@ const ImportantNotices: React.FC = () => {
           );
 
           setNotices(filteredContent);
+          setLoading(false);
         }
       } catch (err) {
         setError(err.message || "Unknown error occurred");
@@ -64,7 +66,15 @@ const ImportantNotices: React.FC = () => {
   }, []);
 
   console.log(notices);
+  const [loading, setLoading] = useState<boolean>(true);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <ClipLoader size={50} color={"#123abc"} loading={loading} />
+      </div>
+    );
+  }
   return (
     <div>
       <NoticeHistory notices={notices} />

@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { useUser } from "@/providers/UserProvider";
+import { ClipLoader } from "react-spinners";
 
 interface Notification {
   id: string;
@@ -50,27 +51,45 @@ const PreviousProfNotifications: React.FC = () => {
     fetchNotifications();
   }, [userName]);
 
-  if (loading) {
-    return <div className="text-white">Loading...</div>;
-  }
-
   const handleView = (attachment: string) => {
     window.open(attachment);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[100%]">
+        <ClipLoader size={50} color={"#123abc"} loading={loading} />
+      </div>
+    );
+  }
   return (
-    <div className="h-full overflow-hidden">
-      <div className="h-full overflow-y-auto pr-4">
+    <div
+      style={{
+        overflow: "auto",
+        WebkitOverflowScrolling: "touch",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+      className="h-full"
+    >
+      <div className="grid grid-cols-2 gap-x-4 pr-4">
         {notifications.length === 0 ? (
           <p className="text-white">No previous notifications found.</p>
         ) : (
           notifications.map((notification) => (
-            <div key={notification.id} className="bg-gray-800 flex flex-col gap-3 p-4 mb-4 rounded-lg">
-              <div>
-                <h3 className="text-2xl font-bold text-white">{notification.title}</h3>
-                <p className="text-lg text-white">{notification.message}</p>
+            <div
+              key={notification.id}
+              className="bg-muted flex flex-col gap-3 p-4 mb-4 rounded-lg"
+            >
+              <div className="flex flex-col gap-1">
+                <h3 className="text-3xl font-bold dark:text-white">
+                  {notification.title}
+                </h3>
+                <p className="text-lg dark:text-white">
+                  {notification.message}
+                </p>
               </div>
-              <span className="text-sm text-gray-400">
+              <span className="text-md dark:text-gray-400">
                 {new Intl.DateTimeFormat("en-US", {
                   weekday: "long",
                   year: "numeric",
@@ -80,25 +99,28 @@ const PreviousProfNotifications: React.FC = () => {
                   minute: "numeric",
                 }).format(notification.notificationTime.toDate())}
               </span>
-              <div className="flex gap-6 text-sm text-gray-400">
+              <div className="flex gap-6 text-[0.9rem] dark:text-gray-400">
                 <div>
                   <p>Topic: {notification.topic}</p>
                   <p>Sent By: {notification.sentBy}</p>
                 </div>
               </div>
-              {notification.attachments && notification.attachments.length > 0 && (
-                <div>
-                  <p className="text-gray-400 mb-1">Attachments:</p>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleView(notification.attachments)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm"
-                    >
-                      View Attachment
-                    </button>
+              {notification.attachments &&
+                notification.attachments.length > 0 && (
+                  <div className="flex gap-2 items-center">
+                    <p className="text-gray-500 dark:text-gray-400 mb-1">
+                      Attachments:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleView(notification.attachments)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-md text-sm"
+                      >
+                        View Attachment
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           ))
         )}
