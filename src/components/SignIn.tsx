@@ -28,7 +28,6 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Loader } from "lucide-react";
 import ModeToggle from "./ui/mode-toggle";
 import Link from "next/link";
-
 interface UserData {
   name: string;
   email: string;
@@ -148,14 +147,16 @@ const SignIn: React.FC = () => {
             title: "Contact DevsClub for Password Reset",
             description: "Ask devsclub for password reset directly",
             variant: "destructive",
-          })
+          });
         } else {
           // If not found in OfficialLogin, check the Professors collection
           q = query(collection(db, "Professors"), where("email", "==", email));
           querySnapshot = await getDocs(q);
 
           if (!querySnapshot.empty) {
-            router.push(`mailto:devs@example.com?subject=Your%20Subject&body=This%20is%20the%20email%20body`);
+            router.push(
+              `mailto:devs@example.com?subject=Your%20Subject&body=This%20is%20the%20email%20body`
+            );
           } else {
             toast({
               title: "Error",
@@ -182,82 +183,66 @@ const SignIn: React.FC = () => {
   }
 
   return (
-    <>
-      <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
-        <div className=" mx-auto ">
-          <div className="flex justify-center h-16">
-            <div className="flex-shrink-0 flex items-center gap-2">
-              <ModeToggle />
-              <Button variant={"link"}>
-                <Link href="/about">About Us</Link>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+    <div className="flex justify-center items-center h-screen">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Sign In</CardTitle>
+          <CardDescription>Welcome to the DEVS CLUB WEBSITE</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid w-full gap-4">
+            <div className="flex flex-col items-start space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={email}
+                onChange={handleChange(setEmail)}
+              />
+            </div>
+            <div className="flex flex-col items-start space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={handleChange(setPassword)}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="remember-me"
+                checked={rememberMe}
+                onCheckedChange={handleRememberMeChange}
+              />
+              <Label htmlFor="remember-me">Remember Me</Label>
             </div>
           </div>
-        </div>
-      </nav>
-
-      <div className="flex justify-center items-center h-screen">
-        <Card className="w-[350px]">
-          <CardHeader>
-            <CardTitle>Sign In</CardTitle>
-            <CardDescription>Welcome to the DEVS CLUB WEBSITE</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid w-full gap-4">
-              <div className="flex flex-col items-start space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={email}
-                  onChange={handleChange(setEmail)}
-                />
-              </div>
-              <div className="flex flex-col items-start space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={handleChange(setPassword)}
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="remember-me"
-                  checked={rememberMe}
-                  onCheckedChange={handleRememberMeChange}
-                />
-                <Label htmlFor="remember-me">Remember Me</Label>
-              </div>
+        </CardContent>
+        <CardFooter>
+          <div className="flex flex-col items-center w-full space-y-2">
+            <Button
+              className="w-full"
+              onClick={loginMsg}
+              disabled={!email || !password || loading}
+            >
+              {loading ? (
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+            <div
+              className="text-xs text-red-500 text-center hover:underline underline-offset-2"
+              onClick={forgotPassword}
+            >
+              Forgot password?
             </div>
-          </CardContent>
-          <CardFooter>
-            <div className="flex flex-col items-center w-full space-y-2">
-              <Button
-                className="w-full"
-                onClick={loginMsg}
-                disabled={!email || !password || loading}
-              >
-                {loading ? (
-                  <Loader className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
-              <div
-                className="text-xs text-red-500 text-center hover:underline underline-offset-2"
-                onClick={forgotPassword}
-              >
-                Forgot password?
-              </div>
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
-    </>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

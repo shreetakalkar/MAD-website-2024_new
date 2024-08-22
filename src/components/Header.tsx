@@ -5,7 +5,7 @@ import Image from "next/image";
 import DevsDark from "@/public/images/devs-dark.png";
 import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
-import { LogOut, User } from "lucide-react";
+import { Lock, LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +17,7 @@ import { auth } from "@/config/firebase";
 import { useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/modeToggle";
 import LeftSideLinks from "@/components/LeftSideLinks";
+import Link from "next/link";
 
 const Header = ({ userType }: { userType: string }) => {
   const { theme } = useTheme();
@@ -60,6 +61,16 @@ const Header = ({ userType }: { userType: string }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link
+                  href="/change-password"
+                  className="flex items-center"
+                >
+                  <Lock className="mr-2 h-4 w-4" />
+                  Change Password
+                </Link>
+              </DropdownMenuItem>
+
               <DropdownMenuItem onSelect={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
