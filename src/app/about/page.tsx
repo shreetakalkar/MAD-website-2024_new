@@ -13,19 +13,20 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { ModeToggle } from "@/components/modeToggle";
+import Image from "next/image";
+import DevsDark from "@/public/images/devs-dark.png";
+import DevsLight from "@/public/images/devs-light.png";
+import { useTheme } from "next-themes";
 
 const Team = () => {
   const { user } = useUser();
   
   const carouselImageArray = [
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Ftitle.JPG?alt=media&token=12cb53fd-ebdf-4aba-9b15-0eef01c9f41e` , 
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Fapp1.png?alt=media&token=061c8eb8-276a-42e0-975f-3469b5598af3`,
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Fapp2.png?alt=media&token=2b456034-344d-4d55-9dc6-7f19a25989ff`,
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Frailwayhome-light.png?alt=media&token=0c789c81-7558-430d-bb33-8bb836809159`,
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Fnewpass-light.png?alt=media&token=2b984c15-5508-42e3-81a5-bbe0ef76e17b`,
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Fpasscheck-light.png?alt=media&token=17bb1957-3404-482c-9e4e-d12f04938adf`,
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Fdownload-light.png?alt=media&token=f435c6b1-4e3d-4a8f-bbbe-9038ae4eeb49`,
-    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2Fcommittee-light.png?alt=media&token=f0d20b6e-1ebb-4d8f-ad8e-79105747500d`,
+    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2FCover%20Page%20for%20Devs%20Play%20Store.png?alt=media&token=920eda3f-3b70-4c89-9309-4cc02ad41bb7` , 
+    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2F1.png?alt=media&token=3f4db1d7-394e-497d-a3bd-c1f3a85dbc22`,
+    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2F2.png?alt=media&token=59f1fe57-50c5-41e7-bb82-ae5bd5a3a20c`,
+    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2F3.png?alt=media&token=4494cb5b-5d76-4f74-b9a6-1af5d3321d60`,
+    `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2F4.png?alt=media&token=f25e38ae-31dd-4a18-84bd-a1e30baa6dfb`,
   ]
 
   const webMembers = [
@@ -104,44 +105,69 @@ const Team = () => {
   
   
 
+  const { theme } = useTheme();
 
   return (
     <div className="container mx-auto p-4">
-      <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
-        <div className=" mx-auto ">
-          <div className="flex justify-center h-16">
-            <div className="flex-shrink-0 flex items-center gap-2">
-              <ModeToggle  />
-              {user?.name ?
-              <Button variant={"link"} >
-              <Link href="/dashboard">Dashboard</Link>
-              <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>:<Button variant={"link"}>
-                  <Link href="/">Sign In</Link>
-                  <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              }
-            </div>
+      <nav className="sticky top-0 shadow-md z-50 bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800">
+      <div className="container mx-auto px-4">
+        <div className="flex  justify-between items-center h-16">
+          <div className="flex items-center space-x-4">
+            <Image
+              src={theme === "dark" ? DevsDark : DevsLight}
+              alt="logo"
+              width={50}
+              height={50}
+              className="rounded-md"
+            />
+            <Link href="/about" className="text-xl font-semibold text-gray-800 dark:text-white">
+              {`Developer's Club of TSEC`}
+            </Link>
           </div>
+          <div className="flex ml-auto">
+          <Button variant={"link"}>
+            <Link href="mailto:devsclubtsec@gmail.com" className="flex items-center">
+              Contact us
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+            {user?.name ? (
+              <Button variant={"link"}>
+                <Link href="/dashboard" className="flex items-center">
+                  Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : (
+              <Button variant={"link"}>
+                <Link href="/" className="flex items-center">
+                  Sign In
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            )}
+          </div>
+          <ModeToggle />
         </div>
-      </nav>
+      </div>
+    </nav>
 
       <section className="mb-12 w-full">
         <Carousel
           opts={{ align: "center" }}
-          className="w-ful"
+          className="w-full"
         >
           <CarouselContent className="relative">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <CarouselItem key={index} className="w-full h-[75vh] flex items-center justify-center">
-                <div className="w-full h-full flex items-center justify-center p-4">
-                  <Card className="w-4/5 h-4/5">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <CarouselItem key={index} className="w-full flex items-center justify-center">
+                <div className="w-full h-[calc(100vw*(9/16))] max-h-[2304px] flex items-center justify-center p-4">
+                  <Card className="w-full h-full">
                     <CardContent className="flex items-center justify-center h-full p-6">
-                    <img 
-                      src={carouselImageArray[index]} 
-                      alt={`Carousel Image ${index + 1}`} 
-                      className="object-contain w-full h-full"
-                    />
+                      <img 
+                        src={carouselImageArray[index]} 
+                        alt={`Carousel Image ${index + 1}`} 
+                        className="object-contain w-full h-full"
+                      />
                     </CardContent>
                   </Card>
                 </div>
@@ -153,9 +179,43 @@ const Team = () => {
         </Carousel>
       </section>
 
+      <div className="flex justify-around p-6">
+        <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-90">
+          <a href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application" target="blank">
+            <h2 className="text-xl font-bold mb-2">TSEC App On PLaystore</h2>
+          </a>
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
+            alt="Card 1"
+            className="w-full h-auto rounded-md mb-2 w-80"
+          />
+          <p>Devs App is available on Playstore</p>
+        </div>
 
+        <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-90">
+          <h2 className="text-xl font-bold mb-2">Devs Club Website</h2>
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FApp%20Icon%20with%20Shadow.png?alt=media&token=11d0ab17-d538-4b3d-8480-cedc1d3936d7"
+            alt="Card 2"
+            className="w-full h-auto rounded-md mb-2 w-80"
+          />
+          <p>Devs Club Website is used By officials</p>
+        </div>
 
-      <h1 className="text-4xl font-bold mb-8 text-center">Our Team</h1>
+        <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-90">
+          <a href="https://apps.apple.com/in/app/tsec-app/id6446188102" target="blank">
+            <h2 className="text-xl font-bold mb-2">TSEC App On App Store</h2>
+          </a>
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
+            alt="Card 3"
+            className="w-full h-auto rounded-md mb-2 w-80"
+          />
+          <p>Devs App is available on App Store</p>
+        </div>
+      </div>
+
+      <h1 className="text-4xl font-bold mb-8 text-center">Meet Our Team</h1>
 
       <div className="mb-12">
         <h2 className="text-3xl font-semibold mb-4 text-center">Principal</h2>
@@ -224,7 +284,7 @@ const Team = () => {
 
       <div className="mb-12">
         <h2 className="text-3xl font-semibold mb-4 text-center">
-          Chairpersons
+          Chairperson
         </h2>
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           <div className="text-center mb-4 sm:mb-0">
@@ -234,7 +294,7 @@ const Team = () => {
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
             />
             <p className="text-xl font-medium">Fahed Khan</p>
-            <p className="text-sm">Chairperson</p>
+            {/* <p className="text-sm">Chairperson</p> */}
             <Link
               href="https://linkedin.com/in/fahedkhan"
               target="_blank"
@@ -259,7 +319,7 @@ const Team = () => {
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
             />
             <p className="text-xl font-medium">Atharva Khewle</p>
-            <p className="text-sm">Vice Chairperson</p>
+            {/* <p className="text-sm">Vice Chairperson</p> */}
             <Link
               href="https://linkedin.com/in/charliejohnson"
               target="_blank"
