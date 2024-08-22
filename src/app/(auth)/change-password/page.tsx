@@ -74,15 +74,15 @@ const SignIn: React.FC = () => {
 
   const handleRememberMeChange = (checked: boolean) => setRememberMe(checked);
 
-  const updateUserState = (data: UserData, uid: string) => {
-    setUser({
-      name: data.name,
-      email: data.email,
-      type: data.type,
-      uid,
-    });
-    setLoggedIn(true);
-  };
+  // const updateUserState = (data: UserData, uid: string) => {
+  //   setUser({
+  //     name: data.name,
+  //     email: data.email,
+  //     type: data.type,
+  //     uid,
+  //   });
+  //   setLoggedIn(true);
+  // };
 
   const handleResetPassword = async () => {
     try {
@@ -110,20 +110,20 @@ const SignIn: React.FC = () => {
         password
       );
       console.log(userCredential);
-      // if (userCredential.user) {
-      //   await updatePassword(userCredential.user, newPassword);
+      if (userCredential.user) {
+        await updatePassword(userCredential.user, newPassword);
 
-      //   toast({
-      //     title: "Password Updated",
-      //     description: "Your password has been reset successfully",
-      //   });
+        toast({
+          title: "Password Updated",
+          description: "Your password has been reset successfully",
+        });
 
-      //   setPassword("");
-      //   setNewPassword("");
-      //   setConfirmPassword("");
+        setPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
 
-      //   // router.push("/dashboard");
-      // }
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error("Error resetting password: ", error);
       toast({
