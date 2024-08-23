@@ -36,7 +36,7 @@ export default function UnprotectedNavbar() {
           </Button>
             
               <Button variant={"link"}>
-                <Link href="/about" className="flex items-center">
+                <Link href="/" className="flex items-center">
                   About Us
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

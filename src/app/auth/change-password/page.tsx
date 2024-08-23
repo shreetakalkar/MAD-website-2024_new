@@ -49,7 +49,7 @@ const SignIn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     if (!user) {
-      router.push("/");
+      router.push("/auth");
     } else {
       const storedEmail = localStorage.getItem("rememberMeEmail");
       const storedPassword = localStorage.getItem("rememberMePassword");

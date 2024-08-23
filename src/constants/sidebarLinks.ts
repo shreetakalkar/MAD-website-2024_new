@@ -3,7 +3,7 @@ import { userTypes } from "./types/userTypes";
 const Features = [
   {
     mainTitle: "Dashboard",
-    mainLink: "/",
+    mainLink: "/auth",
     lightIconLink: "assets/images/Dashboard.png",
     darkIconLink: "assets/images/dashboard-dark.png",
     type: [],
@@ -52,7 +52,7 @@ const Features = [
   },
   {
     mainTitle: "Coming Soon",
-    mainLink: "/",
+    mainLink: "/auth",
     lightIconLink: "assets/images/Notes.png",
     darkIconLink: "assets/images/notes-dark.png",
     type: [userTypes.COMMITTEE],

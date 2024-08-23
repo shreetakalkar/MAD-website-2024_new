@@ -187,7 +187,7 @@
 //                     localStorage.removeItem("user");
 //                   }
 //                   setLoggedIn(false);
-//                   router.push("/");
+//                   router.push("/auth");
 //                 }}
 //                 className="border-none bg-none text-gray-900"
 //               >
