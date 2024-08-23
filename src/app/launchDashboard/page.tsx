@@ -17,6 +17,10 @@ import { ArrowRight } from "lucide-react";
 import { ModeToggle } from "@/components/modeToggle";
 import { db } from "@/config/firebase";
 import { collection, doc, getDoc } from "firebase/firestore";
+import Image from "next/image";
+import DevsDark from "@/public/images/devs-dark.png";
+import DevsLight from "@/public/images/devs-light.png";
+import { useTheme } from "next-themes";
 
 interface Student {
   name: string;
@@ -25,6 +29,7 @@ interface Student {
 }
 
 const TableDemo = () => {
+  const { theme } = useTheme();
   const { user } = useUser();
   const [students, setStudents] = useState<Student[]>([]);
 
@@ -49,26 +54,39 @@ const TableDemo = () => {
 
   return (
     <div className="container mx-auto p-4 w-[100vw]">
-      <nav className="sticky top-0 shadow-sm z-50 bg-white dark:bg-slate-950">
-        <div className="mx-auto">
-          <div className="flex justify-center h-16">
-            <div className="flex-shrink-0 flex items-center gap-2">
-              <ModeToggle />
-              {user?.name ? (
-                <Button variant={"link"}>
-                  <Link href="/dashboard">Dashboard</Link>
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              ) : (
-                <Button variant={"link"}>
-                  <Link href="/">Sign In</Link>
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
-            </div>
+    <nav className="sticky top-0 shadow-md z-50 bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center space-x-4">
+            <Image
+              src={theme === "dark" ? DevsDark : DevsLight}
+              alt="logo"
+              width={50}
+              height={50}
+              className="rounded-md"
+            />
+            <Link href="/about" className="text-xl font-semibold text-gray-800 dark:text-white">
+              {`Developer's Club of TSEC`}
+            </Link>
+          </div>
+          <div className="flex items-center space-x-6">
+            <Button variant={"link"}>
+              <Link href="mailto:devsclubtsec@gmail.com" className="flex items-center">
+                Contact us
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant={"link"} className="hover:underline">
+              <Link href="/about" className="flex items-center text-gray-600 dark:text-gray-300">
+                About Us
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+            <ModeToggle />
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
       <div className="flex justify-center p-10">
         <div className="w-[85vw] max-h-[85vh] overflow-y-auto rounded-[1.2rem] border-[0.1rem] dark:border-muted-foreground border-muted-950">

@@ -33,22 +33,22 @@ const Team = () => {
     {
       name: "Juhi Deore",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FJuhi.jpg?alt=media&token=33b59920-a019-458e-a925-4cfda021d74a",
-      linkedin: "https://linkedin.com/in/juhideore",
+      linkedin: "https://www.linkedin.com/in/juhideore/",
     },
     {
       name: "Anish Awasthi",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FAnish.jpeg?alt=media&token=aa0c7f5c-248b-4f32-94f2-f01f8d911326",
-      linkedin: "https://linkedin.com/in/anishawasthi",
+      linkedin: "https://linkedin.com/in/anish-awasthi-213106287",
     },
     {
       name: "Mayuresh Chavan",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMayuresh.jpg?alt=media&token=27bf9f19-5dd7-4631-8228-ba760ced9016",
-      linkedin: "https://linkedin.com/in/mayureshchavan",
+      linkedin: "https://www.linkedin.com/in/mayuresh-chavan-04a3b5259/",
     },
     {
       name: "Jash Rashne",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FJash.JPG?alt=media&token=9bdc90ec-805b-46af-a9ce-43d0a66b4b66",
-      linkedin: "https://linkedin.com/in/jashrashne",
+      linkedin: "https://www.linkedin.com/in/jashrashne",
     },
   ];
 
@@ -56,12 +56,12 @@ const Team = () => {
     {
       name: "Zoya Hassan",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FZoya.jpeg?alt=media&token=6854ba68-af9b-44c2-903f-61596e690252",
-      linkedin: "https://linkedin.com/in/zoyahassan",
+      linkedin: "https://www.linkedin.com/in/zoya-hassan-688470271/",
     },
     {
       name: "Herambh Vengurlekar",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fheramb.JPG?alt=media&token=e2c743ca-e812-4a43-a4ec-4bef248aa604",
-      linkedin: "https://linkedin.com/in/mayureshchavan",
+      linkedin: "http://www.linkedin.com/in/herambve",
     },
     {
       name: "Suhani Poptani",
@@ -74,17 +74,17 @@ const Team = () => {
     {
       name: "Aryan Pathak",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FAryan.jpg?alt=media&token=c58aa850-6ff0-4597-8d50-886cd09ddf70",
-      linkedin: "https://linkedin.com/in/aryanpathak",
+      linkedin: "https://www.linkedin.com/in/aryan-pathak-67a39b290",
     },
     {
       name: "Shreya Bhatia",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FShreya.jpg?alt=media&token=d5a5410a-6a13-4d3c-98cd-c757df659b4c",
-      linkedin: "https://linkedin.com/in/shreyabhatia",
+      linkedin: "http://www.linkedin.com/in/shreya-bhatia-6364ab2bb",
     },
     {
       name: 'Siddhi Mehta',
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FSiddhi.png?alt=media&token=5552fe08-ca67-4e88-840b-b305eefb6d1c",
-      linkedin:'/'
+      linkedin:'https://www.linkedin.com/in/siddhi-mehta-228048298/'
     }
     
   ];
@@ -93,12 +93,12 @@ const Team = () => {
     {
       name: "Kashish Dodeja",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fkashish.JPG?alt=media&token=3e71f52b-b06f-4e65-89ba-d49569fd76d3",
-      linkedin: "https://linkedin.com/in/kashishdodeja",
+      linkedin: "https://www.linkedin.com/in/kashishdodeja?trk=contact-info",
     },
     {
       name: "Malhaar Mirchandani",
       image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMalhaar.jpg?alt=media&token=15ac7778-63a8-4529-85ff-13cc5916ba29",
-      linkedin: "https://linkedin.com/in/malhaarmirchandani",
+      linkedin: "https://www.linkedin.com/in/malhaar-mirchandani-a8188b287",
     },
     
   ];
@@ -229,7 +229,7 @@ const Team = () => {
             <p className="text-xl font-medium">Dr. G. T. Thampi</p>
             <p className="text-sm">Principal</p>
             <Link
-              href="https://linkedin.com/in/johndoe"
+              href="https://www.linkedin.com/in/gopakumaran-thampi-79680727?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -247,14 +247,14 @@ const Team = () => {
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           <div className="text-center mb-4 sm:mb-0">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fdk_maam.jpg?alt=media&token=32d36076-687f-4dd7-beec-645a0035ef22"
               alt="Prof. Darakshan Khan"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
             />
             <p className="text-xl font-medium">Prof. Darakshan Khan</p>
             <p className="text-sm">Professor Incharge</p>
             <Link
-              href="https://linkedin.com/in/darakshankhan"
+              href="https://www.linkedin.com/in/darakshan-khan-2166132a4?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -271,7 +271,7 @@ const Team = () => {
             <p className="text-xl font-medium">Dr. Sachi Natu</p>
             <p className="text-sm">Professor Incharge</p>
             <Link
-              href="https://linkedin.com/in/"
+              href="https://www.linkedin.com/in/dr-shachi-natu-b796892?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -296,7 +296,7 @@ const Team = () => {
             <p className="text-xl font-medium">Fahed Khan</p>
             {/* <p className="text-sm">Chairperson</p> */}
             <Link
-              href="https://linkedin.com/in/fahedkhan"
+              href="https://www.linkedin.com/in/fahed-khan-13b11025b"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -314,14 +314,14 @@ const Team = () => {
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           <div className="text-center mb-4 sm:mb-0">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fatharva.png?alt=media&token=ababa798-5f3c-4e4e-bb17-c1a2b108f51b"
               alt="Atharva Khewle"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
             />
             <p className="text-xl font-medium">Atharva Khewle</p>
             {/* <p className="text-sm">Vice Chairperson</p> */}
             <Link
-              href="https://linkedin.com/in/charliejohnson"
+              href="https://www.linkedin.com/in/atharvakhewle"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -344,7 +344,7 @@ const Team = () => {
             <p className="text-xl font-medium">Ritojnan Mukherjee</p>
             <p className="text-sm">Head</p>
             <Link
-              href="https://linkedin.com/in/evanparker"
+              href="https://www.linkedin.com/in/ritojnanmukherjee/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -381,14 +381,14 @@ const Team = () => {
         <div className="flex justify-center">
           <div className="text-center mb-4">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fzeeshan.png?alt=media&token=4789696e-955a-4ba0-9738-eec09aebf1fc"
               alt="Zeeshan Sayed"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
             />
             <p className="text-xl font-medium">Zeeshan Sayed</p>
             <p className="text-sm">Head</p>
             <Link
-              href="https://linkedin.com/in/fionagreen"
+              href="https://www.linkedin.com/in/zeeshan-hyder-sayed-63324b292"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
@@ -453,14 +453,14 @@ const Team = () => {
         <div className="flex justify-center">
           <div className="text-center mb-4">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fsarthak.png?alt=media&token=1f33ee2e-92ce-43f7-9222-607615650805"
               alt="Sarthak Kuwar"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
             />
             <p className="text-xl font-medium">Sarthak Kuwar</p>
             <p className="text-sm">Head</p>
             <Link
-              href="https://linkedin.com/in/sarthakkuwar"
+              href="https://www.linkedin.com/in/sarthak-kuwar-95759226a"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600"
