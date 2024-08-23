@@ -56,7 +56,7 @@ const ImportantNotices: React.FC = () => {
           setNotices(filteredContent);
           setLoading(false);
         }
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message || "Unknown error occurred");
         console.error("Error fetching notices:", err);
       }
