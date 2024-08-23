@@ -55,12 +55,15 @@ const TableDemo = () => {
 
   return (
     <div className="container mx-auto p-4 w-[100vw]">
-      <UnprotectedNavbar />
-      <div className="flex justify-center p-10">
+      <UnprotectedNavbar/>
+      <div className="text-center mb-4 p-5">
+          <b>Students Who Decoded the Launch Screen 🥳</b>
+      </div>
+      <div className="flex justify-center px-10">
         <div className="w-[85vw] max-h-[85vh] overflow-y-auto rounded-[1.2rem] border-[0.1rem] dark:border-muted-foreground border-muted-950">
           <Table>
             <TableCaption className="p-4">
-              Students Who Decoded the Launch Screen
+             You can be one oh them, its easy, give it a try 😉
             </TableCaption>
             <TableHeader>
               <TableRow className="bg-muted hover:bg-muted">

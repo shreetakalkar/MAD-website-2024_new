@@ -114,11 +114,12 @@ const LaunchForm = () => {
     <div className="container mx-auto p-4">
       <UnprotectedNavbar />
       <div className="flex justify-center p-10">
+      <div className="w-2/3 p-6 border border-gray-300 rounded-lg shadow-sm">
+        <div className="text-center mb-4">
+          <b>Oh cool, did you unlock ? What&#39;s your name ?</b>
+        </div>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-2/3 space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
@@ -126,11 +127,7 @@ const LaunchForm = () => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      type="text"
-                      placeholder="Enter your name"
-                    />
+                    <Input {...field} type="text" placeholder="Enter your name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,10 +140,7 @@ const LaunchForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Year</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your year" />
@@ -169,10 +163,7 @@ const LaunchForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Branch</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your branch" />
@@ -189,7 +180,7 @@ const LaunchForm = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />{" "}
+              />
             </div>
             <FormField
               control={form.control}
@@ -215,11 +206,7 @@ const LaunchForm = () => {
                 <FormItem>
                   <FormLabel>Code</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="Enter the code"
-                    />
+                    <Input {...field} type="password" placeholder="Enter the code" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -229,6 +216,8 @@ const LaunchForm = () => {
           </form>
         </Form>
       </div>
+    </div>
+
     </div>
   );
 };
