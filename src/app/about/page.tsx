@@ -109,7 +109,7 @@ const Team = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <nav className="sticky top-0 shadow-md z-50 bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800">
+      <nav className="sticky top-0 z-50 bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800">
       <div className="container mx-auto px-4">
         <div className="flex  justify-between items-center h-16">
           <div className="flex items-center space-x-4">
@@ -120,9 +120,7 @@ const Team = () => {
               height={50}
               className="rounded-md"
             />
-            <Link href="/about" className="text-xl font-semibold text-gray-800 dark:text-white">
-              {`Developer's Club of TSEC`}
-            </Link>
+            
           </div>
           <div className="flex ml-auto">
           <Button variant={"link"}>
@@ -179,41 +177,42 @@ const Team = () => {
         </Carousel>
       </section>
 
-      <div className="flex justify-around p-6">
-        <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-90">
-          <a href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application" target="blank">
-            <h2 className="text-xl font-bold mb-2">TSEC App On PLaystore</h2>
-          </a>
-          <img
-            src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
-            alt="Card 1"
-            className="w-full h-auto rounded-md mb-2 w-80"
-          />
-          <p>Devs App is available on Playstore</p>
-        </div>
+      <div className="flex flex-wrap justify-around p-6">
+  <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2">
+    <a href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application" target="_blank" rel="noopener noreferrer">
+      <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">TSEC App On Playstore</h2>
+    </a>
+    <img
+      src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
+      alt="Card 1"
+      className="h-auto rounded-md mb-2 w-full"
+    />
+    <p>Devs App is available on Playstore</p>
+  </div>
 
-        <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-90">
-          <h2 className="text-xl font-bold mb-2">Devs Club Website</h2>
-          <img
-            src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FApp%20Icon%20with%20Shadow.png?alt=media&token=11d0ab17-d538-4b3d-8480-cedc1d3936d7"
-            alt="Card 2"
-            className="w-full h-auto rounded-md mb-2 w-80"
-          />
-          <p>Devs Club Website is used By officials</p>
-        </div>
+  <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2">
+    <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">Devs Club Website</h2>
+    <img
+      src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FApp%20Icon%20with%20Shadow.png?alt=media&token=11d0ab17-d538-4b3d-8480-cedc1d3936d7"
+      alt="Card 2"
+      className="w-full h-auto rounded-md mb-2"
+    />
+    <p>Devs Club Website is used by officials</p>
+  </div>
 
-        <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-90">
-          <a href="https://apps.apple.com/in/app/tsec-app/id6446188102" target="blank">
-            <h2 className="text-xl font-bold mb-2">TSEC App On App Store</h2>
-          </a>
-          <img
-            src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
-            alt="Card 3"
-            className="w-full h-auto rounded-md mb-2 w-80"
-          />
-          <p>Devs App is available on App Store</p>
-        </div>
-      </div>
+  <div className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2">
+    <a href="https://apps.apple.com/in/app/tsec-app/id6446188102" target="_blank" rel="noopener noreferrer">
+      <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">TSEC App On App Store</h2>
+    </a>
+    <img
+      src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
+      alt="Card 3"
+      className="w-full h-auto rounded-md mb-2"
+    />
+    <p>Devs App is available on App Store</p>
+  </div>
+</div>
+
 
       <h1 className="text-4xl font-bold mb-8 text-center">Meet Our Team</h1>
 
