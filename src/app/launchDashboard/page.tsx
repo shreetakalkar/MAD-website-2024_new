@@ -11,15 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useUser } from "@/providers/UserProvider";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { ModeToggle } from "@/components/modeToggle";
 import { db } from "@/config/firebase";
-import { collection, doc, getDoc } from "firebase/firestore";
-import Image from "next/image";
-import DevsDark from "@/public/images/devs-dark.png";
-import DevsLight from "@/public/images/devs-light.png";
+import { doc, getDoc } from "firebase/firestore";
 import { useTheme } from "next-themes";
 import UnprotectedNavbar from "@/components/UnprotectedNavbar";
 
@@ -54,17 +47,14 @@ const TableDemo = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 w-[100vw]">
-      <UnprotectedNavbar/>
-      <div className="text-center mb-4 p-5">
-          <b>Students Who Decoded the Launch Screen 🥳</b>
+    <div className="container mx-auto px-4 py-2">
+      <UnprotectedNavbar />
+      <div className="text-center my-2">
+        <b>Students Who Decoded the Launch Screen 🥳</b>
       </div>
-      <div className="flex justify-center px-10">
-        <div className="w-[85vw] max-h-[85vh] overflow-y-auto rounded-[1.2rem] border-[0.1rem] dark:border-muted-foreground border-muted-950">
+      <div className="flex justify-center px-4">
+        <div className="w-full max-w-xl max-h-[70vh] overflow-y-auto rounded-md border dark:border-muted-foreground border-muted-950">
           <Table>
-            <TableCaption className="p-4">
-             You can be one of them, its easy, give it a try 😉
-            </TableCaption>
             <TableHeader>
               <TableRow className="bg-muted hover:bg-muted">
                 <TableHead>Rank</TableHead>
@@ -86,6 +76,10 @@ const TableDemo = () => {
           </Table>
         </div>
       </div>
+      <div className="text-center my-2 ">
+        <b>Students Who Decoded the Launch Screen 🥳</b>
+      </div>
+
     </div>
   );
 };

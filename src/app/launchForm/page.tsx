@@ -111,113 +111,112 @@ const LaunchForm = () => {
   const { user } = useUser();
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto px-4 py-4">
       <UnprotectedNavbar />
-      <div className="flex justify-center p-10">
-      <div className="w-2/3 p-6 border border-gray-300 rounded-lg shadow-sm">
-        <div className="text-center mb-4">
-          <b>Oh cool, did you unlock ? What&#39;s your name ?</b>
+      <div className="flex justify-center px-4 py-6 sm:p-6 lg:p-10">
+        <div className="w-full max-w-lg p-4 sm:p-6 border border-gray-300 rounded-lg shadow-sm">
+          <div className="text-center mb-4">
+            <b>Oh cool, did you unlock? What&#39;s your name?</b>
+          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="text" placeholder="Enter your name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="year"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="FE">FE</SelectItem>
+                          <SelectItem value="SE">SE</SelectItem>
+                          <SelectItem value="TE">TE</SelectItem>
+                          <SelectItem value="BE">BE</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="branch"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Branch</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your branch" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Comps">Comps</SelectItem>
+                          <SelectItem value="Aids">Aids</SelectItem>
+                          <SelectItem value="It">It</SelectItem>
+                          <SelectItem value="Extc">Extc</SelectItem>
+                          <SelectItem value="Chem">Chem</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="instagramId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Instagram ID (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        placeholder="Enter your Instagram ID (optional)"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Code</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="password" placeholder="Enter the code" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full">Submit</Button>
+            </form>
+          </Form>
         </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="text" placeholder="Enter your name" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-2">
-              <FormField
-                control={form.control}
-                name="year"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Year</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your year" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="FE">FE</SelectItem>
-                        <SelectItem value="SE">SE</SelectItem>
-                        <SelectItem value="TE">TE</SelectItem>
-                        <SelectItem value="BE">BE</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="branch"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Branch</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your branch" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Comps">Comps</SelectItem>
-                        <SelectItem value="Aids">Aids</SelectItem>
-                        <SelectItem value="It">It</SelectItem>
-                        <SelectItem value="Extc">Extc</SelectItem>
-                        <SelectItem value="Chem">Chem</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="instagramId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Instagram ID (optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="text"
-                      placeholder="Enter your Instagram ID (optional)"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="password" placeholder="Enter the code" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Submit</Button>
-          </form>
-        </Form>
       </div>
-    </div>
-
     </div>
   );
 };
