@@ -63,7 +63,7 @@ const TableDemo = () => {
         <div className="w-[85vw] max-h-[85vh] overflow-y-auto rounded-[1.2rem] border-[0.1rem] dark:border-muted-foreground border-muted-950">
           <Table>
             <TableCaption className="p-4">
-             You can be one oh them, its easy, give it a try 😉
+             You can be one of them, its easy, give it a try 😉
             </TableCaption>
             <TableHeader>
               <TableRow className="bg-muted hover:bg-muted">
