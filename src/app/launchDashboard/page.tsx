@@ -76,10 +76,6 @@ const TableDemo = () => {
           </Table>
         </div>
       </div>
-      <div className="text-center my-2 ">
-        <b>Students Who Decoded the Launch Screen 🥳</b>
-      </div>
-
     </div>
   );
 };
