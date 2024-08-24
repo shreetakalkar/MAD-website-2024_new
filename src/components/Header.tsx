@@ -63,7 +63,7 @@ const Header = ({ userType }: { userType: string }) => {
             <DropdownMenuContent>
               <DropdownMenuItem>
                 <Link
-                  href="/change-password"
+                  href="/auth/change-password"
                   className="flex items-center"
                 >
                   <Lock className="mr-2 h-4 w-4" />
