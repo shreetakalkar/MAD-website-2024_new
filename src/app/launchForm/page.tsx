@@ -79,7 +79,7 @@ const LaunchForm = () => {
         name: data.name,
         branch: data.branch,
         year: data.year,
-        instagramId: data.instagramId,
+        instagramId: data.instagramId || null,
       };
 
       await updateDoc(launchDocRef, {
