@@ -39,7 +39,7 @@ const Team = () => {
     {
       name: "Mayuresh Chavan",
       image:
-        "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMayuresh.jpg?alt=media&token=27bf9f19-5dd7-4631-8228-ba760ced9016",
+        "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMayuresh.jpg?alt=media&token=27bf9f19-5dd7-4631-8228-ba760ced9016gs",
       linkedin: "https://www.linkedin.com/in/mayuresh-chavan-04a3b5259/",
     },
     {
