@@ -31,16 +31,16 @@ const Team = () => {
       linkedin: "https://www.linkedin.com/in/juhideore/",
     },
     {
+      name: "Mayuresh Chavan",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMayuresh.jpg?alt=media&token=c5668236-d83a-451e-a796-05248301795a",
+      linkedin: "https://www.linkedin.com/in/mayuresh-chavan-04a3b5259/",
+    },
+    {
       name: "Anish Awasthi",
       image:
         "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FAnish.jpeg?alt=media&token=aa0c7f5c-248b-4f32-94f2-f01f8d911326",
       linkedin: "https://linkedin.com/in/anish-awasthi-213106287",
-    },
-    {
-      name: "Mayuresh Chavan",
-      image:
-        "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMayuresh.jpg?alt=media&token=27bf9f19-5dd7-4631-8228-ba760ced9016",
-      linkedin: "https://www.linkedin.com/in/mayuresh-chavan-04a3b5259/",
     },
     {
       name: "Jash Rashne",
@@ -324,7 +324,7 @@ const Team = () => {
             </Link>
           </div>
         </div>
-        <div className="flex flex-wrap  justify-center space-x-4 sm:space-x-8 mt-4">
+        <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8 mt-4">
           {webMembers.map((member, index) => (
             <div key={index} className="text-center mb-4 sm:mb-0">
               <img
