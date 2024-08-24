@@ -5,7 +5,7 @@ import ImportantNotices from "@/components/Notices/NoticePage";
 const page = () => {
   return (
     <div>
-      <ImportantNotices />
+      <PrincipalHodInterface />
     </div>
   );
 };

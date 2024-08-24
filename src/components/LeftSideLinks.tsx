@@ -9,6 +9,9 @@ import {
   FileBadge,
   Bell,
   History,
+  CalendarClock,
+  HistoryIcon,
+  Book
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -29,61 +32,16 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         <Home className="h-4 w-4" />
         Home
       </Link>
-      {userType === "hod" && (
-        <>
-          <Link
-            href="#"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Create New Notes
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Past Notes
-          </Link>
-        </>
-      )}
-      {userType === "committee" && (
-        <>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Create New Event
-          </Link>
-          <Link
-            href="/dashboard/history-page"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            History
-          </Link>
-        </>
-      )}
-      {userType === "admin" && (
-        <>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Approve Events
-          </Link>
-          <Link
-            href="/dashboard/history-page"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            History
-          </Link>
-        </>
 
+      {userType === "committee" || userType === "admin" && (
+        <>
+            <Link href="/dashboard/history-page" className={getLinkClasses("/dashboard/history-page")}>
+            <History className="h-4 w-4" />
+            Past Events
+          </Link>
+        </>
       )}
+
       {userType === "railway" && (
         <>
           <Link
@@ -130,44 +88,34 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
           </Link>
         </>
       )}
-      {(userType === "admin" ||
-        userType === "hod" ||
-        userType === "principal") && (
+
+      {(userType === "hod" ||
+        userType === "principal" || userType === "examdept") && (
           <>
-            <Link
-              href="#"
-              className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              Create New Notifications
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-            >
-              <ShoppingCart className="h-4 w-4" />
+            <Link href="/dashboard/history" className={getLinkClasses("/dashboard/history")}>
+              <History className="h-4 w-4" />
               Past Notifications
             </Link>
           </>
-        )}
+      )}
+
       {userType === "professor" && (
         <>
-          <Link
-            href="/dashboard/notification"
-            className={getLinkClasses("/dashboard/notification")}
-          >
+          <Link href="/dashboard/notification" className={getLinkClasses("/dashboard/notification")}>
             <Bell className="h-4 w-4" />
             Send Notification
           </Link>
-          <Link
-            href="/dashboard/history"
-            className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-          >
+          <Link href="/dashboard/notes_history" className={getLinkClasses("/dashboard/notes_history")}>
+            <Book className="h-4 w-4" />
+            Past Notes
+          </Link>
+          <Link href="/dashboard/notification_history" className={getLinkClasses("/dashboard/notification_history")}>
             <History className="h-4 w-4" />
-            History
+            Past Notification
           </Link>
         </>
       )}
+
     </nav>
   );
 };

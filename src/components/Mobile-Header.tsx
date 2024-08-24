@@ -10,6 +10,10 @@ import {
   User,
   Bell,
   History,
+  Lock,
+  FileBadge,
+  Download,
+  Book
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
@@ -29,6 +33,7 @@ import {
 import { useUser } from "@/providers/UserProvider";
 import { auth } from "@/config/firebase";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const MobileHeader = ({ userType }: { userType: string }) => {
   const { theme } = useTheme();
@@ -48,6 +53,13 @@ const MobileHeader = ({ userType }: { userType: string }) => {
     }
   };
 
+  const pathname = usePathname();
+  const getLinkClasses = (path: string) => {
+    return pathname === path
+      ? "flex items-center gap-2 px-2 py-2 text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-700 shadow-lg dark:shadow-blue-600/50 transition-all duration-300 ease-in-out"
+      : "flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all duration-300 ease-in-out hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-600/50";
+  };
+
   return (
     <header className="flex w-screen h-14 items-center justify-between gap-4 border-b  px-4 mt-3 lg:h-[60px] lg:px-6  md:hidden lg:hidden">
       <Sheet>
@@ -60,119 +72,94 @@ const MobileHeader = ({ userType }: { userType: string }) => {
 
         <SheetContent side="left" className="flex flex-col w-[50%]">
           {/* Links */}
+
           <nav className="grid gap-2 text-sm font-medium mt-[20%] space-y-3">
-            <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-            >
+            <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
               <Home className="h-4 w-4" />
               Home
             </Link>
 
             {/* Conditional Links */}
-            {userType === "hod" && (
+
+            {userType === "committee" || userType === "admin" &&(
               <>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Create New Notes
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Past Notes
-                </Link>
+                <Link href="/dashboard/history-page" className={getLinkClasses("/dashboard/history-page")}>
+                <History className="h-4 w-4" />
+                Past Events
+              </Link>
               </>
             )}
-            {userType === "committee" && (
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Create New Event
-              </Link>
-            )}
-            {userType === "admin" && (
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Approve Events
-              </Link>
-            )}
+
             {userType === "railway" && (
               <>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <FilePlus className="h-4 w-4" />
-                  Create New Pass
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <ClipboardEdit className="h-4 w-4" />
-                  Update Pass
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <FileStack className="h-4 w-4" />
-                  Pending Requests
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <GitPullRequestClosed className="h-4 w-4" />
-                  Approved Requests
-                </Link>
-              </>
+              <Link
+                href="/dashboard/create_pass"
+                className={getLinkClasses("/dashboard/create_pass")}
+              >
+                <FilePlus className="h-4 w-4" />
+                Create New Pass
+              </Link>
+              <Link
+                href="/dashboard/pending_req"
+                className={getLinkClasses("/dashboard/pending_req")}
+              >
+                <FileStack className="h-4 w-4" />
+                Pending Requests
+              </Link>
+              <Link
+                href="/dashboard/collected_pass"
+                className={getLinkClasses("/dashboard/collected_pass")}
+              >
+                <FileBadge className="h-4 w-4" />
+                Collected Pass
+              </Link>
+              <Link
+                href="/dashboard/update_pass"
+                className={getLinkClasses("/dashboard/update_pass")}
+              >
+                <ClipboardEdit className="h-4 w-4" />
+                Update Pass
+              </Link>
+              <Link
+                href="/dashboard/approved_rejected"
+                className={getLinkClasses("/dashboard/approved_rejected")}
+              >
+                <GitPullRequestClosed className="h-4 w-4" />
+                Approved Passes
+              </Link>
+              <Link
+                href="/dashboard/downloads"
+                className={getLinkClasses("/dashboard/downloads")}
+              >
+                <Download className="h-4 w-4" />
+                Download Files
+              </Link>
+            </>
             )}
-            {(userType === "admin" ||
-              userType === "hod" ||
-              userType === "principal") && (
-              <>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Create New Notifications
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Past Notifications
-                </Link>
-              </>
+
+            {(userType === "hod" ||
+              userType === "principal" || userType === "examdept") && (
+                <>
+                  <Link href="/dashboard/history" className={getLinkClasses("/dashboard/history")}>
+                    <History className="h-4 w-4" />
+                    Past Notifications
+                  </Link>
+                </>
             )}
+
             {userType === "professor" && (
               <>
-                <Link
-                  href="/dashboard/notification"
-                  className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
+                <Link href="/dashboard/notification" className={getLinkClasses("/dashboard/notification")}>
                   <Bell className="h-4 w-4" />
                   Send Notification
                 </Link>
-                <Link
-                  href="/dashboard/history"
-                  className="flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all hover:text-blue-600"
-                >
+                <Link href="/dashboard/notes_history" className={getLinkClasses("/dashboard/notes_history")}>
+                  <Book className="h-4 w-4" />
+                  Past Notes
+                </Link>
+                <Link href="/dashboard/notification_history" className={getLinkClasses("/dashboard/notification_history")}>
                   <History className="h-4 w-4" />
-                  History
+                  Past Notification
                 </Link>
               </>
             )}
@@ -188,6 +175,15 @@ const MobileHeader = ({ userType }: { userType: string }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link
+                  href="/auth/change-password"
+                  className="flex items-center"
+                >
+                  <Lock className="mr-2 h-4 w-4" />
+                  Change Password
+                </Link>
+              </DropdownMenuItem>
                 <DropdownMenuItem onSelect={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout

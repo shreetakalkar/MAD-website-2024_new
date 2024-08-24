@@ -3,7 +3,7 @@
 import React from "react";
 import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import DevsDark from "@/public/images/devs-dark.png";
@@ -28,6 +28,15 @@ export default function UnprotectedNavbar() {
               className="rounded-md"
             />
           </div>
+          {pathname === "/auth/change-password" && (
+            <Button variant={"link"}>
+              <Link href="/dashboard" className="flex items-center">
+                <ArrowLeft className="ml-2 h-4 w-4"/>
+                Dashboard
+              </Link>
+            </Button>
+          )}
+
           <div className="flex ml-auto">
             <Button variant={"link"}>
               <Link href="mailto:devsclubtsec@gmail.com" className="flex items-center">
