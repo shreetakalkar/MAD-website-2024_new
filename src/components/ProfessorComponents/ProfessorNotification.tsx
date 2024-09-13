@@ -94,15 +94,28 @@ const NotificationComponent = () => {
       .filter(Boolean)
       .join("-");
 
-    const uploadData = {
-      attachments: [fileUrl],
-      message: data.description,
-      notificationTime: new Date(),
-      senderName: user?.name,
-      sentBy: user?.name,
-      title: data.title,
-      topic: topicFormatted,
-    };
+    let uploadData;
+
+    if(fileUrl) {
+      uploadData = {
+        attachments: [fileUrl],
+        message: data.description,
+        notificationTime: new Date(),
+        senderName: user?.name,
+        sentBy: user?.name,
+        title: data.title,
+        topic: topicFormatted,
+      };
+    } else {
+      uploadData = {
+        message: data.description,
+        notificationTime: new Date(),
+        senderName: user?.name,
+        sentBy: user?.name,
+        title: data.title,
+        topic: topicFormatted,
+      };
+    }
 
     try {
       const notificationsRef = collection(db, "notifications");

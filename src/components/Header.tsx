@@ -52,7 +52,7 @@ const Header = ({ userType }: { userType: string }) => {
           </div>
         </div>
         <div className="flex items-center">
-          <ModeToggle />
+          {/* <ModeToggle /> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="link" className="ml-4">
