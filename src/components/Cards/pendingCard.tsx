@@ -39,6 +39,25 @@ const currentUserYear = (gradyear: string) => {
   }
 };
 
+const calAge = (dobString:any) => {
+  const [day, month, year] = dobString.split("/").map(Number);
+  const dob = new Date(year, month - 1, day);
+  const today = new Date();
+  let ageYears = today.getFullYear() - dob.getFullYear();
+  let ageMonths = today.getMonth() - dob.getMonth();
+  if (ageMonths < 0 || (ageMonths === 0 && today.getDate() < dob.getDate())) {
+    ageYears--;
+    ageMonths += 12;
+  }
+  if (today.getDate() < dob.getDate()) {
+    ageMonths--;
+    if (ageMonths < 0) {
+      ageMonths += 12;
+    }
+  }
+  return { years: ageYears, months: ageMonths };
+};
+
 const isButtonDisabled = () => {
   const now = new Date();
   const day = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
@@ -68,7 +87,7 @@ function InputWithLabel({ label, input }: { label: any; input: any }) {
       </div>
       <div className=" h-[65%] overflow-auto">
         <div
-          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem] `} 
+          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem]S`} 
         >
           {input}
         </div>
@@ -398,6 +417,16 @@ const PendingCard: React.FC<PendingCardProps> = ({
     setLoading(false);
   };
 
+  const formatDOB = (dob: string | Date) => {
+    const date = new Date(dob);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    const formattedDOB = `${day}/${month}/${year}`
+    const age = calAge(formattedDOB)
+    return `${day}/${month}/${year} Age: ${age.years}Y ${age.months}M`;
+  };
+
   return (
     <>
       {loading && (
@@ -579,7 +608,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
             <div className="h-full w-1/2 flex ">
               <div className="h-full w-1/2 ">
-                <InputWithLabel label={`DOB`} input={dob} />
+              {/* <p>Age: </p> */}
+                <InputWithLabel label={`DOB`} input={formatDOB(dob)} />
               </div>
               <div className="h-full w-1/2">
                 <InputWithLabel label={`Gender`} input={gender} />
