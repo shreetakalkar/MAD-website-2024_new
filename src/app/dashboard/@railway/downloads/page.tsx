@@ -70,29 +70,6 @@ const Downloads: React.FC = () => {
     }
   };
 
-  // const fetchEnquiries = async () => {
-  //   try {
-  //     const [historyData, downloadHistory] = await Promise.all([
-  //       getDocs(collection(db, "ConcessionHistory")),
-  //       fetchDownloadHistory(),
-  //     ]);
-
-  //     const data = historyData.docs.map((doc) => doc.data());
-  //     if (data.length > 0 && data[0].history) {
-  //       makeBatches(data[0].history, downloadHistory);
-  //     } else {
-  //       setWesternBatchedEnquiries([]);
-  //       setCentralBatchedEnquiries([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to fetch data. Please try again later.",
-  //     });
-  //   }
-  // };
-
   const fetchEnquiries = async () => {
     try {
       const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
@@ -115,12 +92,12 @@ const Downloads: React.FC = () => {
     }
   };
   
-
   const makeBatches = (data: Enquiry[], downloadHistory: Download[]) => {
     const seenPassNums = new Set<string>();
     const uniqueData: Enquiry[] = [];
 
-    console.log("raw data", data);
+    // console.log("raw data", data);
+    
     for (let i = data.length - 1; i >= 0; i--) {
       const enquiry = data[i];
       if (!seenPassNums.has(enquiry.passNum)) {
@@ -128,7 +105,7 @@ const Downloads: React.FC = () => {
         uniqueData.push(enquiry); // making the array in reverse order to get the latest enquiry first
       }
     }
-    console.log("unique data", uniqueData);
+    // console.log("unique data", uniqueData);
 
     const westernBatches: BatchElement[] = [];
     const centralBatches: BatchElement[] = [];
@@ -154,7 +131,7 @@ const Downloads: React.FC = () => {
       ) {
         if (
           westernBatches.length === 0 ||
-          westernBatches[westernBatches.length - 1].enquiries.length === limit
+          westernBatches[westernBatches.length - 1]?.enquiries?.length === limit
         ) {
           // const isDownload = downloadDate.find((d : any)=> d.from === westernIndex+1 && d.to === westernIndex+limit)
           const fileName = `W${westernIndex + 1}-${westernIndex + limit}`;
@@ -169,7 +146,7 @@ const Downloads: React.FC = () => {
 
           westernIndex += limit;
         } else {
-          westernBatches[westernBatches.length - 1].enquiries.push(enquiry);
+          westernBatches[westernBatches.length - 1]?.enquiries.push(enquiry);
         }
       } else if (
         enquiry.status === "serviced" &&
@@ -177,7 +154,7 @@ const Downloads: React.FC = () => {
       ) {
         if (
           centralBatches.length === 0 ||
-          centralBatches[centralBatches.length - 1].enquiries.length === limit
+          centralBatches[centralBatches.length - 1]?.enquiries.length === limit
         ) {
           const fileName = `C${centralIndex + 1}-${centralIndex + limit}`;
           centralBatches.push({
@@ -189,21 +166,21 @@ const Downloads: React.FC = () => {
           });
           centralIndex += limit;
         } else {
-          centralBatches[centralBatches.length - 1].enquiries.push(enquiry);
+          centralBatches[centralBatches.length - 1]?.enquiries.push(enquiry);
         }
       }
     }
 
-    if (westernBatches[westernBatches.length - 1].enquiries.length < limit) {
+    if (westernBatches[westernBatches.length - 1]?.enquiries?.length < limit) {
       westernBatches.pop();
     }
 
-    if (centralBatches[centralBatches.length - 1].enquiries.length < limit) {
+    if (centralBatches[centralBatches.length - 1]?.enquiries?.length < limit) {
       centralBatches.pop();
     }
 
-    console.log("western batches", westernBatches);
-    console.log("central batches", centralBatches);
+    // console.log("western batches", westernBatches);
+    // console.log("central batches", centralBatches);
 
     setWesternBatchedEnquiries(westernBatches);
     setCentralBatchedEnquiries(centralBatches);
@@ -224,8 +201,8 @@ const Downloads: React.FC = () => {
       downloadExcelFile(excelContent, batch.fileName);
 
       const newDownload = {
-        from: batch.enquiries[0].passNum,
-        to: batch.enquiries[batch.enquiries.length - 1].passNum,
+        from: batch?.enquiries[0].passNum,
+        to: batch?.enquiries[batch?.enquiries?.length - 1].passNum,
         date: new Date().toISOString(),
         filename: batch.fileName,
       };
