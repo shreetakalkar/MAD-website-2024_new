@@ -33,7 +33,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         Home
       </Link>
 
-      {userType === "committee" || userType === "admin" && (
+      {(userType === "committee" || userType === "admin") && (
         <>
             <Link href="/dashboard/history-page" className={getLinkClasses("/dashboard/history-page")}>
             <History className="h-4 w-4" />
