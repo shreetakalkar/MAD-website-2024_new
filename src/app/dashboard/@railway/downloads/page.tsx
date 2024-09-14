@@ -53,7 +53,7 @@ const Downloads: React.FC = () => {
     "All" | "Central" | "Western"
   >("All");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
-  const limit = 2;
+  const limit = 100;
   // const [downloadDate, setDownloadDate] = useState<any>([]);
 
   const fetchDownloadHistory = async () => {
