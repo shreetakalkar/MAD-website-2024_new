@@ -25,6 +25,16 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+function formatDate(dateString:any) {
+  const date = new Date(dateString);
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
+
 const CommiteeDept = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState<boolean>(false);
@@ -57,7 +67,7 @@ const CommiteeDept = () => {
   const handleUpload = async (data: FormData,imageUrl: string) => {
     console.log("submitting data");
     console.log("data",data);
-    const eventDate = new Date(data.eventDate).toISOString().split('T')[0];
+    const eventDate = formatDate(data.eventDate)
     
     try {
       const docRef = collection(db, "TempEvents");
