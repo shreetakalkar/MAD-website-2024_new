@@ -67,7 +67,7 @@ const Team = () => {
       name: "Suhani Poptani",
       image:
         "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FSuhani.jpeg?alt=media&token=eeccf450-3d90-4c01-bdd6-f19c5c6700fc",
-      linkedin: "https://linkedin.com/in/jashrashne",
+      linkedin: "", //not on linkedin
     },
   ];
 
