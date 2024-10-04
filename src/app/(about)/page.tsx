@@ -8,12 +8,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useUser } from "@/providers/UserProvider";
 import Link from "next/link";
 import UnprotectedNavbar from "@/components/UnprotectedNavbar";
 
 const Team = () => {
-  const { user } = useUser();
 
   const carouselImageArray = [
     `https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCarousel%2FCover%20Page%20for%20Devs%20Play%20Store.png?alt=media&token=920eda3f-3b70-4c89-9309-4cc02ad41bb7`,
@@ -108,8 +106,7 @@ const Team = () => {
   ];
 
   return (
-    <div className="container mx-auto p-4">
-      <UnprotectedNavbar />
+    <>
 
       <section className="mb-12 w-full">
         <Carousel opts={{ align: "center" }} className="w-full">
@@ -461,7 +458,7 @@ const Team = () => {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
