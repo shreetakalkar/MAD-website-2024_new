@@ -11,8 +11,16 @@ import {
 } from "@/components/ui/card";
 import { Globe, Loader } from "lucide-react";
 
+// Define the type for your links
+type Link = {
+  id: string;
+  purpose?: string;
+  url: string;
+};
+
 const LinksList = () => {
-  const [links, setLinks] = useState([]);
+  // Use the Link type for the state
+  const [links, setLinks] = useState<Link[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,7 +29,7 @@ const LinksList = () => {
       const linksData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })) as Link[]; // Assert that this matches the Link type
       setLinks(linksData);
       setLoading(false); // Stop loading after data is fetched
     };
@@ -44,7 +52,7 @@ const LinksList = () => {
           <div key={link.id}>
             <Card className="h-full">
               <CardHeader>
-                <CardTitle className="text-2xl mb-2">{link.purpose||"Unclassified"}</CardTitle>
+                <CardTitle className="text-2xl mb-2">{link.purpose || "Unclassified"}</CardTitle>
                 <CardDescription className="">
                   <a
                     href={link.url}
