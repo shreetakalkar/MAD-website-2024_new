@@ -55,11 +55,9 @@ const LinksList = () => {
                     "
                   >
                     <Globe className="w-5 h-5 text-blue-500" />
-                    {link.url.length > 30
-                      ? `${link.url.substring(0, 25)}...`
-                      : link.url}
+                    Watch video →
                   </a>
-                </CardDescription>
+                </CardDescription>  
               </CardHeader>
             </Card>
           </div>
