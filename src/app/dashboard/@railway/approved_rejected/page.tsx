@@ -59,7 +59,7 @@ const Approved_Rejected = () => {
       accessorKey: "gender",
       header: "Gender",
       cell: ({ row }) => {
-        let cellData = row.getValue("class") as string;
+        let cellData = row.getValue("gender") as string;
         return (
           <div className="flex h-[6vh] text-center items-center justify-center ">
             {cellData}
