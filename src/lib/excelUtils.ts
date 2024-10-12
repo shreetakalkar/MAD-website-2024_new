@@ -317,14 +317,14 @@ export const createExcelFile = async (
           name: `${enquiry.lastName.toUpperCase()} ${enquiry.firstName.toUpperCase()} ${enquiry.middleName.toUpperCase()}`,
           gender: enquiry.gender === "Male" ? "M" : "F",
           dob: formatDate(enquiry.dob.toDate()),
-          from: enquiry.from,
-          to: enquiry.to,
+          from: enquiry.from.toUpperCase(),
+          to: enquiry.to.toUpperCase(),
           class: enquiry.class,
           mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
           lastPassIssued: enquiry.lastPassIssued
             ? formatDate(enquiry.lastPassIssued.toDate())
             : "",
-          address: enquiry.address,
+          address: enquiry.address.toUpperCase(),
         };
         const row = worksheet.addRow(rowData);
         worksheet.getRow(row.number).alignment = { horizontal: 'center', vertical: "top", wrapText: true};

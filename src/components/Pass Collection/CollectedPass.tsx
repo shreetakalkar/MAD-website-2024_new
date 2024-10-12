@@ -164,6 +164,8 @@ const CollectedPassTable: React.FC = () => {
               phoneNum: detailsData.phoneNum || "",
               collectedDate: collectedValue === "1" ? dateFormat(requestDoc.data().passCollected.date.toDate()) : "-"
             };
+            studentDetails.name =  studentDetails.name.toUpperCase();
+            studentDetails.branch =  studentDetails.branch.toUpperCase();
             fetchedData.push(studentDetails);
           }
           console.log(fetchedData);

@@ -529,7 +529,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
     const year = date.getFullYear();
     const formattedDOB = `${day}/${month}/${year}`
     const age = calAge(formattedDOB)
-    return `${day}/${month}/${year} Age: ${age.years}Y ${age.months}M`;
+    return `${day}/${month}/${year} AGE: ${age.years}Y ${age.months}M`;
   };
 
   return (
@@ -546,7 +546,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
             <div className="h-full w-1/2 ">
               <InputWithLabel
                 label={`Name`}
-                input={`${lastName} ${firstName} ${middleName}`}
+                input={`${lastName.toUpperCase()} ${firstName.toUpperCase()} ${middleName.toUpperCase()}`}
               />
             </div>
             <div className="h-full w-1/2 flex ">
@@ -555,32 +555,32 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`DOB`} input={formatDOB(dob)} />
               </div>
               <div className="h-full w-1/2">
-                <InputWithLabel label={`Gender`} input={gender} />
+                <InputWithLabel label={`Gender`} input={gender.toUpperCase()} />
               </div>
             </div>
           </div>
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 flex ">
               <div className="h-full w-1/2 ">
-                <InputWithLabel label={`From`} input={from} />
+                <InputWithLabel label={`From`} input={from.toUpperCase()} />
               </div>
               <div className="h-full w-1/2">
-                <InputWithLabel label={`To`} input={to} />
+                <InputWithLabel label={`To`} input={to.toUpperCase()} />
               </div>
             </div>
             <div className="h-full w-1/2 flex ">
               <div className="h-full w-1/2 ">
-                <InputWithLabel label={`Class`} input={travelClass} />
+                <InputWithLabel label={`Class`} input={travelClass.toUpperCase()} />
               </div>
               <div className="h-full w-1/2">
-                <InputWithLabel label={`Duration`} input={duration} />
+                <InputWithLabel label={`Duration`} input={duration.toUpperCase()} />
               </div>
             </div>
           </div>
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 flex ">
               <div className="h-full w-1/2 ">
-                <InputWithLabel label={`Branch`} input={branch} />
+                <InputWithLabel label={`Branch`} input={branch.toUpperCase()} />
               </div>
               <div className="h-full w-1/2">
                 <InputWithLabel
@@ -594,13 +594,13 @@ const PendingCard: React.FC<PendingCardProps> = ({
                 <InputWithLabel label={`Phone Number`} input={phoneNum} />
               </div>
               <div className="h-full w-1/2">
-                <InputWithLabel label={`Travel Lane`} input={travelLane} />
+                <InputWithLabel label={`Travel Lane`} input={travelLane.toUpperCase()} />
               </div>
             </div>
           </div>
           <div className="h-[40%] flex">
             <div className="h-full w-1/2">
-              <InputWithLabel label={`Address`} input={address} />
+              <InputWithLabel label={`Address`} input={address.toUpperCase()} />
             </div>
             <div className="h-full w-1/2 flex flex-col">
               <div className="w-full h-1/2 flex items-center justify-center mt-4">
