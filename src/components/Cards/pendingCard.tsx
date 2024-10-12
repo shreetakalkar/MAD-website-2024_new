@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,15 @@ import { EyeIcon } from "lucide-react";
 import testimg from "../../public/images/OnlineTraining.png";
 import { dateFormat } from "@/constants/dateFormat";
 import { ClipLoader } from "react-spinners";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const currentUserYear = (gradyear: string) => {
   // const gradYearList = useGradYear();
@@ -95,6 +104,7 @@ function InputWithLabel({ label, input }: { label: any; input: any }) {
     </div>
   );
 }
+
 //ignore
 interface ImageModalProps {
   isOpen: boolean;
@@ -102,29 +112,124 @@ interface ImageModalProps {
   imageSrc: string;
 }
 
+// Sir ke demand ke according Zoom ka feature with image in the modal !!
 const ImageModal: React.FC<ImageModalProps> = ({
   isOpen,
   onClose,
   imageSrc,
 }) => {
-  if (!isOpen) return null;
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+
+  const imageRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setZoomLevel(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [isOpen]);
+
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.1, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.1, 1));
+  };
+
+  const resetZoom = () => {
+    setZoomLevel(1);
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDragging(true);
+    setStartPos({ x: e.clientX - position.x, y: e.clientY - position.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (dragging) {
+      const newX = e.clientX - startPos.x;
+      const newY = e.clientY - startPos.y;
+
+      if (imageRef.current) {
+        const image = imageRef.current;
+        const modalBounds = image.parentElement?.getBoundingClientRect();
+        const imageBounds = image.getBoundingClientRect();
+
+        const maxX = (modalBounds?.width || 0) / 2;
+        const maxY = (modalBounds?.height || 0) / 2;
+        const minX = -((imageBounds.width * zoomLevel) - maxX);
+        const minY = -((imageBounds.height * zoomLevel) - maxY);
+
+        setPosition({
+          x: Math.max(Math.min(newX, maxX), minX),
+          y: Math.max(Math.min(newY, maxY), minY),
+        });
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setZoomLevel((prev) => Math.min(Math.max(prev + delta, 1), 3));
+  };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-      <div className="bg-neutral-900 p-8 rounded shadow-md">
-        <img
-          src={imageSrc}
-          alt="Previous Pass"
-          className="max-w-full max-h-full"
-        />
-        <button
-          className="bg-gray-500 text-white py-2 px-4 rounded mt-4"
-          onClick={onClose}
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Image Preview</DialogTitle>
+          <DialogDescription>
+            Zoom and pan the image using your mouse. Scroll to zoom in and out.
+          </DialogDescription>
+        </DialogHeader>
+        <div
+          className="flex justify-center items-center overflow-hidden py-4"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onWheel={handleWheel}
         >
-          Close
-        </button>
-      </div>
-    </div>
+          <img
+            ref={imageRef}
+            src={imageSrc}
+            alt="Previous Pass"
+            style={{
+              transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px)`,
+              cursor: dragging ? "grabbing" : "grab",
+            }}
+            className="max-w-full max-h-96 rounded-lg transition-transform duration-300"
+            onMouseDown={handleMouseDown}
+          />
+        </div>
+        <div className="flex space-x-2 mt-4 justify-center">
+          <Button variant="outline" onClick={handleZoomOut}>
+            Zoom Out
+          </Button>
+          <Button variant="outline" onClick={resetZoom}>
+            Reset Zoom
+          </Button>
+          <Button variant="outline" onClick={handleZoomIn}>
+            Zoom In
+          </Button>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -434,168 +539,6 @@ const PendingCard: React.FC<PendingCardProps> = ({
           <ClipLoader size={50} color={"#123abc"} loading={loading} />
         </div>
       )}
-      {/* MAYURESH KA COMPONENT */}
-      {/* <div className="mx-auto max-w-lg flex flex-col border p-4 rounded shadow">
-              <h2 className="text-xl mb-4">Railway Concessions</h2>
-              <div className="space-y-4">
-                <div>
-                  <strong>Name:</strong> {firstName} {middleName} {lastName} <span className="text-gray-500">{gender}</span>
-                </div>
-                <div className="flex justify-between">
-                  <div>
-                    <strong>From:</strong> {from}
-                  </div>
-                  <div>
-                    <strong>To:</strong> {to}
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div>
-                    <strong>Class:</strong> {travelClass}
-                  </div>
-                  <div>
-                    <strong>Mode:</strong> {duration}
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div>
-                    <strong>Date of Issue:</strong> {lastPassIssued}
-                  </div>
-                  <div>
-                    <strong>Branch:</strong> {branch}
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div>
-                    <strong>Current Year:</strong> {gradyear}
-                  </div>
-                </div>
-                <div>
-                  <strong>Address:</strong> {address}
-                </div>
-                <div className="flex justify-between">
-                  <div>
-                    <strong>Date of Birth:</strong> {dob}
-                  </div>
-                  <div>
-                    <strong>Age:</strong> {ageYears} Years & {ageMonths} Months
-                  </div>
-                </div>
-                <div>
-                  <strong>Phone Number:</strong> {phoneNum}
-                </div>
-                <div>
-                  <strong>Status Message:</strong> {statusMessage}
-                </div>
-                <div className="flex space-x-2">
-                  <button className="bg-green-500 text-white bg- py-2 px-4 rounded hover:bg-green-600" onClick={handleApprove}>Approve</button>
-                  <button className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600" onClick={handleReject}>Reject</button>
-                </div>
-              </div>
-            </div> */}
-
-      {/* <div className="p-[0.8%] flex rounded-md border-[2px] border-[#E2E8F0] w-[90vw] h-[90vh] temp-> ml-[20px] my-[20px]">
-        <div className="flex flex-col w-1/2 h-full">
-          <div className="h-[100%] w-[100%] flex flex-col  ">
-            <div className="h-[14.2857142857%] flex w-[100%] "> 
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Name`} input={firstName}/>
-              </div>
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Middle Name`} input={middleName} />
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Last Name`} input={lastName} />
-              </div>
-              <div className="w-[50%] h-full">
-                {" "}
-                <InputWithLabel label={`Phone Number`} input={phoneNum} />
-
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Gender`} input={gender} />
-              </div>
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Date of Birth`} input={dob} />
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`From`} input={from} />
-              </div>
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`To`} input={to} />
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Branch`} input={branch} />
-              </div>
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Graduation Year`} input={currentYear} />
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Class`} input={travelClass} />
-              </div>
-              <div className="w-[50%] h-full">
-                <InputWithLabel label={`Duration`} input={duration} />
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%] ">
-
-              <div className="w-[100%] h-full">
-                <InputWithLabel label={`Travel Lane`} input={travelLane} />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col w-1/2 h-full">
-          <div className="h-[100%] w-[100%] flex flex-col  ">
-            <div className="h-[28.5714285714%] w-[100%] ">
-              <div className="w-full h-full">
-                <InputWithLabel label={`Address`} input={address} />
-              </div>
-            </div>
-            <div className="h-[57.1428571429%] w-[100%] ">
-              <div className="w-full h-full border-[0.5px] rounded-lg overflow-auto remove-scroller flex flex-col items-center">
-                <div className="my-2">
-                  <img src={idCardURL} alt="idCarUrl" />
-                </div>
-                <div className="my-2">
-                  <img src={idCardURL2} alt="idCarUrl2" />
-                </div>
-                <div className="my-2">
-                  <img src={previousPassURL} alt="previousPassUrl" />
-                </div>
-              </div>
-            </div>
-            <div className="h-[14.2857142857%] flex w-[100%]">
-              <div className="w-[50%] flex items-center  justify-center">
-              <button
-                className="bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
-                onClick={handleApprove}
-              >
-                Approve
-              </button>
-              </div>
-              <div className="w-[50%]   flex items-center justify-center">
-              <button
-                className="bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
-                onClick={handleReject}
-              >
-                Reject
-              </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
 
       <div className="p-[0.8%] flex rounded-xl border-[2px] border-[#bfc3c7] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="w-[70%] h-full flex flex-col">
@@ -686,21 +629,42 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
           </div>
         </div>
-        <div className="w-[30%] h-full flex flex-col  overflow-auto">
-          <div className="m-2 h-[33.333%]">
-            <img className="rounded-lg" src={idCardURL} alt="idCarUrl" />
-          </div>
-          <div className="m-2 h-[33.333%]">
-            <img className="rounded-lg" src={idCardURL2} alt="idCarUrl2" />
-          </div>
-          <div className="m-2 h-[33.333%]">
-            <img
-              className="rounded-lg"
-              src={previousPassURL}
-              alt="previousPassUrl"
-            />
-          </div>
+        <div className="w-[30%] h-full flex flex-col overflow-auto">
+        <div className="m-2 h-[33.333%]">
+          <img
+            className="rounded-lg"
+            src={idCardURL}
+            alt="idCardUrl"
+            onClick={() => {
+              setImageSrc(idCardURL);
+              setIsImageModalOpen(true);
+            }}
+          />
         </div>
+        <div className="m-2 h-[33.333%]">
+          <img
+            className="rounded-lg"
+            src={idCardURL2}
+            alt="idCardUrl2"
+            onClick={() => {
+              setImageSrc(idCardURL2);
+              setIsImageModalOpen(true);
+            }}
+          />
+        </div>
+        <div className="m-2 h-[33.333%]">
+          <img
+            className="rounded-lg"
+            src={previousPassURL}
+            alt="previousPassUrl"
+            onClick={() => {
+              setImageSrc(previousPassURL);
+              setIsImageModalOpen(true);
+            }}
+          />
+        </div>
+      </div>
+
       </div>
 
       {/* Approve/Reject modal */}
