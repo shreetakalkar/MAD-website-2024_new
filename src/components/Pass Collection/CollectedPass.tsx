@@ -31,6 +31,7 @@ interface Data {
   gradYear: string;
   lastPassIssued: Date;
   collectedDate: Date | string;
+  phoneNum: number; 
 }
 
 const CollectedPassTable: React.FC = () => {
@@ -94,6 +95,23 @@ const CollectedPassTable: React.FC = () => {
       header: "Certificate Number",
     },
     {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "phoneNum",
+      header: "Phone No",
+    },
+    {
+      accessorKey: "gradYear",
+      header: "Year",
+    },
+    {
+      accessorKey: "branch",
+      header: "Branch",
+    },
+    
+    {
       accessorKey: "lastPassIssued",
       header: "Issued Date",
       cell: ({ getValue }) => formatDate(getValue()),
@@ -101,18 +119,6 @@ const CollectedPassTable: React.FC = () => {
     {
       accessorKey: "status",
       header: "Status",
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
-    },
-    {
-      accessorKey: "branch",
-      header: "Branch",
-    },
-    {
-      accessorKey: "gradYear",
-      header: "Year",
     },
     {
       accessorKey: "collectedDate",
@@ -155,6 +161,7 @@ const CollectedPassTable: React.FC = () => {
               branch: detailsData?.branch || "",
               gradYear: currentUserYear(detailsData?.gradyear) || "",
               lastPassIssued: detailsData.lastPassIssued?.toDate(),
+              phoneNum: detailsData.phoneNum || "",
               collectedDate: collectedValue === "1" ? dateFormat(requestDoc.data().passCollected.date.toDate()) : "-"
             };
             fetchedData.push(studentDetails);
