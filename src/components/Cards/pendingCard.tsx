@@ -257,8 +257,18 @@ const Modal: React.FC<ModalProps> = ({
   data,
 }) => {
   const [certificateNumber, setCertificateNumber] = useState("");
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
+
+  const validateAndSubmit = () => {
+    if (action === "Approve" && certificateNumber.trim() === "") {
+      setError("Please enter certificate number");
+    } else {
+      setError("");
+      onSubmit(certificateNumber)
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
@@ -302,6 +312,9 @@ const Modal: React.FC<ModalProps> = ({
               onChange={(e) => setCertificateNumber(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {error && (
+              <p className="text-red-500 mt-2 text-sm">{error}</p>
+            )}
           </div>
         )}
         {action === "Reject" && (
@@ -325,13 +338,16 @@ const Modal: React.FC<ModalProps> = ({
                 ? "bg-green-600 hover:bg-green-700"
                 : "bg-red-600 hover:bg-red-700"
             }`}
-            onClick={() => onSubmit(certificateNumber)}
+            onClick={validateAndSubmit}
           >
             {action}
           </button>
           <button
             className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
-            onClick={onClose}
+            onClick={() => {
+              setError("");
+              onClose();
+            }}
           >
             Go Back
           </button>
