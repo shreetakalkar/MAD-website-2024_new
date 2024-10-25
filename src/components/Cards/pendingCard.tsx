@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ZoomIn, ZoomOut, RotateCcw, RotateCw, RefreshCcw } from 'lucide-react';
 
 const currentUserYear = (gradyear: string) => {
   // const gradYearList = useGradYear();
@@ -122,6 +123,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0); // New state for rotation
 
   const imageRef = useRef<HTMLImageElement | null>(null);
 
@@ -129,6 +131,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
     if (!isOpen) {
       setZoomLevel(1);
       setPosition({ x: 0, y: 0 });
+      setRotation(0); // Reset rotation when modal is closed
     }
   }, [isOpen]);
 
@@ -143,6 +146,20 @@ const ImageModal: React.FC<ImageModalProps> = ({
   const resetZoom = () => {
     setZoomLevel(1);
     setPosition({ x: 0, y: 0 });
+  };
+
+  const resetZoomAndRotation = () => {
+    setZoomLevel(1);
+    setPosition({ x: 0, y: 0 });
+    setRotation(0);
+  };
+
+  const handleRotateClockwise = () => {
+    setRotation((prev) => prev + 90); // Rotate 90 degrees clockwise
+  };
+
+  const handleRotateCounterClockwise = () => {
+    setRotation((prev) => prev - 90); // Rotate 90 degrees counterclockwise
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -186,7 +203,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[650px]">
         <DialogHeader>
           <DialogTitle>Image Preview</DialogTitle>
           <DialogDescription>
@@ -205,7 +222,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
             src={imageSrc}
             alt="Previous Pass"
             style={{
-              transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px)`,
+              transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
               cursor: dragging ? "grabbing" : "grab",
             }}
             className="max-w-full max-h-96 rounded-lg transition-transform duration-300"
@@ -213,16 +230,23 @@ const ImageModal: React.FC<ImageModalProps> = ({
           />
         </div>
         <div className="flex space-x-2 mt-4 justify-center">
-          <Button variant="outline" onClick={handleZoomOut}>
-            Zoom Out
-          </Button>
-          <Button variant="outline" onClick={resetZoom}>
-            Reset Zoom
-          </Button>
           <Button variant="outline" onClick={handleZoomIn}>
-            Zoom In
+            <ZoomIn className="mr-1 w-4 h-4" /> Zoom In
+          </Button>
+          <Button variant="outline" onClick={handleZoomOut}>
+            <ZoomOut className="mr-1 w-4 h-4" /> Zoom Out
+          </Button>
+          <Button variant="outline" onClick={handleRotateCounterClockwise}>
+            <RotateCcw className="mr-1 w-4 h-4" /> Rotate Left
+          </Button>
+          <Button variant="outline" onClick={handleRotateClockwise}>
+            <RotateCw className="mr-1 w-4 h-4" /> Rotate Right
+          </Button>
+          <Button variant="outline" onClick={resetZoomAndRotation}>
+            <RefreshCcw className="mr-1 w-4 h-4" /> Reset
           </Button>
         </div>
+
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Close
