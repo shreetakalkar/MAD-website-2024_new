@@ -78,7 +78,11 @@ const Downloads: React.FC = () => {
       const downloadHistory = await fetchDownloadHistory();
   
       if (docSnap.exists() && docSnap.data().history) {
-        makeBatches(docSnap.data().history, downloadHistory);
+
+        // console.log("Doc Snap: ", docSnap.data().history)
+        // Yeh chal rha hai jaisa chalna chahiye, contact fahed before making ANY CHANGES
+        const sortedData = (docSnap.data().history.sort((a: any, b: any) => a.passNum.localeCompare(b.passNum))).reverse();
+        makeBatches(sortedData  , downloadHistory);
       } else {
         setWesternBatchedEnquiries([]);
         setCentralBatchedEnquiries([]);
@@ -127,7 +131,7 @@ const Downloads: React.FC = () => {
 
       if (
         (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
-        (enquiry.travelLane === "Western" || enquiry.travelLane === "Harbour")
+        (enquiry.travelLane === "Western")
       ) {
         if (
           westernBatches.length === 0 ||
@@ -149,8 +153,8 @@ const Downloads: React.FC = () => {
           westernBatches[westernBatches.length - 1]?.enquiries.push(enquiry);
         }
       } else if (
-        enquiry.status === "serviced" &&
-        enquiry.travelLane === "Central"
+        (enquiry.status === "serviced") && (enquiry.travelLane === "Central" || enquiry.travelLane === "Harbour")
+        
       ) {
         if (
           centralBatches.length === 0 ||
