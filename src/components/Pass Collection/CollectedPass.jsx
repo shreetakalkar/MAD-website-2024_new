@@ -9,70 +9,51 @@ import {
   getDocs,
   orderBy,
   query,
-  Timestamp,
   updateDoc,
   where,
   setDoc,
 } from "firebase/firestore";
 import { toast } from "../ui/use-toast";
 import { CollectionDisplayTable } from "./CollectionDisplayTable";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "../ui/button";
-import useGradYear from "@/constants/gradYearList";
-import { dateFormat } from "@/constants/dateFormat";
 import { Loader } from "lucide-react";
 
-interface Data {
-  certNo: string;
-  name: string;
-  status: "Collected" | "Not Collected";
-  branch: string;
-  gradYear: string;
-  lastPassIssued: Date;
-  collectedDate: Date | string;
-  phoneNum: number;
-}
-
-const CollectedPassTable: React.FC = () => {
-  const formatDate = (date: Date) => {
+const CollectedPassTable = () => {
+  const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
 
-  const currentUserYear = (gradyear: string) => {
-    // const gradYearList = useGradYear();
-    // console.log(gradYearList);
-
+  const currentUserYear = (gradyear) => {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     const gradYear = parseInt(gradyear);
 
     if (
-      (currentMonth >= 6 && gradYear == currentYear + 4) ||
-      (currentMonth <= 5 && gradYear == currentYear + 3)
+      (currentMonth >= 6 && gradYear === currentYear + 4) ||
+      (currentMonth <= 5 && gradYear === currentYear + 3)
     ) {
       return "FE";
     } else if (
-      (currentMonth >= 6 && gradYear == currentYear + 3) ||
-      (currentMonth <= 5 && gradYear == currentYear + 2)
+      (currentMonth >= 6 && gradYear === currentYear + 3) ||
+      (currentMonth <= 5 && gradYear === currentYear + 2)
     ) {
       return "SE";
     } else if (
-      (currentMonth >= 6 && gradYear == currentYear + 2) ||
-      (currentMonth <= 5 && gradYear == currentYear + 1)
+      (currentMonth >= 6 && gradYear === currentYear + 2) ||
+      (currentMonth <= 5 && gradYear === currentYear + 1)
     ) {
       return "TE";
     } else if (
-      (currentMonth >= 6 && gradYear == currentYear + 1) ||
-      (currentMonth <= 5 && gradYear == currentYear)
+      (currentMonth >= 6 && gradYear === currentYear + 1) ||
+      (currentMonth <= 5 && gradYear === currentYear)
     ) {
       return "BE";
     }
   };
 
-  const columns: ColumnDef<Data, any>[] = [
+  const columns = [
     {
       id: "select",
       cell: ({ row }) => (
@@ -109,7 +90,6 @@ const CollectedPassTable: React.FC = () => {
       accessorKey: "branch",
       header: "Branch",
     },
-
     {
       accessorKey: "lastPassIssued",
       header: "Issued Date",
@@ -125,13 +105,12 @@ const CollectedPassTable: React.FC = () => {
     },
   ];
 
-  const [data, setData] = useState<Data[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
-      const fetchedData: Data[] = [];
       try {
         const concessionRequestRef = collection(db, "ConcessionRequest");
         const q = query(
@@ -140,43 +119,40 @@ const CollectedPassTable: React.FC = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        for (const requestDoc of querySnapshot.docs) {
-          const id = requestDoc.id;
-          const concessionDetailsRef = doc(db, "ConcessionDetails", id);
-          const detailsDoc = await getDoc(concessionDetailsRef);
+        const fetchedData = await Promise.all(
+          querySnapshot.docs.map(async (requestDoc) => {
+            const id = requestDoc.id;
+            const concessionDetailsRef = doc(db, "ConcessionDetails", id);
+            const detailsDoc = await getDoc(concessionDetailsRef);
 
-          if (detailsDoc.exists()) {
-            const detailsData = detailsDoc.data();
-            const collectedValue = requestDoc.data().passCollected?.collected;
-            const studentDetails: Data = {
-              certNo: requestDoc.data().passNum,
-              name:
-                detailsData?.lastName +
-                " " +
-                detailsData?.firstName +
-                " " +
-                detailsData?.middleName,
-              status: collectedValue === "1" ? "Collected" : "Not Collected",
-              branch: detailsData?.branch || "",
-              gradYear: currentUserYear(detailsData?.gradyear) || "",
-              lastPassIssued: detailsData.lastPassIssued?.toDate(),
-              phoneNum: detailsData.phoneNum || "",
-              collectedDate:
-                collectedValue === "1"
-                  ? dateFormat(requestDoc.data().passCollected.date.toDate())
-                  : "-",
-            };
-            studentDetails.name = studentDetails.name.toUpperCase();
-            studentDetails.branch = studentDetails.branch.toUpperCase();
-            fetchedData.push(studentDetails);
-          }
-          console.log(fetchedData);
-        }
-        fetchedData.sort(
-          (a, b) => b.lastPassIssued.getTime() - a.lastPassIssued.getTime()
+            if (detailsDoc.exists()) {
+              const detailsData = detailsDoc.data();
+              const collectedValue = requestDoc.data().passCollected?.collected;
+              return {
+                certNo: requestDoc.data().passNum,
+                name: `${detailsData?.lastName} ${detailsData?.firstName} ${detailsData?.middleName}`.toUpperCase(),
+                status: collectedValue === "1" ? "Collected" : "Not Collected",
+                branch: (detailsData?.branch || "").toUpperCase(),
+                gradYear: currentUserYear(detailsData?.gradyear) || "",
+                lastPassIssued: detailsData.lastPassIssued?.toDate(),
+                phoneNum: detailsData.phoneNum || "",
+                collectedDate:
+                  collectedValue === "1"
+                    ? requestDoc.data().passCollected.date.toDate().toLocaleDateString()
+                    : "-",
+              };
+            }
+            return null;
+          })
         );
 
-        setData(fetchedData);
+        setData(
+          fetchedData
+            .filter((studentDetails) => studentDetails !== null)
+            .sort(
+              (a, b) => b.lastPassIssued.getTime() - a.lastPassIssued.getTime()
+            )
+        );
       } catch (error) {
         toast({ description: "Error fetching passes", variant: "destructive" });
         console.error("Error fetching passes", error);
@@ -188,7 +164,7 @@ const CollectedPassTable: React.FC = () => {
     fetchUserData();
   }, []);
 
-  const updateCollectedField = async (certNo: any) => {
+  const updateCollectedField = async (certNo) => {
     try {
       const concessionRequestRef = collection(db, "ConcessionRequest");
       const q = query(
@@ -209,24 +185,22 @@ const CollectedPassTable: React.FC = () => {
             },
           });
 
-          // For Stats UPDATE PASS
           const concessionHistoryRef = doc(
             db,
             "ConcessionHistory",
             "DailyStats"
           );
           const concessionHistorySnap = await getDoc(concessionHistoryRef);
-          const currentDate = dateFormat(new Date());
+          const currentDate = new Date().toLocaleDateString();
 
           if (concessionHistorySnap.exists()) {
             const historyData = concessionHistorySnap.data();
             let statsArray = historyData.stats || [];
             const dateIndex = statsArray.findIndex(
-              (entry: any) => entry.date === currentDate
+              (entry) => entry.date === currentDate
             );
 
             if (dateIndex >= 0) {
-              // Initialize cancelledPass if it doesn't exist
               if (typeof statsArray[dateIndex].collectedPass !== "number") {
                 statsArray[dateIndex].collectedPass = 0;
               }
@@ -268,12 +242,12 @@ const CollectedPassTable: React.FC = () => {
     }
   };
 
-  const handleCheckboxChange = async (row: any, value: any) => {
+  const handleCheckboxChange = async (row, value) => {
     const certNoToUpdate = data.find(
       (item) => item.certNo === row.original.certNo
     )?.certNo;
 
-    const updatedData: Data[] = data.map((item) =>
+    const updatedData = data.map((item) =>
       item.certNo === row.original.certNo
         ? { ...item, status: value ? "Collected" : "Not Collected" }
         : item

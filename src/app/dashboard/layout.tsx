@@ -35,12 +35,12 @@ export default function Home({
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     const fetchUserType = async ({ uid }: { uid: string }) => {
       if (!uid) return;
       let facultyRef = doc(db, "OfficialLogin", uid);
       let docSnap = await getDoc(facultyRef);
-      console.log(docSnap.data()?.type);
+      // console.log(docSnap.data()?.type);
       if (!docSnap.exists()) {
         facultyRef = doc(db, "Professors", uid);
         docSnap = await getDoc(facultyRef);
