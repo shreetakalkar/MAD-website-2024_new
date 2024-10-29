@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import Link from "next/link";
 import UnprotectedNavbar from "@/components/UnprotectedNavbar";
+import Image from "next/image";
 
 const Team = () => {
 
@@ -119,10 +120,13 @@ const Team = () => {
                 <div className="w-full h-[calc(100vw*(9/16))] max-h-[2304px] flex items-center justify-center p-4">
                   <Card className="w-full h-full">
                     <CardContent className="flex items-center justify-center h-full p-6">
-                      <img
+                      <Image
                         src={carouselImageArray[index]}
                         alt={`Carousel Image ${index + 1}`}
                         className="object-contain w-full h-full"
+                        width={1920}
+                        height={1080}
+                        priority={index === 0}
                       />
                     </CardContent>
                   </Card>
@@ -146,10 +150,12 @@ const Team = () => {
               TSEC App On Playstore
             </h2>
           </a>
-          <img
+          <Image
             src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
-            alt="Card 1"
+            alt="Playstore QR"
             className="h-auto rounded-md mb-2 w-full"
+            width={300}
+            height={300}
           />
           <p>Devs App is available on Playstore</p>
         </div>
@@ -158,10 +164,12 @@ const Team = () => {
           <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
             Devs Club Website
           </h2>
-          <img
+          <Image
             src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FApp%20Icon%20with%20Shadow.png?alt=media&token=11d0ab17-d538-4b3d-8480-cedc1d3936d7"
             alt="Card 2"
             className="w-full h-auto rounded-md mb-2"
+            width={300}
+            height={300}
           />
           <p>Devs Club Website is used by officials</p>
         </div>
@@ -176,10 +184,12 @@ const Team = () => {
               TSEC App On App Store
             </h2>
           </a>
-          <img
+          <Image
             src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
             alt="Card 3"
             className="w-full h-auto rounded-md mb-2"
+            width={300}
+            height={300}
           />
           <p>Devs App is available on App Store</p>
         </div>
@@ -191,10 +201,12 @@ const Team = () => {
         <h2 className="text-3xl font-semibold mb-4 text-center">Principal</h2>
         <div className="flex justify-center">
           <div className="text-center">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fgt_thampi.jpg?alt=media&token=a99a5fdc-3e17-41e9-8043-affe6fa00873"
               alt="Dr. G. T. Thampi"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Dr. G. T. Thampi</p>
             <p className="text-sm">Principal</p>
@@ -216,10 +228,12 @@ const Team = () => {
         </h2>
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           <div className="text-center mb-4 sm:mb-0">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fdk_maam.jpg?alt=media&token=32d36076-687f-4dd7-beec-645a0035ef22"
               alt="Prof. Darakshan Khan"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Prof. Darakshan Khan</p>
             <p className="text-sm">Professor Incharge</p>
@@ -233,10 +247,12 @@ const Team = () => {
             </Link>
           </div>
           <div className="text-center">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fsachimam.png?alt=media&token=1f41d84a-0627-4373-b20e-c5424306fcb9"
               alt="Dr. Sachi Natu"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Dr. Sachi Natu</p>
             <p className="text-sm">Professor Incharge</p>
@@ -256,10 +272,12 @@ const Team = () => {
         <h2 className="text-3xl font-semibold mb-4 text-center">Chairperson</h2>
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           <div className="text-center mb-4 sm:mb-0">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Ffahed.png?alt=media&token=45721059-7939-4be2-acdf-a4c15150a30e"
               alt="Fahed Khan"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Fahed Khan</p>
             {/* <p className="text-sm">Chairperson</p> */}
@@ -281,10 +299,12 @@ const Team = () => {
         </h2>
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           <div className="text-center mb-4 sm:mb-0">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fatharva.png?alt=media&token=ababa798-5f3c-4e4e-bb17-c1a2b108f51b"
               alt="Atharva Khewle"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Atharva Khewle</p>
             {/* <p className="text-sm">Vice Chairperson</p> */}
@@ -304,10 +324,12 @@ const Team = () => {
         <h2 className="text-3xl font-semibold mb-4 text-center">Web Team</h2>
         <div className="flex justify-center">
           <div className="text-center mb-4">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fritojnan.jpeg?alt=media&token=5c08bd18-b645-4175-992f-2c66f728f9e6"
               alt="Ritojnan Mukherjee"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Ritojnan Mukherjee</p>
             <p className="text-sm">Head</p>
@@ -324,10 +346,12 @@ const Team = () => {
         <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8 mt-4">
           {webMembers.map((member, index) => (
             <div key={index} className="text-center mb-4 sm:mb-0">
-              <img
+              <Image
                 src={member.image}
                 alt={member.name}
                 className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+                width={256}
+                height={256}
               />
               <p className="text-xl font-medium">{member.name}</p>
               <p className="text-sm">Member</p>
@@ -348,10 +372,12 @@ const Team = () => {
         <h2 className="text-3xl font-semibold mb-4 text-center">App Team</h2>
         <div className="flex justify-center">
           <div className="text-center mb-4">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fzeeshan.png?alt=media&token=4789696e-955a-4ba0-9738-eec09aebf1fc"
               alt="Zeeshan Sayed"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Zeeshan Sayed</p>
             <p className="text-sm">Head</p>
@@ -368,10 +394,12 @@ const Team = () => {
         <div className="flex  justify-center space-x-4 sm:space-x-8 mt-4">
           {appMembers.map((member, index) => (
             <div key={index} className="text-center mb-4 sm:mb-0">
-              <img
+              <Image
                 src={member.image}
                 alt={member.name}
                 className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+                width={256}
+                height={256}
               />
               <p className="text-xl font-medium">{member.name}</p>
               <p className="text-sm">Member</p>
@@ -393,10 +421,12 @@ const Team = () => {
         <div className="flex  justify-center space-x-4 sm:space-x-8">
           {designMembers.map((member, index) => (
             <div key={index} className="text-center mb-4 sm:mb-0">
-              <img
+              <Image
                 src={member.image}
                 alt={member.name}
                 className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+                width={256}
+                height={256}
               />
               <p className="text-xl font-medium">{member.name}</p>
               <p className="text-sm">Member</p>
@@ -419,10 +449,12 @@ const Team = () => {
         </h2>
         <div className="flex justify-center">
           <div className="text-center mb-4">
-            <img
+            <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fsarthak.png?alt=media&token=1f33ee2e-92ce-43f7-9222-607615650805"
               alt="Sarthak Kuwar"
               className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+              width={256}
+              height={256}
             />
             <p className="text-xl font-medium">Sarthak Kuwar</p>
             <p className="text-sm">Head</p>
@@ -439,10 +471,12 @@ const Team = () => {
         <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8 mt-4">
           {opsMembers.map((member, index) => (
             <div key={index} className="text-center mb-4 sm:mb-0">
-              <img
+              <Image
                 src={member.image}
                 alt={member.name}
                 className="w-32 h-32 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full mx-auto mb-2"
+                width={256}
+                height={256}
               />
               <p className="text-xl font-medium">{member.name}</p>
               <p className="text-sm">Member</p>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from "next/image";
 
 interface AdminHistoryCardProps {
   id: string;
@@ -44,7 +45,7 @@ const HistoryCard: React.FC<AdminHistoryCardProps> = ({
           <p className="mb-2"><strong>Status:</strong> <span className={`capitalize ${status === 'accepted' ? 'text-green-600' : 'text-red-600'}`}>{status}</span></p>
         </div>
         <div className="w-1/3">
-          <img src={imageUrl} alt="Event" className="w-full h-auto rounded" />
+          <Image width={250} height={250} src={imageUrl} alt="Event" className="w-full h-auto rounded" />
         </div>
       </div>
     </div>

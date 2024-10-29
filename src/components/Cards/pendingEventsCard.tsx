@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from "next/image";
 
 interface PendingEventsCardProps {
   id: string;
@@ -45,7 +46,7 @@ const PendingEventsCard: React.FC<PendingEventsCardProps> = ({
           </p>
         </div>
         <div className="w-1/3">
-          <img src={imageUrl} alt="Event" className="w-full h-auto rounded" />
+          <Image width={250} height={250} src={imageUrl} alt="Event" className="w-full h-auto rounded" />
         </div>
       </div>
       <div className="mt-4 flex justify-end">

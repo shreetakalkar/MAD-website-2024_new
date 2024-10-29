@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ZoomIn, ZoomOut, RotateCcw, RotateCw, RefreshCcw } from 'lucide-react';
+import Image from "next/image";
 
 const currentUserYear = (gradyear: string) => {
   // const gradYearList = useGradYear();
@@ -217,13 +218,16 @@ const ImageModal: React.FC<ImageModalProps> = ({
           onMouseLeave={handleMouseUp}
           onWheel={handleWheel}
         >
-          <img
+          <Image
             ref={imageRef}
             src={imageSrc}
             alt="Previous Pass"
+            width={650}
+            height={400}
             style={{
               transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
               cursor: dragging ? "grabbing" : "grab",
+              objectFit: 'contain',
             }}
             className="max-w-full max-h-96 rounded-lg transition-transform duration-300"
             onMouseDown={handleMouseDown}
@@ -670,33 +674,39 @@ const PendingCard: React.FC<PendingCardProps> = ({
           </div>
         </div>
         <div className="w-[30%] h-full flex flex-col overflow-auto">
-        <div className="m-2 h-[33.333%]">
-          <img
+        <div className="m-2 h-[33.333%] relative">
+          <Image
             className="rounded-lg"
             src={idCardURL}
-            alt="idCardUrl"
+            alt="ID Card Front"
+            fill
+            style={{ objectFit: 'contain' }}
             onClick={() => {
               setImageSrc(idCardURL);
               setIsImageModalOpen(true);
             }}
           />
         </div>
-        <div className="m-2 h-[33.333%]">
-          <img
+        <div className="m-2 h-[33.333%] relative">
+          <Image
             className="rounded-lg"
             src={idCardURL2}
-            alt="idCardUrl2"
+            alt="ID Card Back"
+            fill
+            style={{ objectFit: 'contain' }}
             onClick={() => {
               setImageSrc(idCardURL2);
               setIsImageModalOpen(true);
             }}
           />
         </div>
-        <div className="m-2 h-[33.333%]">
-          <img
+        <div className="m-2 h-[33.333%] relative">
+          <Image
             className="rounded-lg"
             src={previousPassURL}
-            alt="previousPassUrl"
+            alt="Previous Pass"
+            fill
+            style={{ objectFit: 'contain' }}
             onClick={() => {
               setImageSrc(previousPassURL);
               setIsImageModalOpen(true);
