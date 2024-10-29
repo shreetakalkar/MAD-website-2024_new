@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { useUser } from "@/providers/UserProvider";
 import NoticeHistory from "./NoticeHistory";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 
 export interface Notice {
   id: string;
@@ -71,7 +71,7 @@ const ImportantNotices: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        <Loader className="w-10 h-10 animate-spin" />
       </div>
     );
   }

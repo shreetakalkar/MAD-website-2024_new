@@ -16,7 +16,7 @@ import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 
 const RailwayUpdateConc = () => {
   const [passes, setPasses] = useState<any[]>([]);
@@ -172,8 +172,8 @@ const RailwayUpdateConc = () => {
           </div>
         ) : (
           <div className="flex justify-center items-center h-screen">
-            <ClipLoader size={50} color={"#123abc"}/>
-          </div>
+            <Loader className="w-10 h-10 animate-spin" />
+            </div>
         )}
         {passes.map((pass, index) => {
           return (

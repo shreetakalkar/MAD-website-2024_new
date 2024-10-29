@@ -20,8 +20,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "../ui/button";
 import useGradYear from "@/constants/gradYearList";
 import { dateFormat } from "@/constants/dateFormat";
-import { ClipLoader } from "react-spinners";
-
+import { Loader } from "lucide-react";
 
 interface Data {
   certNo: string;
@@ -31,7 +30,7 @@ interface Data {
   gradYear: string;
   lastPassIssued: Date;
   collectedDate: Date | string;
-  phoneNum: number; 
+  phoneNum: number;
 }
 
 const CollectedPassTable: React.FC = () => {
@@ -110,7 +109,7 @@ const CollectedPassTable: React.FC = () => {
       accessorKey: "branch",
       header: "Branch",
     },
-    
+
     {
       accessorKey: "lastPassIssued",
       header: "Issued Date",
@@ -122,8 +121,8 @@ const CollectedPassTable: React.FC = () => {
     },
     {
       accessorKey: "collectedDate",
-      header: "Collected Date"
-    }
+      header: "Collected Date",
+    },
   ];
 
   const [data, setData] = useState<Data[]>([]);
@@ -162,10 +161,13 @@ const CollectedPassTable: React.FC = () => {
               gradYear: currentUserYear(detailsData?.gradyear) || "",
               lastPassIssued: detailsData.lastPassIssued?.toDate(),
               phoneNum: detailsData.phoneNum || "",
-              collectedDate: collectedValue === "1" ? dateFormat(requestDoc.data().passCollected.date.toDate()) : "-"
+              collectedDate:
+                collectedValue === "1"
+                  ? dateFormat(requestDoc.data().passCollected.date.toDate())
+                  : "-",
             };
-            studentDetails.name =  studentDetails.name.toUpperCase();
-            studentDetails.branch =  studentDetails.branch.toUpperCase();
+            studentDetails.name = studentDetails.name.toUpperCase();
+            studentDetails.branch = studentDetails.branch.toUpperCase();
             fetchedData.push(studentDetails);
           }
           console.log(fetchedData);
@@ -186,7 +188,6 @@ const CollectedPassTable: React.FC = () => {
     fetchUserData();
   }, []);
 
-  
   const updateCollectedField = async (certNo: any) => {
     try {
       const concessionRequestRef = collection(db, "ConcessionRequest");
@@ -209,18 +210,24 @@ const CollectedPassTable: React.FC = () => {
           });
 
           // For Stats UPDATE PASS
-          const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
+          const concessionHistoryRef = doc(
+            db,
+            "ConcessionHistory",
+            "DailyStats"
+          );
           const concessionHistorySnap = await getDoc(concessionHistoryRef);
           const currentDate = dateFormat(new Date());
 
           if (concessionHistorySnap.exists()) {
             const historyData = concessionHistorySnap.data();
             let statsArray = historyData.stats || [];
-            const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate);
+            const dateIndex = statsArray.findIndex(
+              (entry: any) => entry.date === currentDate
+            );
 
             if (dateIndex >= 0) {
               // Initialize cancelledPass if it doesn't exist
-              if (typeof statsArray[dateIndex].collectedPass !== 'number') {
+              if (typeof statsArray[dateIndex].collectedPass !== "number") {
                 statsArray[dateIndex].collectedPass = 0;
               }
               statsArray[dateIndex].collectedPass += 1;
@@ -234,10 +241,12 @@ const CollectedPassTable: React.FC = () => {
             await updateDoc(concessionHistoryRef, { stats: statsArray });
           } else {
             await setDoc(concessionHistoryRef, {
-              stats: [{
-                date: currentDate,
-                collectedPass: 1
-              }],
+              stats: [
+                {
+                  date: currentDate,
+                  collectedPass: 1,
+                },
+              ],
             });
           }
 
@@ -276,9 +285,11 @@ const CollectedPassTable: React.FC = () => {
   };
 
   if (loading) {
-    return   <div className="flex items-center justify-center h-screen">
-                <ClipLoader size={50} color={"#123abc"} loading={loading} />
-             </div>
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="w-10 h-10 animate-spin" />
+      </div>
+    );
   }
 
   return (

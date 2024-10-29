@@ -5,9 +5,7 @@ import { db } from "@/config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ClipLoader } from "react-spinners";
-
-
+import { Loader } from "lucide-react";
 const RailwayEntryInterface = () => {
   const [emails, setEmails] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -72,8 +70,8 @@ const RailwayEntryInterface = () => {
   return (
     <>
       {loading && (
-        <div className="flex items-center justify-center h-screen">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader className="w-10 h-10 animate-spin" />
         </div>
       )}
       {!loading && (

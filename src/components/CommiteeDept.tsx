@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { db, storage } from "@/config/firebase";
 import { collection, addDoc } from "firebase/firestore";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 import { useUser } from "@/providers/UserProvider";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
@@ -128,7 +128,7 @@ const CommiteeDept = () => {
       <div className="w-[100%] flex justify-center items-center">
         {loading && (
           <div className="flex items-center justify-center h-screen">
-            <ClipLoader size={50} color={"#123abc"} loading={loading} />
+            <Loader className="w-10 h-10 animate-spin" />
           </div>
         )}
 

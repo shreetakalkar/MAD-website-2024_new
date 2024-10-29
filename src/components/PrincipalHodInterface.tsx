@@ -11,7 +11,7 @@ import { db, storage } from "@/config/firebase";
 import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import useGradYear from "@/constants/gradYearList";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 import { useUser } from "@/providers/UserProvider";
 
 // Define the schema for form validation
@@ -177,8 +177,7 @@ const PrincipalHodInterface = () => {
       <div className="w-[100%] flex justify-center items-center">
         {loading && (
           <div className="flex items-center justify-center h-screen">
-            <ClipLoader size={50} color={"#123abc"} loading={loading} />
-            {/* <p>Loading...</p> */}
+            <Loader className="w-10 h-10 animate-spin" />
           </div>
         )}
 

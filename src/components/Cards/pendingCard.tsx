@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon } from "lucide-react";
 import testimg from "../../public/images/OnlineTraining.png";
 import { dateFormat } from "@/constants/dateFormat";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -576,7 +576,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
     <>
       {loading && (
         <div className="flex items-center justify-center h-screen">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
+          <Loader className="w-10 h-10 animate-spin" />
         </div>
       )}
 

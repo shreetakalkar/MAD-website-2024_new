@@ -22,7 +22,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import useGradYear from "@/constants/gradYearList";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 import { useUser } from "@/providers/UserProvider";
 
 // Define the schema for form validation
@@ -172,8 +172,7 @@ const TPOcomponent = () => {
       <div className="w-[100%] flex justify-center items-center">
         {loading && (
           <div className="flex items-center justify-center h-screen">
-            <ClipLoader size={50} color={"#123abc"} loading={loading} />
-            {/* <p>Loading...</p> */}
+            <Loader className="w-10 h-10 animate-spin" />
           </div>
         )}
 

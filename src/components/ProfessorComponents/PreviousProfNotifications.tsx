@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { useUser } from "@/providers/UserProvider";
-import { ClipLoader } from "react-spinners";
+import { Loader } from "lucide-react";
 
 interface Notification {
   id: string;
@@ -58,7 +58,7 @@ const PreviousProfNotifications: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[100%]">
-        <ClipLoader size={50} color={"#123abc"} loading={loading} />
+        <Loader className="w-10 h-10 animate-spin" />
       </div>
     );
   }
