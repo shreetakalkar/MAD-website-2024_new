@@ -679,7 +679,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
             className="rounded-lg"
             src={idCardURL}
             alt="ID Card Front"
-            fill
+            width={600}
+            height={400}
             style={{ objectFit: 'contain' }}
             onClick={() => {
               setImageSrc(idCardURL);
@@ -692,7 +693,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
             className="rounded-lg"
             src={idCardURL2}
             alt="ID Card Back"
-            fill
+            width={600}
+            height={400}
             style={{ objectFit: 'contain' }}
             onClick={() => {
               setImageSrc(idCardURL2);
@@ -705,7 +707,8 @@ const PendingCard: React.FC<PendingCardProps> = ({
             className="rounded-lg"
             src={previousPassURL}
             alt="Previous Pass"
-            fill
+            width={600}
+            height={400}
             style={{ objectFit: 'contain' }}
             onClick={() => {
               setImageSrc(previousPassURL);
