@@ -9,6 +9,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { dateFormat } from "@/constants/dateFormat";
 import { Loader } from "lucide-react";
+import { any } from "zod";
 
 const parseDate = (dateStr: any) => {
   const [day, month, year] = dateStr.split("/").map(Number);
@@ -139,6 +140,17 @@ const Approved_Rejected = () => {
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
+      },
+      sortingFn: (rowA, rowB) => {
+        const parseDate = (dateString: string): number => {
+          const [day, month, year] = dateString.split('/').map(Number);
+          return new Date(year, month - 1, day).getTime();  // Convert to timestamp
+        };
+    
+        const dateA = parseDate(rowA.original.dateOfIssue);
+        const dateB = parseDate(rowB.original.dateOfIssue);
+    
+        return dateA - dateB;
       },
     },
     {
@@ -289,11 +301,9 @@ const Approved_Rejected = () => {
           });
 
           const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
-            const dateA =
-              a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
-            const dateB =
-              b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
-            return dateA - dateB;
+            const dateA = a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
+            const dateB = b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
+            return dateB - dateA;
           });
 
           const userList = sortedUserArray.map(({ index, ...rest }) => rest);
