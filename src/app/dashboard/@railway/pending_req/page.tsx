@@ -74,9 +74,9 @@ const PendingRequests = () => {
               statusMessage: data.statusMessage || "N/A",
               to: data.to || "N/A",
               travelLane: data.travelLane || "N/A",
-              idCardURL: data.idCardURL || "N/A",
-              idCardURL2: data.idCardURL2 || "N/A",
-              previousPassURL: data.previousPassURL || "N/A",
+              idCardURL: data.idCardURL || "",
+              idCardURL2: data.idCardURL2 || "",
+              previousPassURL: data.previousPassURL || "",
             };
           })
           .filter((item) => item.status === "unserviced");
