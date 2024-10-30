@@ -11,10 +11,10 @@ import { dateFormat } from "@/constants/dateFormat";
 import { Loader } from "lucide-react";
 import { any } from "zod";
 
-const parseDate = (dateStr: any) => {
-  const [day, month, year] = dateStr.split("/").map(Number);
-  return new Date(year, month - 1, day);
-};
+// const parseDate = (dateStr: any) => {
+//   const [day, month, year] = dateStr.split("/").map(Number);
+//   return new Date(year, month - 1, day);
+// };
 
 const Approved_Rejected = () => {
   interface Data {
@@ -26,7 +26,7 @@ const Approved_Rejected = () => {
     to: string;
     class: string;
     mode: string;
-    dateOfIssue: string;
+    dateOfIssue: number;
     address: string;
     status: string;
   }
@@ -141,18 +141,18 @@ const Approved_Rejected = () => {
           </Button>
         );
       },
-      sortingFn: (rowA, rowB) => {
-        const parseDate = (dateString: string): number => {
-          const [day, month, year] = dateString.split('/').map(Number);
-          return new Date(year, month - 1, day).getTime();  // Convert to timestamp
-        };
-    
-        const dateA = parseDate(rowA.original.dateOfIssue);
-        const dateB = parseDate(rowB.original.dateOfIssue);
-    
-        return dateA - dateB;
+      cell: ({ row }) => {
+        const cellData = row.getValue("dateOfIssue") as number;
+        return (
+          <div className="flex h-[6vh] text-center items-center justify-center ">
+            {dateFormat(cellData)}
+          </div>
+        );
       },
-    },
+      sortingFn: (rowA, rowB) => {
+        return rowA.original.dateOfIssue - rowB.original.dateOfIssue;
+      },
+    },   
     {
       accessorKey: "address",
       header: () => <div className="w-[200px] text-center">Address</div>,
@@ -289,9 +289,7 @@ const Approved_Rejected = () => {
                   to: item.to || "N/A",
                   class: item.class || "N/A",
                   mode: item.duration || "N/A",
-                  dateOfIssue: item.lastPassIssued?.seconds
-                    ? dateFormat(item.lastPassIssued.seconds)
-                    : "N/A",
+                  dateOfIssue: item.lastPassIssued?.seconds || 0,
                   address: item.address || "N/A",
                   status: item.status || "N/A",
                   index: index,
@@ -301,9 +299,7 @@ const Approved_Rejected = () => {
           });
 
           const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
-            const dateA = a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
-            const dateB = b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
-            return dateB - dateA;
+            return b.dateOfIssue - a.dateOfIssue;
           });
 
           const userList = sortedUserArray.map(({ index, ...rest }) => rest);
