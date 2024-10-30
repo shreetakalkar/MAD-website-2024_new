@@ -51,53 +51,53 @@ export function CollectionDisplayTable<TData, TValue>({
 
   const setStatusFilter = (status: string | null) => {
     setFilterStatus(status);
-    table.getColumn("status")?.setFilterValue(status);
+    table.getColumn("status")?.setFilterValue(status ?? undefined);
   };
 
   return (
     <div>
       <div className="flex items-center py-4 gap-4">
-  <Input
-    placeholder="Filter certificate numbers..."
-    value={(table.getColumn("certNo")?.getFilterValue() as string) ?? ""}
-    onChange={(event) =>
-      table.getColumn("certNo")?.setFilterValue(event.target.value)
-    }
-    className="max-w-sm"
-  />
+        <Input
+          placeholder="Filter certificate numbers..."
+          value={(table.getColumn("certNo")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("certNo")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
 
-  {/* Collected Button */}
-  <Button
-    onClick={() => setStatusFilter("Collected")}
-    disabled={filterStatus === "Collected"}
-    className={`bg-blue-200 hover:bg-blue-300 text-blue-700 px-4 py-2 rounded-md ${
-      filterStatus === "Collected" ? "opacity-50 cursor-not-allowed" : ""
-    }`}
-  >
-    Collected
-  </Button>
+        {/* Collected Button */}
+        <Button
+          onClick={() => setStatusFilter("Collected")}
+          disabled={filterStatus === "Collected"}
+          className={`bg-blue-200 hover:bg-blue-300 text-blue-700 px-4 py-2 rounded-md ${
+            filterStatus === "Collected" ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Collected
+        </Button>
 
-  {/* Not Collected Button */}
-  <Button
-    onClick={() => setStatusFilter("Not Collected")}
-    disabled={filterStatus === "Not Collected"}
-    className={`bg-blue-200 hover:bg-blue-300 text-blue-700 px-4 py-2 rounded-md ${
-      filterStatus === "Not Collected" ? "opacity-50 cursor-not-allowed" : ""
-    }`}
-  >
-    Not Collected
-  </Button>
+        {/* Not Collected Button */}
+        <Button
+          onClick={() => setStatusFilter("Not Collected")}
+          disabled={filterStatus === "Not Collected"}
+          className={`bg-blue-200 hover:bg-blue-300 text-blue-700 px-4 py-2 rounded-md ${
+            filterStatus === "Not Collected" ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Not Collected
+        </Button>
 
-  {/* Clear Button */}
-  <Button
-    onClick={() => setStatusFilter(null)}
-    disabled={!filterStatus}
-    className={`bg-blue-200 hover:bg-blue-300 text-blue-700 px-4 py-2 rounded-md ${
-      !filterStatus ? "opacity-50 cursor-not-allowed" : ""
-    }`}
-  >
-    Clear
-  </Button>
+        {/* Clear Button */}
+        <Button
+          onClick={() => setStatusFilter(null)}
+          disabled={!filterStatus}
+          className={`bg-blue-200 hover:bg-blue-300 text-blue-700 px-4 py-2 rounded-md ${
+            !filterStatus ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Clear
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>

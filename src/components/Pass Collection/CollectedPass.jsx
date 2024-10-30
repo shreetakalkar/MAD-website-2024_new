@@ -98,6 +98,9 @@ const CollectedPassTable = () => {
     {
       accessorKey: "status",
       header: "Status",
+      filterFn: (row, columnId, filterValue) => {
+        return row.getValue(columnId) === filterValue;
+      },
     },
     {
       accessorKey: "collectedDate",
