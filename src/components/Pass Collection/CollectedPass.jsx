@@ -16,6 +16,7 @@ import {
 import { toast } from "../ui/use-toast";
 import { CollectionDisplayTable } from "./CollectionDisplayTable";
 import { Loader } from "lucide-react";
+import { dateFormat } from "@/constants/dateFormat";
 
 const CollectedPassTable = () => {
   const formatDate = (date) => {
@@ -188,20 +189,14 @@ const CollectedPassTable = () => {
             },
           });
 
-          const concessionHistoryRef = doc(
-            db,
-            "ConcessionHistory",
-            "DailyStats"
-          );
+          const concessionHistoryRef = doc(db,"ConcessionHistory","DailyStats");
           const concessionHistorySnap = await getDoc(concessionHistoryRef);
-          const currentDate = new Date().toLocaleDateString();
+          const currentDate = dateFormat(new Date());
 
           if (concessionHistorySnap.exists()) {
             const historyData = concessionHistorySnap.data();
             let statsArray = historyData.stats || [];
-            const dateIndex = statsArray.findIndex(
-              (entry) => entry.date === currentDate
-            );
+            const dateIndex = statsArray.findIndex((entry) => entry.date === currentDate);
 
             if (dateIndex >= 0) {
               if (typeof statsArray[dateIndex].collectedPass !== "number") {
