@@ -138,7 +138,7 @@ const CollectedPassTable = () => {
                 phoneNum: detailsData.phoneNum || "",
                 collectedDate:
                   collectedValue === "1"
-                    ? requestDoc.data().passCollected.date.toDate().toLocaleDateString()
+                    ? formatDate(requestDoc.data().passCollected.date.toDate())
                     : "-",
               };
             }
