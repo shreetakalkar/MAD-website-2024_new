@@ -6,6 +6,7 @@ import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
 import { Loader } from "lucide-react";
 import { z } from "zod";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   branch: z.string(),
@@ -36,6 +37,7 @@ const RailwayUpdateConc = () => {
   const [pass, setPass] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const fetchPass = async (certNo) => {
     console.log("Inside FetchPass: ", certNo)
@@ -63,6 +65,10 @@ const RailwayUpdateConc = () => {
           }
         } else {
           setPass(null);
+          toast({
+            description: "No pass found.",
+            variant: "destructive",
+          });
         }
         console.log(pass)
       });
