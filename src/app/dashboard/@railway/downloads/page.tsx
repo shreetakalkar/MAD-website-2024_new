@@ -284,6 +284,9 @@ const Downloads: React.FC = () => {
 
   return (
     <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
+      <div style={{ color: 'red', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center'}}>
+        Download Excel Files ONLY when All passes are collected. If there are few passes which are not Collected then Cancel those passes from Update Pass.
+      </div>
       <div className="flex items-center justify-between mb-4 p-5">
         <div className="flex w-full justify-between flex-wrap items-center">
           <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">
