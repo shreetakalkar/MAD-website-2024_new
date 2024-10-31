@@ -286,6 +286,7 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
   const [certificateNumber, setCertificateNumber] = useState("");
   const [error, setError] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   if (!isOpen) return null;
 
@@ -309,77 +310,119 @@ const Modal: React.FC<ModalProps> = ({
             : "bg-white"
         }`}
       >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-          {action} Concession Request
-        </h2>
-        <div className="mb-4 text-gray-700">
-          <p>
-            <strong>Name:</strong> {data.firstName} {data.middleName}{" "}
-            {data.lastName}
-          </p>
-        </div>
-        <div className="mb-4 text-gray-700">
-          <p>
-            <strong>From:</strong> {data.from}
-          </p>
-        </div>
-        <div className="mb-4 text-gray-700">
-          <p>
-            <strong>Duration:</strong> {data.duration}
-          </p>
-        </div>
-        {action === "Approve" && (
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2">
-              <strong>Certificate Number:</strong>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Certificate Number..."
-              value={certificateNumber}
-              onChange={(e) => setCertificateNumber(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {error && (
-              <p className="text-red-500 mt-2 text-sm">{error}</p>
+
+        {!showConfirmation ? (
+
+          <>
+
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+              {action} Concession Request
+            </h2>
+            <div className="mb-4 text-gray-700">
+              <p>
+                <strong>Name:</strong> {data.lastName} {data.firstName} {data.middleName}
+              </p>
+            </div>
+            <div className="mb-4 text-gray-700">
+              <p>
+                <strong>From:</strong> {data.from}
+              </p>
+            </div>
+            <div className="mb-4 text-gray-700">
+              <p>
+                <strong>Duration:</strong> {data.duration}
+              </p>
+            </div>
+            {action === "Approve" && (
+              <div className="mb-6">
+                <label className="block text-gray-700 mb-2">
+                  <strong>Certificate Number:</strong>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter Certificate Number..."
+                  value={certificateNumber}
+                  onChange={(e) => setCertificateNumber(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {error && (
+                  <p className="text-red-500 mt-2 text-sm">{error}</p>
+                )}
+              </div>
             )}
-          </div>
+            {action === "Reject" && (
+              <div className="mb-6">
+                <label className="block text-gray-700 mb-2">
+                  <strong>Reason:</strong>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter Reason..."
+                  value={data.reason}
+                  onChange={(e) => data.setReason(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+            )}
+            <div className="flex justify-between items-center">
+              <button
+                className={`w-1/3 py-2 px-4 rounded-lg text-white ${
+                  action === "Approve"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-red-600 hover:bg-red-700"
+                }`}
+                onClick={() => {
+                  if (action === "Approve") {
+                    setShowConfirmation(true); 
+                  } else {
+                    validateAndSubmit();
+                  }
+                }}
+              >
+                {action}
+              </button>
+              <button
+                className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
+                onClick={() => {
+                  setError("");
+                  onClose();
+                }}
+              >
+                Go Back
+              </button>
+            </div>
+
+          </>
+
+        ) : (
+
+            action === "Approve" && (
+
+              <div className="text-center">
+                <p className="text-lg text-gray-700 mb-6">
+                  Confirm Certificate number for <strong>{data.lastName} {data.firstName} {data.middleName}</strong> as{" "}
+                  <strong>{certificateNumber}</strong>?
+                </p>
+                <div className="flex justify-center space-x-4">
+                  <button
+                    className="w-1/3 py-2 px-4 rounded-lg text-white bg-green-600 hover:bg-green-700"
+                    onClick={validateAndSubmit}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
+                    onClick={() => setShowConfirmation(false)}
+                  >
+                    Go Back
+                  </button>
+                </div>
+              </div>
+
+            )
+
         )}
-        {action === "Reject" && (
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2">
-              <strong>Reason:</strong>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Reason..."
-              value={data.reason}
-              onChange={(e) => data.setReason(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-        )}
-        <div className="flex justify-between items-center">
-          <button
-            className={`w-1/3 py-2 px-4 rounded-lg text-white ${
-              action === "Approve"
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-red-600 hover:bg-red-700"
-            }`}
-            onClick={validateAndSubmit}
-          >
-            {action}
-          </button>
-          <button
-            className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
-            onClick={() => {
-              setError("");
-              onClose();
-            }}
-          >
-            Go Back
-          </button>
-        </div>
+        
       </div>
     </div>
   );
