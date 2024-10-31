@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import "@/app/globals.css";
 import {
@@ -181,6 +182,7 @@ const RailwayUpdateCard = ({
   };
 
   const cancelForm = async () => {
+    setLoading(true);
     try {
       const concessionRef = doc(db, "ConcessionDetails", passData.uid);
       await updateDoc(concessionRef, {
@@ -260,10 +262,12 @@ const RailwayUpdateCard = ({
     toast({ description: "Pass Deleted Successfully !" });
     } catch (error) {
       console.error("Error ", error);
+    } finally {
+      setIsEditable(false);
+      setLoading(false);
     }
 
-    setIsEditable(false);
-    setLoading(false);
+    
   };
 
   // const cancelForm = async () => {
@@ -327,7 +331,13 @@ const RailwayUpdateCard = ({
 
   return (
     <>
-      <Card className="mx-auto ml-[1%] shadow-box mt-2">
+
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Loader className="w-10 h-10 animate-spin" />
+        </div>
+      ) : (
+        <Card className="mx-auto ml-[1%] shadow-box mt-2">
         <CardContent className="p-6">
           <Form {...form}>
             <form method="post" className="space-y-8">
@@ -909,8 +919,9 @@ const RailwayUpdateCard = ({
             </form>
           </Form>
         </CardContent>
-      </Card>
-
+        </Card>
+      )}
+      
       {isModalOpen ? (
         <div className="fixed inset-0 flex items-center z-[100] justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col justify-between h-[40vh] w-[50vw] max-w-md">
