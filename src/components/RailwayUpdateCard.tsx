@@ -37,6 +37,7 @@ import { travelFromLocations } from "@/constants/travelFromLocations";
 import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { dateFormat } from "@/constants/dateFormat";
+import { Check, X } from 'lucide-react';
 
 const RailwayUpdateCard = ({
   formSchema,
@@ -396,7 +397,7 @@ const RailwayUpdateCard = ({
                           <FormItem>
                             <FormLabel>Certifcate Number</FormLabel>
                             <FormControl>
-                              <Input
+                            <Input
                                 className="cursor-default"
                                 value={field.value}
                                 disabled
@@ -846,61 +847,62 @@ const RailwayUpdateCard = ({
                     </div>
 
                     {/* Buttons */}
-                    <div className="buttons w-[100%] flex justify-end space-x-4">
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          toggleEditMode();
-                        }}
-                        className="relative w-[50%]"
-                      >
-                        {isEditable ? (
-                          <Button
-                            type="submit"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              onSubmit(form.getValues());
-                            }}
-                            className="absolute w-full h-full top-0 right-0"
-                          >
-                            Save
-                          </Button>
-                        ) : (
-                          "Edit Details"
-                        )}
-                      </Button>
-
-                      {isEditable === false ? (
+                    <div className="buttons w-full flex justify-end space-x-4">
+                        {/* Edit / Save Button */}
                         <Button
                           type="button"
-                          onClick={() => {
-                            setIsDialogOpen(true);
-                            setIsModalOpen(true);
-                            // cancelForm();
-                          }}
-                          className="w-[50%] bg-red-500"
+                          onClick={toggleEditMode}
+                          className={`bg-green-500 text-white py-2 px-4 rounded-lg shadow transition duration-300 flex items-center 
+                            hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 
+                            ${isEditable ? 'cursor-pointer' : 'cursor-default'}`}
+                
                         >
-                          Delete
+                          {isEditable ? (
+                            <span
+                              onClick={(e) => {
+                                e.preventDefault();
+                                onSubmit(form.getValues());
+                              }}
+                              className="flex items-center space-x-1" 
+                            >
+                              <Check className="h-5 w-5" aria-hidden="true" />
+                              <span className="font-semibold">Save</span>
+                            </span>
+                          ) : (
+                            <span className="flex items-center space-x-1">
+                              <span className="font-semibold">Edit Details</span>
+                            </span>
+                          )}
                         </Button>
-                      ) : null}
 
-                      {/* <div>
-                        {isDialogOpen === true && (
-                          <div className="dialog">
-                            <input
-                              type="text"
-                              value={statusMessage}
-                              onChange={(e) => setStatusMessage(e.target.value)}
-                              placeholder="Enter status message"
-                            />
-                            <button onClick={() => handleSave(statusMessage)}>
-                              Save
-                            </button>
-                            <button onClick={handleCancel}>Cancel</button>
-                          </div>
+
+                        {/* Close Button when in Editable Mode */}
+                        {isEditable && (
+                          <Button
+                            type="button"
+                            onClick={toggleEditMode}
+                            className="bg-red-500 text-white py-2 rounded-lg shadow hover:bg-red-600 transition duration-300 flex items-center"
+                          >
+                            <X className="h-5 w-5 mr-2" /> {/* X icon */}
+                            Close
+                          </Button>
                         )}
-                      </div> */}
-                    </div>
+
+                        {/* Delete Button when not in Editable Mode */}
+                        {!isEditable && (
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              setIsDialogOpen(true);
+                              setIsModalOpen(true);
+                            }}
+                            className="bg-red-500 text-white py-2 rounded-lg shadow hover:bg-red-600 transition duration-300"
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+
                   </div>
                 </div>
               </div>
@@ -933,7 +935,7 @@ const RailwayUpdateCard = ({
                 onClick={handleCancel}
                 className="bg-gray-100 text-gray-800 px-5 py-3 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
               >
-                Cancel
+                Close
               </button>
             </div>
           </div>

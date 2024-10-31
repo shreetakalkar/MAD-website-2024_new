@@ -1,20 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-  limit,
-} from "firebase/firestore";
+import React, { useState } from "react";
+import { collection, doc, getDoc, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { z } from "zod";
 import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 import { Loader } from "lucide-react";
+import { z } from "zod";
 
 const formSchema = z.object({
   branch: z.string(),
@@ -42,63 +33,58 @@ const formSchema = z.object({
 });
 
 const RailwayUpdateConc = () => {
-  const [passes, setPasses] = useState([]);
+  const [pass, setPass] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
-  // Custom debounce function
-  const debounceFetch = (callback, delay) => {
-    let timeoutId;
-    return (...args) => {
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => callback(...args), delay);
-    };
+  const fetchPass = async (certNo) => {
+    console.log("Inside FetchPass: ", certNo)
+    setLoading(true);
+    try {
+      const q = query(
+        collection(db, "ConcessionDetails"),
+        where("certificateNumber", "==", certNo),
+        where("status", "in", ["serviced", "downloaded"])
+      );
+
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
+        if (!snapshot.empty) {
+          const docSnap = snapshot.docs[0];
+          console.log(docSnap.id)
+          const enquiry = docSnap.data();
+          const requestDocSnap = await getDoc(doc(db, "ConcessionRequest", docSnap.id));
+          if (requestDocSnap.exists()) {
+            enquiry.certNo = requestDocSnap.data().passNum;
+            enquiry.uid = requestDocSnap.data().uid;
+            enquiry.dob = enquiry.dob.toDate();
+            enquiry.doi = enquiry.lastPassIssued.toDate();
+            enquiry.gradyear = enquiry.gradyear.toString();
+            setPass(enquiry);
+          }
+        } else {
+          setPass(null);
+        }
+        console.log(pass)
+      });
+    } catch (error) {
+      console.error("Error fetching pass data", error);
+    }
+    setLoading(false);
   };
 
-  const fetchPasses = debounceFetch(async (searchTerm) => {
-    setLoading(true);
-    const q = query(
-      collection(db, "ConcessionDetails"),
-      where("status", "in", ["serviced", "downloaded"]),
-      limit(50)
-    );
+  const handleSearch = () => {
+    if (searchInput) {
+      console.log(searchInput)
+      fetchPass(searchInput);
+    }
+  };
 
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const fetchedPasses = (
-        await Promise.all(
-          snapshot.docs.map(async (docSnap) => {
-            const enquiry = docSnap.data();
-            const requestDocSnap = await getDoc(doc(db, "ConcessionRequest", docSnap.id));
-            if (
-              requestDocSnap.exists() &&
-              requestDocSnap.data().passCollected?.collected?.toString() === "1"
-            ) {
-              enquiry.certNo = requestDocSnap.data().passNum;
-              enquiry.uid = requestDocSnap.data().uid;
-              enquiry.dob = enquiry.dob.toDate();
-              enquiry.doi = enquiry.lastPassIssued.toDate();
-              enquiry.gradyear = enquiry.gradyear.toString();
-              return enquiry;
-            }
-          })
-        )
-      ).filter(Boolean);
-
-      setPasses(
-        fetchedPasses.filter((pass) =>
-          pass.certNo.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, 500);
-
-  useEffect(() => {
-    fetchPasses(searchInput);
-  }, [searchInput]);
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      console.log(searchInput)  
+      handleSearch();
+    }
+  };
 
   return (
     <>
@@ -107,18 +93,29 @@ const RailwayUpdateConc = () => {
           <Loader className="w-10 h-10 animate-spin" />
         </div>
       ) : (
-        <div className="w-[99%] flex flex-col gap-[5rem] p-4">
-          <div className="flex w-full max-w-sm items-center ml-[1%]">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 mt-[20vh]">
+          <h2 className="mb-8 text-lg font-semibold text-center text-gray-700">
+            <span className="text-3xl font-bold">Extend Date, Change Data & Cancel Pass</span>
+          </h2>
+          <div className="flex items-center w-full max-w-md">
             <Input
               type="text"
-              className="shadow-box mt-10"
-              placeholder="Certificate No"
+              className="flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+              placeholder="Enter Certificate No"
               onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
+            <button
+              onClick={handleSearch}
+              className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Search
+            </button>
           </div>
-          {passes.map((pass) => (
-            <RailwayUpdateCard key={pass.certNo} formSchema={formSchema} passData={pass} />
-          ))}
+          <div className="flex justify-center items-center">
+            {pass && <RailwayUpdateCard key={pass.certNo} formSchema={formSchema} passData={pass} />}
+          </div>
+          
         </div>
       )}
     </>
