@@ -16,14 +16,9 @@ import { createExcelFile, downloadExcelFile } from "@/lib/excelUtils";
 import { useTheme } from "next-themes";
 import { Input } from "@/components/ui/input";
 import DownloadTable from "@/components/DownloadTable";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Enquiry } from "@/constants/types/userTypes";
+import { parse } from "path";
+import { AnyRecord } from "dns";
 export interface BatchElement {
   enquiries: Enquiry[];
   fileName: string;
@@ -39,22 +34,21 @@ export interface Download {
   filename: string;
 }
 
+interface PassBookRange {
+  low: number;
+  high: number;
+}
+
+interface PassBookRanges {
+  [key: string]: PassBookRange;
+}
+
 const Downloads: React.FC = () => {
   const { theme } = useTheme();
   const { toast } = useToast();
-  const [westernBatchedEnquiries, setWesternBatchedEnquiries] = useState<
-    BatchElement[]
-  >([]);
-  const [centralBatchedEnquiries, setCentralBatchedEnquiries] = useState<
-    BatchElement[]
-  >([]);
+  const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedLane, setSelectedLane] = useState<
-    "All" | "Central" | "Western"
-  >("All");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
-  const limit = 100;
-  // const [downloadDate, setDownloadDate] = useState<any>([]);
 
   const fetchDownloadHistory = async () => {
     try {
@@ -70,52 +64,50 @@ const Downloads: React.FC = () => {
     }
   };
 
-  const fetchEnquiries = async () => {
+  const fetchPassBookDetails = async () => {
     try {
-      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
-      const docSnap = await getDoc(concessionHistoryRef);
-  
-      const downloadHistory = await fetchDownloadHistory();
-  
-      if (docSnap.exists() && docSnap.data().history) {
-
-        // console.log("Doc Snap: ", docSnap.data().history)
-        // Yeh chal rha hai jaisa chalna chahiye, contact fahed before making ANY CHANGES
-        const sortedData = (docSnap.data().history.sort((a: any, b: any) => a.passNum.localeCompare(b.passNum))).reverse();
-        makeBatches(sortedData  , downloadHistory);
-      } else {
-        setWesternBatchedEnquiries([]);
-        setCentralBatchedEnquiries([]);
+      const passBookRef = doc(db, "ConcessionHistory", "PassBook");
+      const docSnap = await getDoc(passBookRef);
+      if (docSnap.exists() && docSnap.data()) {
+        return docSnap.data();
       }
+      return [];
     } catch (error) {
-      console.error("Error fetching data:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch data. Please try again later.",
-      });
+      console.error("Error fetching pass book details:", error);
+      return [];
     }
   };
-  
-  const makeBatches = (data: Enquiry[], downloadHistory: Download[]) => {
+
+  const parseKeyRanges = (data: any) => {
+    return Object.keys(data).reduce((acc: any, key: string) => {
+      const [start, end] = key.split("-");
+      
+      // remove prefix if exists in the ranges of the filename
+      const low = parseInt(start.replace(/^[A-Za-z]\s*/, ""));
+      const high = parseInt(end.replace(/^[A-Za-z]\s*/, ""));
+
+      acc[key] = { low, high };
+      return acc;
+    }, {});
+  }
+
+  const makeBatches = (
+    data: Enquiry[],
+    downloadHistory: Download[],
+    passBookRanges: PassBookRanges
+  ) => {
     const seenPassNums = new Set<string>();
     const uniqueData: Enquiry[] = [];
+    const batchedEnquiries: BatchElement[] = [];
 
-    // console.log("raw data", data);
-    
+    // Get unique entries (latest first)
     for (let i = data.length - 1; i >= 0; i--) {
       const enquiry = data[i];
       if (!seenPassNums.has(enquiry.passNum)) {
         seenPassNums.add(enquiry.passNum);
-        uniqueData.push(enquiry); // making the array in reverse order to get the latest enquiry first
+        uniqueData.push(enquiry);
       }
     }
-    // console.log("unique data", uniqueData);
-
-    const westernBatches: BatchElement[] = [];
-    const centralBatches: BatchElement[] = [];
-
-    let westernIndex = 0;
-    let centralIndex = 0;
 
     const isDownloaded = (fileName: string) => {
       return downloadHistory.some((d) => d.filename === fileName);
@@ -126,68 +118,45 @@ const Downloads: React.FC = () => {
       return download ? new Date(download.date) : null;
     };
 
-    for (let i = 0; i < uniqueData.length; i++) {
-      const enquiry = uniqueData[i];
+    Object.entries(passBookRanges).forEach(([rangeKey, range]) => {
+      const enquiriesInRange = uniqueData.filter((enquiry) => {
+        const passNum = parseInt(enquiry.passNum);
 
-      if (
-        (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
-        (enquiry.travelLane === "Western")
-      ) {
-        if (
-          westernBatches.length === 0 ||
-          westernBatches[westernBatches.length - 1]?.enquiries?.length === limit
-        ) {
-          // const isDownload = downloadDate.find((d : any)=> d.from === westernIndex+1 && d.to === westernIndex+limit)
-          const fileName = `W${westernIndex + 1}-${westernIndex + limit}`;
 
-          westernBatches.push({
-            enquiries: [enquiry],
-            fileName: fileName,
-            lane: "Western",
-            isDownloaded: isDownloaded(fileName),
-            date: getDownloadDate(fileName),
-          });
+        return (
+          (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
+          passNum >= range.low &&
+          passNum <= range.high
+        );
+      });
 
-          westernIndex += limit;
-        } else {
-          westernBatches[westernBatches.length - 1]?.enquiries.push(enquiry);
-        }
-      } else if (
-        (enquiry.status === "serviced") && (enquiry.travelLane === "Central" || enquiry.travelLane === "Harbour")
-        
-      ) {
-        if (
-          centralBatches.length === 0 ||
-          centralBatches[centralBatches.length - 1]?.enquiries.length === limit
-        ) {
-          const fileName = `C${centralIndex + 1}-${centralIndex + limit}`;
-          centralBatches.push({
-            enquiries: [enquiry],
-            fileName,
-            lane: "Central",
-            isDownloaded: isDownloaded(fileName),
-            date: getDownloadDate(fileName),
-          });
-          centralIndex += limit;
-        } else {
-          centralBatches[centralBatches.length - 1]?.enquiries.push(enquiry);
-        }
+      if (enquiriesInRange.length > 0) {
+        const fileName = rangeKey; // Using the original range key as filename
+        batchedEnquiries.push({
+          enquiries: enquiriesInRange,
+          fileName: fileName,
+          lane: enquiriesInRange[0].travelLane as "Central" | "Western", // Taking first entry's lane
+          isDownloaded: isDownloaded(fileName),
+          date: getDownloadDate(fileName),
+        });
       }
-    }
+    });
 
-    if (westernBatches[westernBatches.length - 1]?.enquiries?.length < limit) {
-      westernBatches.pop();
-    }
+    // Sort batches by filename
+    const sortedBatches = batchedEnquiries.sort((a, b) => {
+      // Extract numbers from filenames for proper numeric sorting
+      const aNum = parseInt(
+        a.fileName.replace(/^[A-Za-z]\s*/, "").split("-")[0]
+      );
+      const bNum = parseInt(
+        b.fileName.replace(/^[A-Za-z]\s*/, "").split("-")[0]
+      );
+      return aNum - bNum;
+    });
 
-    if (centralBatches[centralBatches.length - 1]?.enquiries?.length < limit) {
-      centralBatches.pop();
-    }
+    // console.log(sortedBatches);
 
-    // console.log("western batches", westernBatches);
-    // console.log("central batches", centralBatches);
-
-    setWesternBatchedEnquiries(westernBatches);
-    setCentralBatchedEnquiries(centralBatches);
+    return sortedBatches;
   };
 
   const handleDownloadBatchExcel = async (batch: BatchElement) => {
@@ -248,8 +217,8 @@ const Downloads: React.FC = () => {
             : b
         );
 
-      setWesternBatchedEnquiries(updateBatches(westernBatchedEnquiries));
-      setCentralBatchedEnquiries(updateBatches(centralBatchedEnquiries));
+      setBatchedEnquiries(updateBatches(batchedEnquiries))
+
     } catch (error) {
       console.error("Error handling Excel download:", error);
       toast({
@@ -259,16 +228,51 @@ const Downloads: React.FC = () => {
     }
   };
 
+  const fetchEnquiries = async () => {
+    try {
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
+      const docSnap = await getDoc(concessionHistoryRef);
+      const downloadHistory = await fetchDownloadHistory();
+      const passBookDetails = await fetchPassBookDetails();
+
+      if (!docSnap.exists() || !docSnap.data().history) {
+        setFilteredBatches([]);
+        return;
+      }
+
+      if (!passBookDetails) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch passbook ranges.",
+        });
+        return;
+      }
+
+      const keyRangeMap = parseKeyRanges(passBookDetails);
+
+      const sortedData = docSnap
+        .data()
+        .history.sort((a: any, b: any) => a.passNum.localeCompare(b.passNum))
+        .reverse();
+
+      const batches = makeBatches(sortedData, downloadHistory, keyRangeMap);
+      setBatchedEnquiries(batches)
+      setFilteredBatches(batches);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch data. Please try again later.",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchEnquiries();
   }, []);
 
   useEffect(() => {
-    let allBatches = [...westernBatchedEnquiries, ...centralBatchedEnquiries];
-
-    if (selectedLane !== "All") {
-      allBatches = allBatches.filter((batch) => batch.lane === selectedLane);
-    }
+    let allBatches = batchedEnquiries;
 
     const filtered = allBatches.filter((batch) =>
       batch.fileName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -277,47 +281,58 @@ const Downloads: React.FC = () => {
     setFilteredBatches(filtered);
   }, [
     searchTerm,
-    selectedLane,
-    westernBatchedEnquiries,
-    centralBatchedEnquiries,
+    batchedEnquiries
   ]);
 
   return (
     <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
-      <div style={{ color: 'red', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center'}}>
-        Download Excel Files ONLY when All passes are collected. If there are few passes which are not Collected then Cancel those passes from Update Pass.
+      <div
+        style={{
+          color: "red",
+          fontWeight: "bold",
+          marginBottom: "16px",
+          textAlign: "center",
+        }}
+      >
+        Download Excel Files ONLY when All passes are collected. If there are
+        few passes which are not Collected then Cancel those passes from Update
+        Pass.
       </div>
       <div className="flex items-center justify-between mb-4 p-5">
-        <div className="flex w-full justify-between flex-wrap items-center">
-          <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">
-            Downloads
-          </h2>
-          <div className="flex space-x-4">
-            <Select
-              value={selectedLane}
-              onValueChange={(value: "All" | "Central" | "Western") =>
-                setSelectedLane(value)
-              }
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Lane" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All</SelectItem>
-                <SelectItem value="Central">Central</SelectItem>
-                <SelectItem value="Western">Western</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              className="ring-1 ring-gray-400 focus:ring-gray-400"
-              type="text"
-              placeholder="Search batch names..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+  <div className="flex w-full justify-between flex-wrap items-center">
+    <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">
+      Downloads
+    </h2>
+    <div className="flex space-x-4 relative">
+      <div className="relative flex items-center">
+        <span className="absolute inset-y-0 left-2 flex items-center text-gray-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm8-2l4 4"
             />
-          </div>
-        </div>
+          </svg>
+        </span>
+        <Input
+          className="pl-10 ring-1 ring-gray-400 focus:ring-gray-400"
+          type="text"
+          placeholder="Search batch names..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
+    </div>
+  </div>
+</div>
+
       <DownloadTable
         batches={filteredBatches}
         handleDownloadBatchExcel={handleDownloadBatchExcel}
