@@ -8,7 +8,7 @@ import ImportantNotices from "@/components/Notices/NoticePage";
 const pendingRequests = () => {
   return (
     <div className="h-[100vh]">
-      <ImportantNotices />
+      {/* <ImportantNotices /> */}
       {/* <NoticeHistory /> */}
       {/* <LaunchForm /> */}
       {/* <TableDemo /> */}
