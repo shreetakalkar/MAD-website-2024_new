@@ -120,7 +120,7 @@ const Downloads: React.FC = () => {
 
     Object.entries(passBookRanges).forEach(([rangeKey, range]) => {
       const enquiriesInRange = uniqueData.filter((enquiry) => {
-        const passNum = parseInt(enquiry.passNum);
+        const passNum = parseInt(enquiry.passNum.replace(/^[A-Za-z]\s*/, ""));
 
 
         return (
