@@ -20,7 +20,6 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
     <TableRow>
       <TableCell>{srNo}</TableCell>
       <TableCell>{batch.fileName}</TableCell>
-      <TableCell>{batch.lane}</TableCell>
       <TableCell>
         <Button 
           onClick={() => handleDownloadBatchExcel(batch)}

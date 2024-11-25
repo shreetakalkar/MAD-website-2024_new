@@ -15,7 +15,6 @@ const DownloadTable: React.FC<DownloadTableProps> = ({ batches, handleDownloadBa
         <TableRow>
           <TableHead>Sr No</TableHead>
           <TableHead>Filename</TableHead>
-          <TableHead>Lane</TableHead>
           <TableHead>Action</TableHead>
           <TableHead>Is Downloaded</TableHead>
           <TableHead>Date</TableHead>

@@ -187,10 +187,10 @@ import { Bold } from "lucide-react";
 export const createExcelFile = async (
   batch: BatchElement
 ): Promise<Blob | null> => {
-  console.log(batch);
+  // console.log(batch);
   try {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet(batch.lane);
+    const worksheet = workbook.addWorksheet();
 
     // Define the columns for the worksheet
     const columns = [
