@@ -11,7 +11,9 @@ import {
   History,
   CalendarClock,
   HistoryIcon,
-  Book
+  Book,
+  Cross,
+  Ban
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -79,6 +81,13 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
             <GitPullRequestClosed className="h-4 w-4" />
             Approved Passes
           </Link>
+          <Link
+            href="/dashboard/discard_pass"
+            className={getLinkClasses("/dashboard/discard_pass")}
+          >
+            <Ban className="h-4 w-4" />
+            Discard Pass
+          </Link> 
           <Link
             href="/dashboard/downloads"
             className={getLinkClasses("/dashboard/downloads")}

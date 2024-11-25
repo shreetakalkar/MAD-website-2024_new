@@ -128,10 +128,11 @@ const Downloads: React.FC = () => {
 
     for (let i = 0; i < uniqueData.length; i++) {
       const enquiry = uniqueData[i];
+      // console.log(enquiry)
 
+      // CONSIDER THAT NUMBER PASS NUMBER IS OF WESTERN, EG: 002211
       if (
-        (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
-        (enquiry.travelLane === "Western")
+        (enquiry.status === "serviced" || enquiry.status === "cancelled") && Number.isInteger(parseInt(enquiry.passNum))
       ) {
         if (
           westernBatches.length === 0 ||
@@ -152,10 +153,10 @@ const Downloads: React.FC = () => {
         } else {
           westernBatches[westernBatches.length - 1]?.enquiries.push(enquiry);
         }
-      } else if (
-        (enquiry.status === "serviced") && (enquiry.travelLane === "Central" || enquiry.travelLane === "Harbour")
-        
-      ) {
+      }
+      
+      // CONSIDER THAT ALPHANUMERIC  PASS NUMBER IS OF WESTERN, EG: Z 002211
+      else {
         if (
           centralBatches.length === 0 ||
           centralBatches[centralBatches.length - 1]?.enquiries.length === limit

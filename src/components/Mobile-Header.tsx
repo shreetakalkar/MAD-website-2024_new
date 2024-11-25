@@ -13,7 +13,9 @@ import {
   Lock,
   FileBadge,
   Download,
-  Book
+  Book,
+  Cross,
+  Ban
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
@@ -126,6 +128,13 @@ const MobileHeader = ({ userType }: { userType: string }) => {
               >
                 <GitPullRequestClosed className="h-4 w-4" />
                 Approved Passes
+              </Link>
+              <Link
+                href="/dashboard/discard_pass"
+                className={getLinkClasses("/dashboard/discard_pass")}
+              >
+                <Ban className="h-4 w-4" />
+                Discard Pass
               </Link>
               <Link
                 href="/dashboard/downloads"
