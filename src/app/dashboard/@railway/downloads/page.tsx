@@ -250,10 +250,20 @@ const Downloads: React.FC = () => {
 
       const keyRangeMap = parseKeyRanges(passBookDetails);
 
+      // const sortedData = docSnap
+      //   .data()
+      //   .history.sort((a: any, b: any) => a.passNum.localeCompare(b.passNum))
+      //   .reverse();
+
       const sortedData = docSnap
-        .data()
-        .history.sort((a: any, b: any) => a.passNum.localeCompare(b.passNum))
-        .reverse();
+      .data()
+      .history.sort((a: any, b: any) => {
+          const aClean = a.passNum.replace(/^[A-Za-z]\s*/, "");
+          const bClean = b.passNum.replace(/^[A-Za-z]\s*/, "");
+          return aClean.localeCompare(bClean);
+      })
+      .reverse();
+    
 
       const batches = makeBatches(sortedData, downloadHistory, keyRangeMap);
       setBatchedEnquiries(batches)
