@@ -2,6 +2,7 @@
 import { BatchElement } from "@/app/dashboard/@railway/downloads/page";
 import ExcelJS from "exceljs";
 import { Bold } from "lucide-react";
+import { listOfPassNum } from "./listOfPassNum.utils"
 
 // export const createExcelFile = async (
 //   enquiries: BatchElement
@@ -189,6 +190,9 @@ export const createExcelFile = async (
 ): Promise<Blob | null> => {
   // console.log(batch);
   try {
+
+    let allPassNumInRange = listOfPassNum(batch.fileName)
+
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet();
 
@@ -241,7 +245,7 @@ export const createExcelFile = async (
     };
     worksheet.getRow(2).height = 22.5;
     worksheet.getCell("A2").font = { size: 14, bold: true };
-
+    
     const applyBorders = (row: ExcelJS.Row) => {
       row.eachCell((cell: ExcelJS.Cell) => {
         cell.border = {
@@ -259,11 +263,12 @@ export const createExcelFile = async (
       column.style = { font: { size: 12 } };
     });
 
+
     // Add the header row and apply bold font style
     const headerRow = worksheet.addRow(columns.map((col) => col.header));
     headerRow.eachCell((cell) => {
       cell.font = { bold: true, size: 12 };
-      cell.alignment = { wrapText: true, horizontal: "center" };
+      cell.alignment = { wrapText: true, vertical:"middle", horizontal: "center" };
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
@@ -272,7 +277,7 @@ export const createExcelFile = async (
       };
     });
     headerRow.height = 36;
-
+    
     // Add the data rows to the worksheet
     batch.enquiries.forEach((enquiry, index) => {
       const formatDate = (date: Date) => {
@@ -282,6 +287,45 @@ export const createExcelFile = async (
         const day = String(d.getDate()).padStart(2, "0");
         return `${day}/${month}/${year}`;
       };
+
+      // Insert the "Thadomal Shahani Engineering College" row after every 20 entries
+      if (index > 0 && index % 20 === 0) {
+        const row = worksheet.addRow([]);
+        worksheet.mergeCells(`A${row.number}:K${row.number}`);
+        worksheet.getCell(`A${row.number}`).value = "Thadomal Shahani Engineering College";
+        worksheet.getCell(`A${row.number}`).alignment = {
+          vertical: "middle",
+          horizontal: "center",
+        };
+        worksheet.getRow(row.number).height = 32.25;
+        worksheet.getCell(`A${row.number}`).font = { size: 20, bold: true };
+
+        // Subheading row
+        worksheet.mergeCells(`A${row.number+1}:K${row.number+1}`);
+        worksheet.getCell(
+          `A${row.number+1}`
+        ).value = `Railway Concession for ${batch.lane} Railway`;
+        worksheet.getCell(`A${row.number+1}`).alignment = {
+          vertical: "middle",
+          horizontal: "center",
+        };
+        worksheet.getRow(2).height = 22.5;
+        worksheet.getCell(`A${row.number+1}`).font = { size: 14, bold: true };
+
+        const applyBorders = (row: ExcelJS.Row) => {
+          row.eachCell((cell: ExcelJS.Cell) => {
+            cell.border = {
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              bottom: { style: 'thin' },
+              right: { style: 'thin' }
+            };
+          });
+        };
+        applyBorders(worksheet.getRow(row.number));
+        applyBorders(worksheet.getRow(row.number+1));
+
+      }
 
       if (enquiry.status === 'cancelled') {
         const row = worksheet.addRow({
@@ -310,6 +354,12 @@ export const createExcelFile = async (
             right: { style: 'thin' }
           };
         });
+
+        // Removing PassNum which are found in db so that end me sir ko jo pass nhi mile nhi we can offer that.
+        if ((allPassNumInRange.indexOf(enquiry.passNum))!== -1){
+          allPassNumInRange.splice((allPassNumInRange.indexOf(enquiry.passNum)),1)
+        } 
+
       } else {
         const rowData = {
           srno: index + 1,
@@ -327,8 +377,23 @@ export const createExcelFile = async (
           address: enquiry.address.toUpperCase(),
         };
         const row = worksheet.addRow(rowData);
+
+        // Removing PassNum which are found in db so that end me sir ko jo pass nhi mile nhi we can offer that.
+        if ((allPassNumInRange.indexOf(enquiry.passNum))!== -1){
+          allPassNumInRange.splice((allPassNumInRange.indexOf(enquiry.passNum)),1)
+        } 
+
+        // Default Worksheet Styling
         worksheet.getRow(row.number).alignment = { horizontal: 'center', vertical: "top", wrapText: true};
+
+        // Styliing for Name and Address
+        worksheet.getCell(`C${row.number}`).alignment = { horizontal: 'left', vertical: "top", wrapText: true };
+        worksheet.getCell(`K${row.number}`).alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
+
         worksheet.getRow(row.number).height = 39.375;
+
+        // Address Font Size
+        worksheet.getCell(`K${row.number}`).font = { size: 10 };
 
         row.eachCell((cell) => {
           cell.border = {
@@ -340,6 +405,11 @@ export const createExcelFile = async (
         });
       }
     });
+
+    // Store the Lapata Pass Numbers
+    const array = allPassNumInRange.join(", ");
+    const newRow = worksheet.addRow([]);
+    newRow.getCell("A").value = array;
 
     const buffer = await workbook.xlsx.writeBuffer();
     return new Blob([buffer], {
