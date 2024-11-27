@@ -161,7 +161,6 @@ const Downloads: React.FC = () => {
 
   const handleDownloadBatchExcel = async (batch: BatchElement) => {
     try {
-      console.log("Batch: ", batch)
       const excelContent = await createExcelFile(batch);
 
       if (!excelContent) {
