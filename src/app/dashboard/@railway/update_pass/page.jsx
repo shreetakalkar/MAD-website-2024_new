@@ -92,6 +92,11 @@ const RailwayUpdateConc = () => {
     }
   };
 
+  const handleCertNumClick = () => {
+    window.location.href = '/dashboard/update_cert_num'; 
+  };
+
+
   return (
     <>
       {loading ? (
@@ -99,9 +104,15 @@ const RailwayUpdateConc = () => {
           <Loader className="w-10 h-10 animate-spin" />
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 mt-[20vh]">
-          <h2 className="mb-8 text-lg font-semibold text-center text-gray-700">
+        <div className="flex flex-col items-center justify-start min-h-[80vh] p-4">
+          <h2 className="mb-8 text-lg font-semibold text-center text-gray-700 flex">
             <span className="text-3xl font-bold">Extend Date, Change Data & Cancel Pass</span>
+            <button
+              onClick={handleCertNumClick}
+              className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
+            >
+              Update Certificate Number
+            </button>
           </h2>
           <div className="flex items-center w-full max-w-md">
             <Input
@@ -118,14 +129,14 @@ const RailwayUpdateConc = () => {
               Search
             </button>
           </div>
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center mt-4">
             {pass && <RailwayUpdateCard key={pass.certNo} formSchema={formSchema} passData={pass} />}
           </div>
-          
         </div>
       )}
     </>
   );
+  
 };
 
 export default RailwayUpdateConc;
