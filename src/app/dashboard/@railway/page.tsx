@@ -120,6 +120,11 @@ export default function Page() {
           value: filteredData.updatedPass || 0,
           fill: "#9C27B0",
         }, // Purple
+        {
+          name: "Discarded",
+          value: filteredData.discardedPass || 0,
+          fill: "#C7171E",
+        }, // Darker Red
       ];
       setChartData(chartData);
     }
@@ -283,6 +288,9 @@ export default function Page() {
                     <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                       Cancelled
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                      Discarded
+                    </th>
                   </tr>
                 </thead>
                 <tbody className=" divide-y divide-gray-200">
@@ -297,7 +305,8 @@ export default function Page() {
                           (stat.collectedPass || 0) +
                           (stat.createdPass || 0) +
                           (stat.rejectedPass || 0) +
-                          (stat.updatedPass || 0) || 0}
+                          (stat.updatedPass || 0) +
+                          (stat.discardedPass || 0) || 0}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm ">
                         {stat.createdPass || 0}
@@ -316,6 +325,9 @@ export default function Page() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm ">
                         {stat.cancelledPass || 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm ">
+                        {stat.discardedPass || 0}
                       </td>
                     </tr>
                   ))}
