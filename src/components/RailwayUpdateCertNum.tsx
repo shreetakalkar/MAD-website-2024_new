@@ -104,7 +104,7 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
           historyItem.certificateNumber = newCertificateNumber;
           historyItem.passNum = newCertificateNumber;
           historyUpdated = true;
-          break; // Once found, no need to check further
+          // break; // Nah bhai. Dekh when there will be multiple updated on wrong pass number then woh case me tujhe woh sare updates ke pass num theek karna hoga.
         }
       }
 
