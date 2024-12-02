@@ -4,9 +4,10 @@ import { collection, doc, getDoc, query, where, onSnapshot } from "firebase/fire
 import { db } from "@/config/firebase";
 import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
-import { Loader } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
+import UpdateCertificateNumber from "@/components/RailwayUpdateCertNum";
 
 const formSchema = z.object({
   branch: z.string(),
@@ -38,6 +39,7 @@ const RailwayUpdateConc = () => {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const [showUpdateCertNum, setShowUpdateCertNum] = useState(false); 
 
   const fetchPass = async (certNo) => {
     console.log("Inside FetchPass: ", certNo)
@@ -71,16 +73,17 @@ const RailwayUpdateConc = () => {
           });
         }
         console.log(pass)
+        setLoading(false);
       });
     } catch (error) {
       console.error("Error fetching pass data", error);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSearch = () => {
     if (searchInput) {
-      console.log(searchInput)
+      console.log("UPDATE PASS: ",searchInput)
       fetchPass(searchInput);
     }
   };
@@ -93,7 +96,7 @@ const RailwayUpdateConc = () => {
   };
 
   const handleCertNumClick = () => {
-    window.location.href = '/dashboard/update_cert_num'; 
+    setShowUpdateCertNum(true); // Toggle visibility
   };
 
 
@@ -103,15 +106,18 @@ const RailwayUpdateConc = () => {
         <div className="flex justify-center items-center h-screen">
           <Loader className="w-10 h-10 animate-spin" />
         </div>
+      ): showUpdateCertNum ? (
+        <UpdateCertificateNumber setShowUpdateCertNum={setShowUpdateCertNum}/>
       ) : (
-        <div className="flex flex-col items-center justify-start min-h-[80vh] p-4">
-          <h2 className="mb-8 text-lg font-semibold text-center text-gray-700 flex">
+        <div className="flex flex-col items-center justify-start min-h-[80vh] p-4 relative">
+           <h2 className="mb-8 text-lg font-semibold text-center text-gray-700 flex">
             <span className="text-3xl font-bold">Extend Date, Change Data & Cancel Pass</span>
             <button
               onClick={handleCertNumClick}
-              className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
+              className="absolute right-2 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
             >
               Update Certificate Number
+              <ArrowRight className="w-4 h-4"/>
             </button>
           </h2>
           <div className="flex items-center w-full max-w-md">

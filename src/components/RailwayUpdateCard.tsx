@@ -908,7 +908,8 @@ const RailwayUpdateCard = ({
                             }}
                             className="bg-red-500 text-white py-2 rounded-lg shadow hover:bg-red-600 transition duration-300"
                           >
-                            Delete
+                            {/* Delete */}
+                            Cancel Pass
                           </Button>
                         )}
                       </div>
