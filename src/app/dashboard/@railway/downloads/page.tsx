@@ -169,7 +169,7 @@ const Downloads: React.FC = () => {
     const batchedEnquiries: BatchElement[] = [];
 
     // Get unique entries (latest first)
-    for (let i = data.length - 1; i >= 0; i--) {
+    for (let i = 0; i < data.length; i++) {
       const enquiry = data[i];
       if (!seenPassNums.has(enquiry.passNum)) {
         seenPassNums.add(enquiry.passNum);
@@ -328,7 +328,7 @@ const Downloads: React.FC = () => {
       .history.sort((a: any, b: any) => {
           const aClean = a.passNum.replace(/^[A-Za-z]\s*/, "");
           const bClean = b.passNum.replace(/^[A-Za-z]\s*/, "");
-          return aClean.localeCompare(bClean);
+          return bClean.localeCompare(aClean);
       })
       .reverse();
     
