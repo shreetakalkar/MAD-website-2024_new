@@ -40,7 +40,7 @@ const PendingRequests = () => {
       try {
         const concessionDetailsRef = collection(db, "ConcessionDetails");
         const querySnapshot = await getDocs(concessionDetailsRef);
-        console.log(querySnapshot);
+        // console.log(querySnapshot);
 
         const userList = querySnapshot.docs
           .map((doc) => {
@@ -82,7 +82,7 @@ const PendingRequests = () => {
           .filter((item) => item.status === "unserviced");
 
         userList.forEach((item) => {
-          console.log(item.id);
+          // console.log(item.id);
         });
 
         //Fetching to sort acc to time of application
@@ -99,7 +99,7 @@ const PendingRequests = () => {
                   time: time ? new Date(time.seconds * 1000) : new Date(0),
                 };
               } else {
-                console.log(`No data found for user ${item.id}`);
+                // console.log(`No data found for user ${item.id}`);
                 return { ...item, time: new Date(0) };
               }
             } catch (error) {

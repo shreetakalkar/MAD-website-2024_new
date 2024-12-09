@@ -103,13 +103,13 @@ const SignIn: React.FC = () => {
         });
         return;
       }
-      console.log(user?.email, password, newPassword);
+      // console.log(user?.email, password, newPassword);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      console.log(userCredential);
+      // console.log(userCredential);
       if (userCredential.user) {
         await updatePassword(userCredential.user, newPassword);
 
