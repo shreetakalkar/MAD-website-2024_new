@@ -44,7 +44,7 @@ export default function Home({
       if (!docSnap.exists()) {
         facultyRef = doc(db, "Professors", uid);
         docSnap = await getDoc(facultyRef);
-        console.log(docSnap.data());
+        // console.log(docSnap.data());
         setUserType("professor"); 
       } else{
         setUserType(docSnap.data()?.type);

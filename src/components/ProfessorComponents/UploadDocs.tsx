@@ -55,7 +55,7 @@ const UploadDocs = ({ name }: { name: string }) => {
           const subjects = data[pathSegment];
           setSubjects(subjects || []);
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
           setSubjects([]);
         }
       } catch (error) {

@@ -36,7 +36,7 @@ const TableDemo = () => {
           const data = docSnap.data();
           setStudents(data.students || []);
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error fetching document:", error);

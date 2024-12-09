@@ -12,7 +12,7 @@ const PendingEvents: React.FC = () => {
       const eventsRef = collection(db, "TempEvents");
       const snapshot = await getDocs(eventsRef);
       const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      console.log(events);
+      // console.log(events);
       const pendingEvents = events.filter((e : any) => e.Status === "pending")
       // console.log(events);
       setPendingEvents(pendingEvents);
@@ -24,7 +24,7 @@ const PendingEvents: React.FC = () => {
   const handleApprove = async (id: string) => {
 
     const event = pendingEvents.find(event => event.id === id);
-    console.log(event);
+    // console.log(event);
     if (event) {
       const addRef = doc(db, "Events", id);
       await setDoc(addRef, {
@@ -38,13 +38,13 @@ const PendingEvents: React.FC = () => {
         "Image url ": event["Image url"],
       });
     }
-    console.log("Event Added to Events Collection");
+    // console.log("Event Added to Events Collection");
 
     const delRef = doc(db, "TempEvents", id);
     await updateDoc(delRef,{
       "Status" : "accepted"
     });
-    console.log("Event Removed from TempEvents Collection");
+    // console.log("Event Removed from TempEvents Collection");
     setPendingEvents(prevEvents => prevEvents.filter(event => event.id !== id));
 };
 
@@ -54,7 +54,7 @@ const handleReject = async (id: string) => {
       "Status" : "rejected"
     });
     setPendingEvents(prevEvents => prevEvents.filter(event => event.id !== id));
-    console.log("Event Removed from TempEvents Collection");
+    // console.log("Event Removed from TempEvents Collection");
   };
 
   return (

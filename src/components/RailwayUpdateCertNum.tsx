@@ -57,10 +57,10 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
           setCurrUser(matchedHistory);
           setNewCertificateNumber(matchedHistory.certificateNumber); // Set initial value
         } else {
-          console.log("No matching certificate number found.");
+          // console.log("No matching certificate number found.");
         }
       } else {
-        console.log("No such document!");
+        // console.log("No such document!");
       }
     } catch (error) {
       console.error("Error fetching history:", error);
@@ -130,10 +130,10 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
           });
         });
       } else {
-        console.log(
-          "No ConcessionRequest found for certificateNumber:",
-          currUser.certificateNumber
-        );
+        // console.log(
+        //   "No ConcessionRequest found for certificateNumber:",
+        //   currUser.certificateNumber
+        // );
       }
 
       // Step 3: Update ConcessionDetails collection
@@ -151,10 +151,10 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
           });
         });
       } else {
-        console.log(
-          "No ConcessionDetails found for certificateNumber:",
-          currUser.certificateNumber
-        );
+        // console.log(
+        //   "No ConcessionDetails found for certificateNumber:",
+        //   currUser.certificateNumber
+        // );
       }
 
       // Update Stats

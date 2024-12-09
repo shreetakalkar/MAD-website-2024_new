@@ -42,7 +42,7 @@ const RailwayUpdateConc = () => {
   const [showUpdateCertNum, setShowUpdateCertNum] = useState(false); 
 
   const fetchPass = async (certNo) => {
-    console.log("Inside FetchPass: ", certNo)
+    // console.log("Inside FetchPass: ", certNo)
     setLoading(true);
     try {
       const q = query(
@@ -54,7 +54,7 @@ const RailwayUpdateConc = () => {
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         if (!snapshot.empty) {
           const docSnap = snapshot.docs[0];
-          console.log(docSnap.id)
+          // console.log(docSnap.id)
           const enquiry = docSnap.data();
           const requestDocSnap = await getDoc(doc(db, "ConcessionRequest", docSnap.id));
           if (requestDocSnap.exists()) {
@@ -72,7 +72,7 @@ const RailwayUpdateConc = () => {
             variant: "destructive",
           });
         }
-        console.log(pass)
+        // console.log(pass)
         setLoading(false);
       });
     } catch (error) {
@@ -83,14 +83,14 @@ const RailwayUpdateConc = () => {
 
   const handleSearch = () => {
     if (searchInput) {
-      console.log("UPDATE PASS: ",searchInput)
+      // console.log("UPDATE PASS: ",searchInput)
       fetchPass(searchInput);
     }
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      console.log(searchInput)  
+      // console.log(searchInput)  
       handleSearch();
     }
   };

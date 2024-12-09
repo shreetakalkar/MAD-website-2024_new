@@ -140,13 +140,13 @@ const ExamDept = () => {
   };
 
   useEffect(() => {
-    console.log(loading);
+    // console.log(loading);
   }, [loading]);
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
 
-    console.log(data);
+    // console.log(data);
     let flag = true;
     Object.entries(data).forEach(([_, value]) => {
       if (value === "" || value === null) {
