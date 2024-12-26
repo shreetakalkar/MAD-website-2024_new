@@ -1,130 +1,103 @@
-import {
-  ShoppingCart,
-  Home,
-  ClipboardEdit,
-  FilePlus,
-  FileStack,
-  GitPullRequestClosed,
-  Download,
-  FileBadge,
-  Bell,
-  History,
-  CalendarClock,
-  HistoryIcon,
-  Book,
-  Cross,
-  Ban
-} from "lucide-react";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ImportantNotices from "./Notices/NoticePage";
+import {
+  ShoppingCart, Home, ClipboardEdit, FilePlus,
+  FileStack, GitPullRequestClosed, Download,
+  FileBadge, Bell, History, CalendarClock,
+  HistoryIcon, Book, Cross, Ban
+} from "lucide-react";
+import { useTheme } from "next-themes";
 
 const LeftSideLinks = ({ userType }: { userType: string }) => {
   const pathname = usePathname();
+  const {theme }  = useTheme();
   const getLinkClasses = (path: string) => {
-    return pathname === path
-      ? "flex items-center gap-2 px-2 py-2 text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-700 shadow-lg dark:shadow-blue-600/50 transition-all duration-300 ease-in-out"
-      : "flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all duration-300 ease-in-out hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-600/50";
+    const isActive = pathname === path;
+    const isRailway = userType === "railway";
+
+    return `
+      relative flex items-center gap-1 md:gap-2 
+      px-2 md:px-3 py-2 rounded-md
+      font-medium text-xs md:text-sm transition-all duration-300 bg-gray-50 dark: bg-gray-800
+      ${isActive 
+        ? "bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" 
+        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50"
+      }
+      group
+      ${isRailway ? "" : "whitespace-nowrap"}
+    `;
   };
 
+  const iconClass = "h-4 w-4 transition-transform duration-300 group-hover:scale-110 flex-shrink-0";
+
+  const NavLink = ({ href, icon: Icon, children }) => (
+    <Link href={href} className={getLinkClasses(href)}>
+      <Icon className={iconClass} />
+      <span className={userType === "railway" ? "line-clamp-2" : "truncate"}>{children}</span>
+    </Link>
+  );
+
   return (
-    <nav className="flex items-center px-2 text-sm font-medium lg:px-4 space-x-6">
-      <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
-        <Home className="h-4 w-4" />
-        Home
-      </Link>
+    <nav className="w-full">
+      <div className={`
+        flex items-center gap-1 md:gap-2 p-2
+        ${userType === "railway" ? "flex-wrap" : "overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"}
+      `}>
+        <NavLink href="/dashboard" icon={Home}>Home</NavLink>
 
-      {(userType === "committee" || userType === "admin") && (
-        <>
-            <Link href="/dashboard/history-page" className={getLinkClasses("/dashboard/history-page")}>
-            <History className="h-4 w-4" />
+        {(userType === "committee" || userType === "admin") && (
+          <NavLink href="/dashboard/history-page" icon={History}>
             Past Events
-          </Link>
-        </>
-      )}
+          </NavLink>
+        )}
 
-      {userType === "railway" && (
-        <>
-          <Link
-            href="/dashboard/create_pass"
-            className={getLinkClasses("/dashboard/create_pass")}
-          >
-            <FilePlus className="h-4 w-4" />
-            Create New Pass
-          </Link>
-          <Link
-            href="/dashboard/pending_req"
-            className={getLinkClasses("/dashboard/pending_req")}
-          >
-            <FileStack className="h-4 w-4" />
-            Pending Requests
-          </Link>
-          <Link
-            href="/dashboard/collected_pass"
-            className={getLinkClasses("/dashboard/collected_pass")}
-          >
-            <FileBadge className="h-4 w-4" />
-            Collected Pass
-          </Link>
-          <Link
-            href="/dashboard/update_pass"
-            className={getLinkClasses("/dashboard/update_pass")}
-          >
-            <ClipboardEdit className="h-4 w-4" />
-            Update Pass
-          </Link>
-          <Link
-            href="/dashboard/approved_rejected"
-            className={getLinkClasses("/dashboard/approved_rejected")}
-          >
-            <GitPullRequestClosed className="h-4 w-4" />
-            Approved Passes
-          </Link>
-          <Link
-            href="/dashboard/discard_pass"
-            className={getLinkClasses("/dashboard/discard_pass")}
-          >
-            <Ban className="h-4 w-4" />
-            Discard Pass
-          </Link> 
-          <Link
-            href="/dashboard/downloads"
-            className={getLinkClasses("/dashboard/downloads")}
-          >
-            <Download className="h-4 w-4" />
-            Download Files
-          </Link>
-        </>
-      )}
-
-      {(userType === "hod" ||
-        userType === "principal" || userType === "examdept") && (
+        {userType === "railway" && (
           <>
-            <Link href="/dashboard/history" className={getLinkClasses("/dashboard/history")}>
-              <History className="h-4 w-4" />
-              Past Notifications
-            </Link>
+            <NavLink href="/dashboard/create_pass" icon={FilePlus}>
+              Create New Pass
+            </NavLink>
+            <NavLink href="/dashboard/pending_req" icon={FileStack}>
+              Pending Requests
+            </NavLink>
+            <NavLink href="/dashboard/collected_pass" icon={FileBadge}>
+              Collected Pass
+            </NavLink>
+            <NavLink href="/dashboard/update_pass" icon={ClipboardEdit}>
+              Update Pass
+            </NavLink>
+            <NavLink href="/dashboard/approved_rejected" icon={GitPullRequestClosed}>
+              Approved Passes
+            </NavLink>
+            <NavLink href="/dashboard/discard_pass" icon={Ban}>
+              Discard Pass
+            </NavLink>
+            <NavLink href="/dashboard/downloads" icon={Download}>
+              Download Files
+            </NavLink>
           </>
-      )}
+        )}
 
-      {userType === "professor" && (
-        <>
-          <Link href="/dashboard/notification" className={getLinkClasses("/dashboard/notification")}>
-            <Bell className="h-4 w-4" />
-            Send Notification
-          </Link>
-          <Link href="/dashboard/notes_history" className={getLinkClasses("/dashboard/notes_history")}>
-            <Book className="h-4 w-4" />
-            Past Notes
-          </Link>
-          <Link href="/dashboard/notification_history" className={getLinkClasses("/dashboard/notification_history")}>
-            <History className="h-4 w-4" />
-            Past Notification
-          </Link>
-        </>
-      )}
+        {(userType === "hod" || userType === "principal" || userType === "examdept") && (
+          <NavLink href="/dashboard/history" icon={History}>
+            Past Notifications
+          </NavLink>
+        )}
 
+        {userType === "professor" && (
+          <>
+            <NavLink href="/dashboard/notification" icon={Bell}>
+              Send Notification
+            </NavLink>
+            <NavLink href="/dashboard/notes_history" icon={Book}>
+              Past Notes
+            </NavLink>
+            <NavLink href="/dashboard/notification_history" icon={History}>
+              Past Notification
+            </NavLink>
+          </>
+        )}
+      </div>
     </nav>
   );
 };
