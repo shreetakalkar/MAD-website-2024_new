@@ -70,7 +70,8 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
-    //PLEASE DELETE MAT KARO BHAI YE , BOHOT KAAM KI CHIZ HAI -- USE BHI KI HAI MAINE PENDINGCARD COMPONENT MAI
+    //PLEASE DELETE MAT KARO BHAI YE , BOHOT KAAM KI CHIZ HAI -- USE BHI KI HAI MAINE PENDINGCARD COMPONENT MAI 
+    // (maine ek din iske vajah se responsive banane mai waste kia tha) ~not the same guy as above commentor
     // screens: {
     //   "2xl": { max: "1535px" },
     //   // => @media (max-width: 1535px) { ... }
