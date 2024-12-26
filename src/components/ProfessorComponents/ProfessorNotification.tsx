@@ -70,11 +70,11 @@ const NotificationComponent = () => {
   ): Promise<string> => {
     if (!file) throw new Error("No file provided");
     if (!user?.uid) throw new Error("User ID is not available");
-    console.log("ANDAR");
+    // console.log("ANDAR");
     const storageRef = ref(storage, `notification/${user.uid}/${title}`);
     const snapshot = await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
-    console.log("BAHAR");
+    // console.log("BAHAR");
     return downloadURL;
   };
 

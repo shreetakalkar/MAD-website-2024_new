@@ -65,13 +65,13 @@ const CommiteeDept = () => {
   };
 
   const handleUpload = async (data: FormData,imageUrl: string) => {
-    console.log("submitting data");
-    console.log("data",data);
+    // console.log("submitting data");
+    // console.log("data",data);
     const eventDate = formatDate(data.eventDate)
     
     try {
       const docRef = collection(db, "TempEvents");
-      console.log("docRef",docRef);
+      // console.log("docRef",docRef);
       await addDoc(docRef, {
         "Committee Name": user?.name,
         "Image url": imageUrl,

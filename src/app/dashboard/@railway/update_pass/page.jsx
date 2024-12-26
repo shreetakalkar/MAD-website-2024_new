@@ -4,9 +4,10 @@ import { collection, doc, getDoc, query, where, onSnapshot } from "firebase/fire
 import { db } from "@/config/firebase";
 import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
-import { Loader } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
+import UpdateCertificateNumber from "@/components/RailwayUpdateCertNum";
 
 const formSchema = z.object({
   branch: z.string(),
@@ -38,9 +39,10 @@ const RailwayUpdateConc = () => {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const [showUpdateCertNum, setShowUpdateCertNum] = useState(false); 
 
   const fetchPass = async (certNo) => {
-    console.log("Inside FetchPass: ", certNo)
+    // console.log("Inside FetchPass: ", certNo)
     setLoading(true);
     try {
       const q = query(
@@ -52,7 +54,7 @@ const RailwayUpdateConc = () => {
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         if (!snapshot.empty) {
           const docSnap = snapshot.docs[0];
-          console.log(docSnap.id)
+          // console.log(docSnap.id)
           const enquiry = docSnap.data();
           const requestDocSnap = await getDoc(doc(db, "ConcessionRequest", docSnap.id));
           if (requestDocSnap.exists()) {
@@ -70,27 +72,33 @@ const RailwayUpdateConc = () => {
             variant: "destructive",
           });
         }
-        console.log(pass)
+        // console.log(pass)
+        setLoading(false);
       });
     } catch (error) {
       console.error("Error fetching pass data", error);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSearch = () => {
     if (searchInput) {
-      console.log(searchInput)
+      // console.log("UPDATE PASS: ",searchInput)
       fetchPass(searchInput);
     }
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      console.log(searchInput)  
+      // console.log(searchInput)  
       handleSearch();
     }
   };
+
+  const handleCertNumClick = () => {
+    setShowUpdateCertNum(true); // Toggle visibility
+  };
+
 
   return (
     <>
@@ -98,10 +106,19 @@ const RailwayUpdateConc = () => {
         <div className="flex justify-center items-center h-screen">
           <Loader className="w-10 h-10 animate-spin" />
         </div>
+      ): showUpdateCertNum ? (
+        <UpdateCertificateNumber setShowUpdateCertNum={setShowUpdateCertNum}/>
       ) : (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 mt-[20vh]">
-          <h2 className="mb-8 text-lg font-semibold text-center text-gray-700">
+        <div className="flex flex-col items-center justify-start min-h-[80vh] p-4 relative">
+           <h2 className="mb-8 text-lg font-semibold text-center text-gray-700 flex">
             <span className="text-3xl font-bold">Extend Date, Change Data & Cancel Pass</span>
+            <button
+              onClick={handleCertNumClick}
+              className="absolute right-2 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
+            >
+              Update Certificate Number
+              <ArrowRight className="w-4 h-4"/>
+            </button>
           </h2>
           <div className="flex items-center w-full max-w-md">
             <Input
@@ -118,14 +135,14 @@ const RailwayUpdateConc = () => {
               Search
             </button>
           </div>
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center mt-4">
             {pass && <RailwayUpdateCard key={pass.certNo} formSchema={formSchema} passData={pass} />}
           </div>
-          
         </div>
       )}
     </>
   );
+  
 };
 
 export default RailwayUpdateConc;

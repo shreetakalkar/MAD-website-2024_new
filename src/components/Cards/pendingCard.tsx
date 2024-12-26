@@ -602,7 +602,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
 
       // Update parent component state to remove this card from the list
       onCardUpdate(id);
-      console.log("Document successfully updated");
+      // console.log("Document successfully updated");
     } catch (error) {
       console.error("Error updating concession request: ", error);
     }

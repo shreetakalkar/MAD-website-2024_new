@@ -30,7 +30,7 @@ const AdminHistory: React.FC = () => {
       const snapshot = await getDocs(eventsRef);
       const Events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event));
       setEvents(Events);
-      console.log(Events);
+      // console.log(Events);
     }
     fetchEvents();
   }, []);

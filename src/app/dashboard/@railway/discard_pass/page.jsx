@@ -3,10 +3,11 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { db } from "@/config/firebase";
-import { arrayUnion, doc, updateDoc, Timestamp } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc, Timestamp, getDoc, setDoc } from "firebase/firestore";
 import { useToast } from "@/components/ui/use-toast";
 import React, { useState } from "react";
 import { Loader } from "lucide-react";
+import { dateFormat } from "@/constants/dateFormat";
 
 export default function DiscardPass() {
 
@@ -40,6 +41,38 @@ export default function DiscardPass() {
       });
 
       inputField.value = "";
+
+      // Update Stats
+      const concessionHistoryStatRef = doc(db, "ConcessionHistory", "DailyStats");
+      const concessionHistorySnap = await getDoc(concessionHistoryStatRef);
+      const currentDate = dateFormat(new Date())
+  
+      if (concessionHistorySnap.exists()) {
+        const historyData = concessionHistorySnap.data();
+        let statsArray = historyData.stats || [];
+        const dateIndex = statsArray.findIndex((entry) => entry.date === currentDate);
+  
+        if (dateIndex >= 0) {
+          if (typeof statsArray[dateIndex].discardedPass !== 'number') {
+            statsArray[dateIndex].discardedPass = 0;
+          }
+          statsArray[dateIndex].discardedPass += 1;
+        } else {
+          statsArray.push({
+            date: currentDate,
+            discardedPass: 1,
+          });
+        }
+  
+        await updateDoc(concessionHistoryStatRef, { stats: statsArray });
+      } else {
+        await setDoc(concessionHistoryStatRef, {
+          stats: [{
+            date: currentDate,
+            discardedPass: 1,
+          }],
+        });
+      }
 
       toast({
         // title: "Success",

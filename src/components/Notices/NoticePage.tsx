@@ -40,7 +40,7 @@ const ImportantNotices: React.FC = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        console.log(userType);
+        // console.log(userType);
         const noticeDocRef = doc(db, "ImportantNotice", "Content");
         const noticeSnapshot = await getDoc(noticeDocRef);
 
@@ -65,7 +65,7 @@ const ImportantNotices: React.FC = () => {
     fetchNotices();
   }, []);
 
-  console.log(notices);
+  // console.log(notices);
   const [loading, setLoading] = useState<boolean>(true);
 
   if (loading) {

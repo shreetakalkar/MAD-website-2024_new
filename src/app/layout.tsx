@@ -6,6 +6,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { UserProvider } from "@/providers/UserProvider";
+import { db } from "@/config/firebase";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import UnderMaintenancePage from "@/components/UnderMaintenancePage";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +21,20 @@ const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const [isUnderMaintenance, setIsUnderMaintenance] = useState(false);
+
+  useEffect(() => {
+    const fetchMaintenanceStatus = async () => {
+      const docRef = doc(db, "maintenance", "webmaintenance");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setIsUnderMaintenance(docSnap.data().undermaintenance);
+      }
+    };
+
+    fetchMaintenanceStatus();
+  }, []);
+
   return (
     <html lang="en">
       <head>
@@ -32,7 +50,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            {isUnderMaintenance ? <UnderMaintenancePage /> : children}
             <Toaster />
           </ThemeProvider>
         </UserProvider>

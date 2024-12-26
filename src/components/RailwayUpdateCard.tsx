@@ -206,7 +206,7 @@ const RailwayUpdateCard = ({
 
         let updated = false;
 
-        console.log("Pass: ", passData.certNo);
+        // console.log("Pass: ", passData.certNo);
 
         for (let i = history.length - 1; i >= 0; i--) {
           if (history[i].passNum === passData.certNo) {
@@ -472,7 +472,7 @@ const RailwayUpdateCard = ({
                                     <Button
                                       variant={"outline"}
                                       onClick={() => {
-                                        console.log(format(field.value, "PPP"));
+                                       // console.log(format(field.value, "PPP"));
                                       }}
                                       className={cn(
                                         "text-center font-normal",
@@ -532,7 +532,7 @@ const RailwayUpdateCard = ({
                                     <Button
                                       variant={"outline"}
                                       onClick={() => {
-                                        console.log(format(field.value, "PPP"));
+                                        // console.log(format(field.value, "PPP"));
                                       }}
                                       className={cn(
                                         "text-center font-normal",
@@ -908,7 +908,8 @@ const RailwayUpdateCard = ({
                             }}
                             className="bg-red-500 text-white py-2 rounded-lg shadow hover:bg-red-600 transition duration-300"
                           >
-                            Delete
+                            {/* Delete */}
+                            Cancel Pass
                           </Button>
                         )}
                       </div>

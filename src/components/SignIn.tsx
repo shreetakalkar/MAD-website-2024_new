@@ -133,7 +133,7 @@ const SignIn: React.FC = () => {
 
   async function forgotPassword(event: any): Promise<void> {
     if (email) {
-      console.log(email);
+      // console.log(email);
       try {
         // Query the OfficialLogin collection
         let q = query(
