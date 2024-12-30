@@ -8,6 +8,10 @@ import { teamData, Member } from '@/lib/memberData'
 import { Navbar } from '@/components/landing-page/navbar'
 import { useTheme } from 'next-themes'
 
+import React from "react";
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+
+
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
   animate: { y: 0, opacity: 1 },
@@ -22,54 +26,57 @@ const stagger = {
   }
 }
 
-const MemberCard = ({ member }: { member: Member }) => (
-  <div className="m-6 rounded-2xl p-6 bg-gray-100/50 dark:bg-gray-800/50 shadow-sm w-80 hover:shadow-md transition-all duration-300">
-    <div className="space-y-4">
-      <div className="text-5xl font-semibold text-gray-400 dark:text-gray-500">
-        {member.name}
-      </div>
-      
-      <div className="w-8 h-0.5 bg-pink-500"></div>
-      
-      <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
-      
-      <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
-        <Image
-          src={member.image}
-          alt={member.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 288px"
-        />
-      </div>
-      
-      <div className="flex gap-4 pt-2">
-        {member.linkedin && (
-          <Link
-            href={member.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-300"
+const MemberCard = ({ member } : any) => {
+  return (
+    <CardContainer className="inter-var">
+      <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
+        <CardItem
+          translateZ="50"
+          className="text-2xl font-bold text-neutral-600 dark:text-white"
+        >
+          {member.name}
+        </CardItem>
+        <CardItem
+          as="p"
+          translateZ="60"
+          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+        >
+          {member.role}
+        </CardItem>
+        <CardItem translateZ="100" className="w-full mt-4">
+          <Image
+            src={member.image}
+            height="1000"
+            width="1000"
+            className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+            alt={member.name}
+          />
+        </CardItem>
+        <div className="flex justify-between items-center mt-6">
+          {member.linkedin && (
+            <CardItem
+              translateZ={20}
+              as={Link}
+              href={member.linkedin}
+              target="_blank"
+              className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
+            >
+              LinkedIn →
+            </CardItem>
+          )}
+          <CardItem
+            translateZ={20}
+            as={Link}
+            href="#"
+            className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
           >
-            <LinkedinIcon size={20} />
-          </Link>
-        )}
-        <Link
-          href="#"
-          className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-300"
-        >
-          <GithubIcon size={20} />
-        </Link>
-        <Link
-          href="#"
-          className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-300"
-        >
-          <Globe size={20} />
-        </Link>
-      </div>
-    </div>
-  </div>
-);
+            Visit Website
+          </CardItem>
+        </div>
+      </CardBody>
+    </CardContainer>
+  );
+};
 
 const TeamSection = ({ title, members }: { title: string; members: Member[] }) => (
   <motion.section
