@@ -43,6 +43,7 @@
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.395.0",
     "mad_website_2024": "file:",
+    "mini-svg-data-uri": "^1.4.4",
     "moment-timezone": "^0.5.45",
     "next": "^14.2.15",
     "next-auth": "^4.24.8",
