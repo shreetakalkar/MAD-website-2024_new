@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { EyeIcon } from "lucide-react";
-import testimg from "../../public/images/OnlineTraining.png";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { EyeIcon } from "lucide-react";
+// import testimg from "../../public/images/OnlineTraining.png";
 import { dateFormat } from "@/constants/dateFormat";
 import { Loader } from "lucide-react";
 import {
@@ -50,7 +50,7 @@ const currentUserYear = (gradyear: string) => {
   }
 };
 
-const calAge = (dobString:any) => {
+const calAge = (dobString: any) => {
   const [day, month, year] = dobString.split("/").map(Number);
   const dob = new Date(year, month - 1, day);
   const today = new Date();
@@ -98,7 +98,7 @@ function InputWithLabel({ label, input }: { label: any; input: any }) {
       </div>
       <div className=" h-[65%] overflow-auto">
         <div
-          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem]S`} 
+          className={`border-[0.5px] xl:text-sm flex items-center h-[80%] leading-none   text-start py-[2%] px-[4%]   w-[90%] rounded-lg text-[0.9rem]S`}
         >
           {input}
         </div>
@@ -222,8 +222,13 @@ const ImageModal: React.FC<ImageModalProps> = ({
             ref={imageRef}
             src={imageSrc}
             alt="Previous Pass"
-            width={650}
+            width={600}
             height={400}
+            loading="eager"
+            placeholder="blur"
+            blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+            priority
+            sizes="(max-width: 600px) 100vw, 33vw"
             style={{
               transform: `scale(${zoomLevel}) translate(${position.x}px, ${position.y}px) rotate(${rotation}deg)`,
               cursor: dragging ? "grabbing" : "grab",
@@ -302,13 +307,12 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
       <div
-        className={`p-8 rounded-lg shadow-xl w-full max-w-md ${
-          action === "Approve"
+        className={`p-8 rounded-lg shadow-xl w-full max-w-md ${action === "Approve"
             ? "bg-green-100"
             : action === "Reject"
-            ? "bg-red-100"
-            : "bg-white"
-        }`}
+              ? "bg-red-100"
+              : "bg-white"
+          }`}
       >
 
         {!showConfirmation ? (
@@ -366,14 +370,13 @@ const Modal: React.FC<ModalProps> = ({
             )}
             <div className="flex justify-between items-center">
               <button
-                className={`w-1/3 py-2 px-4 rounded-lg text-white ${
-                  action === "Approve"
+                className={`w-1/3 py-2 px-4 rounded-lg text-white ${action === "Approve"
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
-                }`}
+                  }`}
                 onClick={() => {
                   if (action === "Approve") {
-                    setShowConfirmation(true); 
+                    setShowConfirmation(true);
                   } else {
                     validateAndSubmit();
                   }
@@ -396,33 +399,33 @@ const Modal: React.FC<ModalProps> = ({
 
         ) : (
 
-            action === "Approve" && (
+          action === "Approve" && (
 
-              <div className="text-center">
-                <p className="text-lg text-gray-700 mb-6">
-                  Confirm Certificate number for <strong>{data.lastName} {data.firstName} {data.middleName}</strong> as{" "}
-                  <strong>{certificateNumber}</strong>?
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <button
-                    className="w-1/3 py-2 px-4 rounded-lg text-white bg-green-600 hover:bg-green-700"
-                    onClick={validateAndSubmit}
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
-                    onClick={() => setShowConfirmation(false)}
-                  >
-                    Go Back
-                  </button>
-                </div>
+            <div className="text-center">
+              <p className="text-lg text-gray-700 mb-6">
+                Confirm Certificate number for <strong>{data.lastName} {data.firstName} {data.middleName}</strong> as{" "}
+                <strong>{certificateNumber}</strong>?
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  className="w-1/3 py-2 px-4 rounded-lg text-white bg-green-600 hover:bg-green-700"
+                  onClick={validateAndSubmit}
+                >
+                  Confirm
+                </button>
+                <button
+                  className="w-1/3 py-2 px-4 rounded-lg text-white bg-gray-600 hover:bg-gray-700"
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  Go Back
+                </button>
               </div>
+            </div>
 
-            )
+          )
 
         )}
-        
+
       </div>
     </div>
   );
@@ -638,7 +641,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
             </div>
             <div className="h-full w-1/2 flex ">
               <div className="h-full w-1/2 ">
-              {/* <p>Age: </p> */}
+                {/* <p>Age: </p> */}
                 <InputWithLabel label={`DOB`} input={formatDOB(dob)} />
               </div>
               <div className="h-full w-1/2">
@@ -717,49 +720,61 @@ const PendingCard: React.FC<PendingCardProps> = ({
           </div>
         </div>
         <div className="w-[30%] h-full flex flex-col overflow-auto">
-        <div className="m-2 h-[33.333%] relative">
-          <Image
-            className="rounded-lg"
-            src={idCardURL}
-            alt="ID Card Front"
-            width={600}
-            height={400}
-            style={{ objectFit: 'contain' }}
-            onClick={() => {
-              setImageSrc(idCardURL);
-              setIsImageModalOpen(true);
-            }}
-          />
+          <div className="m-2 h-[33.333%] relative">
+            <Image
+              className="rounded-lg"
+              src={idCardURL}
+              alt="ID Card Front"
+              width={600}
+              height={400}
+              style={{ objectFit: 'contain' }}
+              placeholder="blur"
+              loading="lazy"
+              blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              sizes="(max-width: 600px) 100vw, 33vw"
+              onClick={() => {
+                setImageSrc(idCardURL);
+                setIsImageModalOpen(true);
+              }}
+            />
+          </div>
+          <div className="m-2 h-[33.333%] relative">
+            <Image
+              className="rounded-lg"
+              src={idCardURL2}
+              alt="ID Card Back"
+              width={600}
+              height={400}
+              style={{ objectFit: 'contain' }}
+              placeholder="blur"
+              blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              sizes="(max-width: 600px) 100vw, 33vw"
+              loading="lazy"
+              onClick={() => {
+                setImageSrc(idCardURL2);
+                setIsImageModalOpen(true);
+              }}
+                        />
+          </div>
+          <div className="m-2 h-[33.333%] relative">
+            <Image
+              className="rounded-lg"
+              src={previousPassURL}
+              alt="Previous Pass"
+              width={600}
+              height={400}
+              style={{ objectFit: 'contain' }}
+              placeholder="blur"
+              blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              sizes="(max-width: 600px) 100vw, 33vw"
+              loading="lazy"
+              onClick={() => {
+                setImageSrc(previousPassURL);
+                setIsImageModalOpen(true);
+              }}            
+            />
+          </div>
         </div>
-        <div className="m-2 h-[33.333%] relative">
-          <Image
-            className="rounded-lg"
-            src={idCardURL2}
-            alt="ID Card Back"
-            width={600}
-            height={400}
-            style={{ objectFit: 'contain' }}
-            onClick={() => {
-              setImageSrc(idCardURL2);
-              setIsImageModalOpen(true);
-            }}
-          />
-        </div>
-        <div className="m-2 h-[33.333%] relative">
-          <Image
-            className="rounded-lg"
-            src={previousPassURL}
-            alt="Previous Pass"
-            width={600}
-            height={400}
-            style={{ objectFit: 'contain' }}
-            onClick={() => {
-              setImageSrc(previousPassURL);
-              setIsImageModalOpen(true);
-            }}
-          />
-        </div>
-      </div>
 
       </div>
 
