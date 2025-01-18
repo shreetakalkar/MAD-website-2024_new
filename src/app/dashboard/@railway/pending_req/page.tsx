@@ -5,9 +5,18 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import PendingCard from "@/components/Cards/pendingCard";
 import { Loader } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+
 const PendingRequests = () => {
   const [data, setData] = useState<Data[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   interface Data {
     id: string;
@@ -130,6 +139,12 @@ const PendingRequests = () => {
     setData(data.filter((item) => item.id !== id));
   };
 
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const paginatedData = data.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="p-2">
       {loading ? (
@@ -138,12 +153,44 @@ const PendingRequests = () => {
         </div>
       ) : data.length > 0 ? (
         <div className="flex flex-col space-y-2">
+          <div className="flex justify-center space-x-2 mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-blue-100 rounded-md hover:bg-blue-200 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-4 py-2 bg-blue-100 rounded-md hover:bg-blue-200">
+                {`Page ${currentPage} of ${totalPages}`}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40">
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <DropdownMenuItem
+                    key={index + 1}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={currentPage === index + 1 ? "font-bold" : ""}
+                  >
+                    {`Page ${index + 1}`}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-blue-100 rounded-md hover:bg-blue-200 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
           <div className="w-[100%] text-right">
             <h2 className="float-right p-3 rounded-md text-[#3a3737b1]">
-              Passes remaining : {data.length}
+              Passes remaining: {data.length}
             </h2>
           </div>
-          {data.map((item, index) => (
+          {paginatedData.map((item, index) => (
             <PendingCard
               key={index}
               id={item.id}
@@ -171,6 +218,38 @@ const PendingRequests = () => {
               previousPassURL={item.previousPassURL}
             />
           ))}
+          <div className="flex justify-center space-x-2 mt-4 pt-10">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-blue-100 rounded-md hover:bg-blue-200 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-4 py-2 bg-blue-100 rounded-md hover:bg-blue-200">
+                {`Page ${currentPage} of ${totalPages}`}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40">
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <DropdownMenuItem
+                    key={index + 1}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={currentPage === index + 1 ? "font-bold" : ""}
+                  >
+                    {`Page ${index + 1}`}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-blue-100 rounded-md hover:bg-blue-200 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
       ) : (
         <p className="text-center">No pending requests</p>
