@@ -77,6 +77,7 @@ const Header = ({ userType }: { userType: string }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ModeToggle />
         </div>
       </div>
     </div>
