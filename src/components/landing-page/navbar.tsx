@@ -54,7 +54,7 @@ export function Navbar() {
               whileTap={{ scale: 0.95 }}
               className="hidden md:block"
             >
-              <Button className="bg-[#4339F2] hover:bg-[#4339F2]/90 text-white rounded-full">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
                 <Link href="/auth">
                   Sign In
                 </Link>

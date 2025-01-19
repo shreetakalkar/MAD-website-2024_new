@@ -74,7 +74,7 @@ export default function MembersPage() {
             We're a diverse team of developers, designers, and innovators
             working together to create an amazing experience for TSEC students.
           </p>
-          <div className="w-32 h-1 bg-[#4339F2] mx-auto mt-8 opacity-50"></div>
+          <div className="w-32 h-1 bg-blue-600 mx-auto mt-8 opacity-50"></div>
         </motion.div>
         
         {teamData.map((team) => (

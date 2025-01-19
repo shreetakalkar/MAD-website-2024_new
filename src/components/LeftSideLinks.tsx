@@ -11,7 +11,8 @@ import { useTheme } from "next-themes";
 
 const LeftSideLinks = ({ userType }: { userType: string }) => {
   const pathname = usePathname();
-  const {theme }  = useTheme();
+  const { theme } = useTheme();
+
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path;
     const isRailway = userType === "railway";
@@ -19,10 +20,10 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
     return `
       relative flex items-center gap-1 md:gap-2 
       px-2 md:px-3 py-2 rounded-md
-      font-medium text-xs md:text-sm transition-all duration-300 bg-gray-50 dark: bg-gray-800
+      font-medium text-xs md:text-sm transition-all duration-300
       ${isActive 
-        ? "bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" 
-        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50"
+        ? "bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+        : "bg-gray-50 hover:bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       }
       group
       ${isRailway ? "" : "whitespace-nowrap"}
@@ -42,7 +43,10 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
     <nav className="w-full">
       <div className={`
         flex items-center gap-1 md:gap-2 p-2
-        ${userType === "railway" ? "flex-wrap" : "overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"}
+        ${userType === "railway" 
+          ? "flex-wrap" 
+          : "overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"
+        }
       `}>
         <NavLink href="/dashboard" icon={Home}>Home</NavLink>
 
