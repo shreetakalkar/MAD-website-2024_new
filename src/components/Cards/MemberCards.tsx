@@ -36,7 +36,7 @@ const MemberCard = ({ member }: any) => {
               </div>
             </CardItem>
             
-            <div className="w-12 h-0.5 bg-pink-500 my-4"></div>
+            <div className="w-12 h-0.5 bg-blue-600 my-4"></div>
             
             <CardItem
               as="p"

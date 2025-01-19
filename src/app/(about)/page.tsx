@@ -42,11 +42,11 @@ export default function Page() {
           <motion.div variants={fadeInUp} className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
               Welcome to the{" "}
-              <span className="text-[#4339F2]">TSEC Dev's Club</span>
+              <span className="text-blue-600">TSEC Dev's Club</span>
             </h1>
             <motion.p
               variants={fadeInUp}
-              className="text-lg md:text-xl text-[#4339F2]"
+              className="text-lg md:text-xl text-blue-600"
             >
               Creators of the TSEC App
             </motion.p>
@@ -66,7 +66,7 @@ export default function Page() {
               whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto"
             >
-              <button className="px-6 py-3 text-lg font-semibold text-white bg-[#4339F2] hover:bg-[#4339F2]/90 rounded-full transition-colors duration-300 shadow-lg">
+              <button className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-colors duration-300 shadow-lg">
                 Get Started
               </button>
             </motion.div>
@@ -179,7 +179,7 @@ export default function Page() {
             className="text-center text-2xl md:text-3xl font-bold "
           >
             Empowering TSEC Students with{" "}
-            <span className="text-[#4339F2]">Cutting-Edge Technology</span>
+            <span className="text-blue-600">Cutting-Edge Technology</span>
           </motion.h2>
           <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[
