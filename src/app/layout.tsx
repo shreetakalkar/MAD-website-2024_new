@@ -25,10 +25,10 @@ export default function RootLayout({
 
   useEffect(() => {
     const fetchMaintenanceStatus = async () => {
-      const docRef = doc(db, "maintenance", "webmaintenance");
+      const docRef = doc(db, "Maintainance", "Web Maintenance"); // mujhse zada spelling mistake koi nhi karta hoga
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setIsUnderMaintenance(docSnap.data().undermaintenance);
+        setIsUnderMaintenance(docSnap.data().underMaintenance);
       }
     };
 

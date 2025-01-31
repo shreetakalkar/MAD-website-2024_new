@@ -77,7 +77,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
               Discard Pass
             </NavLink>
             <NavLink href="/dashboard/downloads" icon={Download}>
-              Download Files
+              Download
             </NavLink>
           </>
         )}
