@@ -17,6 +17,8 @@ const PendingRequests = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [filteredData, setFilteredData] = useState<Data[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   interface Data {
     id: string;
@@ -134,6 +136,21 @@ const PendingRequests = () => {
     fetchUserData();
   }, []);
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to the first page when filtering
+
+    if (value === "") {
+      setFilteredData(data);
+    } else {
+      const filtered = data.filter((item) =>
+        item.phoneNum.toString().includes(value)
+      );
+      setFilteredData(filtered);
+    }
+  };
+
   const handleCardUpdate = (id: string) => {
     // Update the state to remove the card with the specified id
     setData(data.filter((item) => item.id !== id));
@@ -153,6 +170,8 @@ const PendingRequests = () => {
         </div>
       ) : data.length > 0 ? (
         <div className="flex flex-col space-y-2">
+
+          {/* Pagination Buttons */}
           <div className="flex justify-center space-x-2 mt-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -185,11 +204,15 @@ const PendingRequests = () => {
               Next
             </button>
           </div>
+
+          {/* No of passes pending */}
           <div className="w-[100%] text-right">
-            <h2 className="float-right p-3 rounded-md text-[#3a3737b1]">
+            <h2 className="float-right p-5 rounded-md text-[#3a3737b1]">
               Passes remaining: {data.length}
             </h2>
           </div>
+
+          {/* Pending Cards */}
           {paginatedData.map((item, index) => (
             <PendingCard
               key={index}
@@ -218,6 +241,8 @@ const PendingRequests = () => {
               previousPassURL={item.previousPassURL}
             />
           ))}
+
+          {/* Pagination Buttons */}
           <div className="flex justify-center space-x-2 mt-4 pt-10">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -250,6 +275,7 @@ const PendingRequests = () => {
               Next
             </button>
           </div>
+
         </div>
       ) : (
         <p className="text-center">No pending requests</p>
