@@ -97,29 +97,6 @@ export const teamData: TeamSection[] = [
     ],
   },
   {
-    title: "Operations Team",
-    members: [
-      {
-        name: "Zoya Hassan",
-        role: "Operations Manager",
-        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FZoya.jpeg?alt=media&token=6854ba68-af9b-44c2-903f-61596e690252",
-        linkedin: "https://www.linkedin.com/in/zoya-hassan-688470271/",
-      },
-      {
-        name: "Herambh Vengurlekar",
-        role: "Project Coordinator",
-        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fheramb.JPG?alt=media&token=e2c743ca-e812-4a43-a4ec-4bef248aa604",
-        linkedin: "http://www.linkedin.com/in/herambve",
-      },
-      {
-        name: "Suhani Poptani",
-        role: "Operations Analyst",
-        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FSuhani.jpeg?alt=media&token=eeccf450-3d90-4c01-bdd6-f19c5c6700fc",
-        linkedin: "",
-      },
-    ],
-  },
-  {
     title: "App Development Team",
     members: [
       {
@@ -136,13 +113,13 @@ export const teamData: TeamSection[] = [
       },
       {
         name: "Shreya Bhatia",
-        role: "UI/UX Designer",
+        role: "Mobile App Developer",
         image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FShreya.jpg?alt=media&token=d5a5410a-6a13-4d3c-98cd-c757df659b4c",
         linkedin: "http://www.linkedin.com/in/shreya-bhatia-6364ab2bb",
       },
       {
         name: "Siddhi Mehta",
-        role: "App Tester",
+        role: "Mobile App Developer",
         image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FSiddhi.png?alt=media&token=5552fe08-ca67-4e88-840b-b305eefb6d1c",
         linkedin: "https://www.linkedin.com/in/siddhi-mehta-228048298/",
       },
@@ -162,6 +139,35 @@ export const teamData: TeamSection[] = [
         role: "UI/UX Designer",
         image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FMalhaar.jpg?alt=media&token=15ac7778-63a8-4529-85ff-13cc5916ba29",
         linkedin: "https://www.linkedin.com/in/malhaar-mirchandani-a8188b287",
+      },
+    ],
+  },
+  {
+    title: "Operations Team",
+    members: [
+      {
+        name: "Sartak Kuwar",
+        role: "Operations Head",
+        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fsarthak.png?alt=media&token=1f33ee2e-92ce-43f7-9222-607615650805",
+        linkedin: ""
+      },
+      {
+        name: "Zoya Hassan",
+        role: "Operations Manager",
+        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FZoya.jpeg?alt=media&token=6854ba68-af9b-44c2-903f-61596e690252",
+        linkedin: "https://www.linkedin.com/in/zoya-hassan-688470271/",
+      },
+      {
+        name: "Herambh Vengurlekar",
+        role: "Project Coordinator",
+        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2Fheramb.JPG?alt=media&token=e2c743ca-e812-4a43-a4ec-4bef248aa604",
+        linkedin: "http://www.linkedin.com/in/herambve",
+      },
+      {
+        name: "Suhani Poptani",
+        role: "Operations Analyst",
+        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2024%2FSuhani.jpeg?alt=media&token=eeccf450-3d90-4c01-bdd6-f19c5c6700fc",
+        linkedin: "",
       },
     ],
   },
