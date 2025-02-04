@@ -42,7 +42,7 @@ export default function Page() {
           <motion.div variants={fadeInUp} className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
               Welcome to the{" "}
-              <span className="text-blue-600">TSEC Dev's Club</span>
+              <span className="text-blue-600">TSEC Dev&apos;s Club</span>
             </h1>
             <motion.p
               variants={fadeInUp}
@@ -56,7 +56,7 @@ export default function Page() {
             className="flex max-w-md flex-col gap-4"
           >
             <p className="text-sm text-muted-foreground">
-              We're a team of passionate developers creating innovative
+              We&apos;re a team of passionate developers creating innovative
               solutions for TSEC students. Our flagship product, the TSEC App,
               enhances your academic experience and streamlines access to
               important college information.

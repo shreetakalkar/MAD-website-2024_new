@@ -34,24 +34,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader } from "lucide-react";
+import { feedbackFormSchema, FeedbackFormData } from "@/lib/validation";
 
-export const feedbackFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters long" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  topic: z.enum(["Suggestion", "Complaint", "Bug Report"], {
-    message: "Please select a valid topic",
-  }),
-  subject: z
-    .string()
-    .min(5, { message: "Subject must be at least 5 characters long" }),
-  message: z
-    .string()
-    .min(10, { message: "Message must be at least 10 characters long" }),
-});
 
-export type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
+// export const feedbackFormSchema = z.object({
+//   name: z
+//     .string()
+//     .min(2, { message: "Name must be at least 2 characters long" }),
+//   email: z.string().email({ message: "Please enter a valid email address" }),
+//   topic: z.enum(["Suggestion", "Complaint", "Bug Report"], {
+//     message: "Please select a valid topic",
+//   }),
+//   subject: z
+//     .string()
+//     .min(5, { message: "Subject must be at least 5 characters long" }),
+//   message: z
+//     .string()
+//     .min(10, { message: "Message must be at least 10 characters long" }),
+// });
+
+// export type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
 
 export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(false);

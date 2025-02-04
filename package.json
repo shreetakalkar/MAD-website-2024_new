@@ -2,6 +2,7 @@
   "name": "mad_website_2024",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -30,6 +31,7 @@
     "@tanstack/react-table": "^8.17.3",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "canvas": "^3.1.0",
     "chart.js": "^4.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -59,6 +61,7 @@
     "react-switch": "^7.0.0",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
+    "sharp": "^0.33.5",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"

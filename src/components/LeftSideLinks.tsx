@@ -32,12 +32,13 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
 
   const iconClass = "h-4 w-4 transition-transform duration-300 group-hover:scale-110 flex-shrink-0";
 
-  const NavLink = ({ href, icon: Icon, children }) => (
+  const NavLink = ({ href, icon: Icon, children }: { href: string, icon: React.ComponentType<{ className?: string }>, children: React.ReactNode }) => (
     <Link href={href} className={getLinkClasses(href)}>
       <Icon className={iconClass} />
       <span className={userType === "railway" ? "line-clamp-2" : "truncate"}>{children}</span>
     </Link>
   );
+  
 
   return (
     <nav className="w-full">

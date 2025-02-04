@@ -71,7 +71,7 @@ export default function MembersPage() {
             Meet Our Team
           </h1>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            We're a diverse team of developers, designers, and innovators
+            We&apos;re a diverse team of developers, designers, and innovators
             working together to create an amazing experience for TSEC students.
           </p>
           <div className="w-32 h-1 bg-blue-600 mx-auto mt-8 opacity-50"></div>
