@@ -9,6 +9,7 @@ const nextConfig = {
         port: "",
       },
     ],
+    unoptimized: true,
   },
   webpack: (config) => {
     // Resolve aliases
