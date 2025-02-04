@@ -49,3 +49,6 @@ firebase.json
 #firebase_Rules
 firestoreRule.rs
 firestorageRule.rs
+
+.firebase
+.github
