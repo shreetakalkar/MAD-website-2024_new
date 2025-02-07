@@ -1,13 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { Document, Page, pdfjs } from "react-pdf";
 import Image from "next/image";
 import DataTable from "@/components/datatable";
 import { ColumnDef } from "@tanstack/react-table";
 import { Notice } from "./NoticePage"; // Adjust the import path as needed
 import useGradYear from "@/constants/gradYearList";
-import "@react-pdf-viewer/core/lib/styles/index.css";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
 import { File } from "lucide-react";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // Modal Component
 const Modal: React.FC<{
@@ -30,9 +33,9 @@ const Modal: React.FC<{
         <div className="h-full w-full p-8 relative flex items-center justify-center">
           {isPDF ? (
             <div className="h-full w-[90%] overflow-hidden">
-              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                <Viewer fileUrl={contentUrl} />
-              </Worker>
+              <Document file={contentUrl}>
+                <Page pageNumber={1} width={600} />
+              </Document>
             </div>
           ) : (
             <Image
@@ -48,13 +51,7 @@ const Modal: React.FC<{
   );
 };
 
-const checkIfPDF = (url: string) => {
-  return url.split("?")[0].endsWith(".pdf");
-};
-
-const capitalizeFirstLetter = (string: string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
+const checkIfPDF = (url: string) => url.split("?")[0].endsWith(".pdf");
 
 const NoticeHistory: React.FC<{ notices: Notice[] }> = ({ notices }) => {
   const gradYearList = useGradYear();
