@@ -2,7 +2,6 @@
   "name": "mad_website_2024",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -32,6 +31,7 @@
     "@tanstack/react-table": "^8.17.3",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "canvas": "^3.1.0",
     "chart.js": "^4.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
