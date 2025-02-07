@@ -14,7 +14,7 @@ const nextConfig = {
   webpack: (config) => {
     // Resolve aliases
     config.resolve.alias["@"] = "/src"; // Adjust the path as needed
-
+    config.externals = {canvas: 'commonjs canvas',};
     return config;
   },
   output: 'export',
