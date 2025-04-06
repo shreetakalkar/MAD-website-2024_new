@@ -366,13 +366,13 @@ export const createExcelFile = async (
           passNum: enquiry.passNum,
           name: `${enquiry.lastName.toUpperCase()} ${enquiry.firstName.toUpperCase()} ${enquiry.middleName.toUpperCase()}`,
           gender: enquiry.gender === "Male" ? "M" : "F",
-          dob: formatDate(enquiry.dob.toDate()),
+          dob: formatDate(new Date(enquiry.dob)),
           from: enquiry.from.toUpperCase(),
           to: enquiry.to.toUpperCase(),
           class: enquiry.class,
           mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
           lastPassIssued: enquiry.lastPassIssued
-            ? formatDate(enquiry.lastPassIssued.toDate())
+            ? formatDate(new Date(enquiry.lastPassIssued))
             : "",
           address: enquiry.address.toUpperCase(),
         };

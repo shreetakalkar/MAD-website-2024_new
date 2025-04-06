@@ -8,8 +8,13 @@ import { useToast } from "@/components/ui/use-toast";
 import React, { useState } from "react";
 import { Loader } from "lucide-react";
 import { dateFormat } from "@/constants/dateFormat";
+import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
+
 
 export default function DiscardPass() {
+
+  const storage = getStorage();
+  const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -29,18 +34,24 @@ export default function DiscardPass() {
 
     setLoading(true);
     try {
-      const docRef = doc(db, "ConcessionHistory", "History");
 
-      await updateDoc(docRef, {
-        history: arrayUnion({
-          passNum,
-          lastPassIssued: Timestamp.now(),
-          certificateNumber: passNum,
-          status: "cancelled",
-        }),
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const existingData = await response.json();
+      const history = Array.isArray(existingData) ? existingData : [];
+
+      const newEntry = {
+        passNum,
+        certificateNumber: passNum,
+        status: "cancelled",
+        lastPassIssued: new Date().toISOString(),
+      };
+
+      history.push(newEntry);
+      
+      await uploadString(fileRef, JSON.stringify(history, null, 2), "raw", {
+        contentType: "application/json",
       });
-
-      inputField.value = "";
 
       // Update Stats
       const concessionHistoryStatRef = doc(db, "ConcessionHistory", "DailyStats");

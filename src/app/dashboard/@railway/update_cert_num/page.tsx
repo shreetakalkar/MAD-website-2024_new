@@ -13,6 +13,12 @@ import {
   where,
 } from "firebase/firestore";
 import { Toast } from "@/components/ui/toast";
+import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
 
 const UpdateCertificateNumber = () => {
   const [loading, setLoading] = useState(false);
@@ -26,32 +32,35 @@ const UpdateCertificateNumber = () => {
 
   const handleSearch = async () => {
     if (!searchInput) return;
-
+  
     setLoading(true);
-
+  
     try {
-      // Reference to the 'Concession History' collection and 'History' document
-      const historyDocRef = doc(db, "ConcessionHistory", "History");
-      const historyDocSnap = await getDoc(historyDocRef);
-
-      if (historyDocSnap.exists()) {
-        const history = historyDocSnap.data()?.history as Array<any>;
-
-        const matchedHistory = history
+      const storage = getStorage();
+      const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
+  
+      // Fetch the JSON file from Firebase Storage
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const history = await response.json();
+  
+      if (Array.isArray(history)) {
+        // Search for matching certificate number (latest first)
+        const matchedHistory = [...history]
           .reverse()
           .find((entry) => entry.certificateNumber === searchInput);
-
+  
         if (matchedHistory) {
           setCurrUser(matchedHistory);
           setNewCertificateNumber(matchedHistory.certificateNumber); // Set initial value
         } else {
-          // console.log("No matching certificate number found.");
+          console.log("No matching certificate number found.");
         }
       } else {
-       //  console.log("No such document!");
+        console.error("Invalid history data format in JSON.");
       }
     } catch (error) {
-      console.error("Error fetching history:", error);
+      console.error("Error fetching history from JSON:", error);
     } finally {
       setLoading(false);
     }
@@ -76,31 +85,45 @@ const UpdateCertificateNumber = () => {
 
     setLoading(true);
 
+    const storage = getStorage();
+    const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
+
     try {
       // Step 1: Update ConcessionHistory
-      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
-      const historyDocSnap = await getDoc(concessionHistoryRef);
-      const historyData = historyDocSnap.data()?.history || [];
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const historyData = await response.json();
+
+      if (!Array.isArray(historyData)) {
+        console.error("Invalid history format in JSON file.");
+        return;
+      }
 
       let historyUpdated = false;
 
-      // Reverse traverse the history array to find the matching certificate number
+      // Step 2: Update all matching entries
       for (let i = historyData.length - 1; i >= 0; i--) {
-        const historyItem = historyData[i];
-        if (historyItem.certificateNumber === currUser.certificateNumber) {
-          // Update the history item
-          historyItem.certificateNumber = newCertificateNumber;
-          historyItem.passNum = newCertificateNumber;
+        const item = historyData[i];
+        if (item.certificateNumber === currUser.certificateNumber) {
+          item.certificateNumber = newCertificateNumber;
+          item.passNum = newCertificateNumber;
           historyUpdated = true;
-          break; // Once found, no need to check further
         }
       }
 
-      // If we found the history item and updated it, save the changes back to Firestore
+      // Step 3: If updated, upload the new JSON
       if (historyUpdated) {
-        await updateDoc(concessionHistoryRef, {
-          history: historyData,
-        });
+        await uploadString(
+          fileRef,
+          JSON.stringify(historyData, null, 2),
+          "raw",
+          {
+            contentType: "application/json",
+          }
+        );
+        console.log("✅ Certificate number updated in JSON.");
+      } else {
+        console.warn("No matching certificate number found.");
       }
 
       // Step 2: Update ConcessionRequest collection

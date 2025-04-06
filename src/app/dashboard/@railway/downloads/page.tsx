@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Loader } from "lucide-react";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export interface BatchElement {
   enquiries: Enquiry[];
@@ -61,6 +62,10 @@ interface PassBookRange {
 
 interface PassBookRanges {
   [key: string]: PassBookRange;
+}
+
+interface HistoryItem {
+  passNum: string;
 }
 
 const Downloads: React.FC = () => {
@@ -297,13 +302,22 @@ const Downloads: React.FC = () => {
   };
 
   const fetchEnquiries = async () => {
+
+    const storage = getStorage();
+    const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
+
     try {
       const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
       const docSnap = await getDoc(concessionHistoryRef);
       const downloadHistory = await fetchDownloadHistory();
       const passBookDetails = await fetchPassBookDetails();
 
-      if (!docSnap.exists() || !docSnap.data().history) {
+      // FireStrorage
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const historyData: Enquiry[] = await response.json();
+
+      if (!docSnap.exists() || !historyData.length) {
         setFilteredBatches([]);
         return;
       }
@@ -317,21 +331,16 @@ const Downloads: React.FC = () => {
       }
 
       const keyRangeMap = parseKeyRanges(passBookDetails);
-
-      // const sortedData = docSnap
-      //   .data()
-      //   .history.sort((a: any, b: any) => a.passNum.localeCompare(b.passNum))
-      //   .reverse();
-
-      const sortedData = docSnap
-      .data()
-      .history.sort((a: any, b: any) => {
+            
+      const sortedData = historyData
+        .sort((a, b) => {
           const aClean = a.passNum.replace(/^[A-Za-z]\s*/, "");
           const bClean = b.passNum.replace(/^[A-Za-z]\s*/, "");
           return bClean.localeCompare(aClean);
-      })
-      .reverse();
-    
+        })
+        .reverse();
+      
+        console.log("Sorted Data", sortedData)
 
       const batches = makeBatches(sortedData, downloadHistory, keyRangeMap);
       setBatchedEnquiries(batches)

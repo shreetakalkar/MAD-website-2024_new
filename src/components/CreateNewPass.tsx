@@ -16,6 +16,13 @@ import useGradYear from "@/constants/gradYearList";
 import { dateFormat } from "@/constants/dateFormat";
 
 import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
+
+import {
   Form,
   FormControl,
   FormDescription,
@@ -306,16 +313,17 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
   };
 
   const appendFEDataInConcHistory = async (values: FormValues) => {
-    const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
     setLoading(true);
     try {
       const { ageYears, ageMonths } = calculateAge(values.dob);
       const { email, certNo, gradYear, phoneNum, ...formData } = values;
-
+  
       const selectedGradYear = gradYearList.find(
         (item) => item.year === gradYear
       )?.gradYear;
+  
       const parsedPhoneNum = parseInt(phoneNum, 10);
+  
       const formattedData = {
         ...formData,
         ageYears,
@@ -323,15 +331,26 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
         gradyear: selectedGradYear,
         passNum: certNo,
         phoneNum: parsedPhoneNum,
-        lastPassIssued: new Date(),
+        lastPassIssued: new Date().toISOString(),
         status: "serviced",
         statusMessage: "Your request has been serviced",
       };
-
-      await updateDoc(concessionHistoryRef, {
-        history: arrayUnion(formattedData),
+  
+      const storage = getStorage();
+      const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
+  
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const existingData = await response.json();
+  
+      const history: any[] = Array.isArray(existingData) ? existingData : [];
+  
+      history.push(formattedData);
+  
+      await uploadString(fileRef, JSON.stringify(history, null, 2), "raw", {
+        contentType: "application/json",
       });
-
+  
       toast({
         description: "Concession request has been created!",
       });
