@@ -7,14 +7,40 @@ import { db } from "@/config/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { dateFormat } from "@/constants/dateFormat";
 import { Loader } from "lucide-react";
 import { any } from "zod";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
-// const parseDate = (dateStr: any) => {
-//   const [day, month, year] = dateStr.split("/").map(Number);
-//   return new Date(year, month - 1, day);
-// };
+const dateFormat = (input: string | { seconds: number } | null | undefined): string => {
+  if (!input) return "N/A";
+
+  let date: Date;
+
+  // Handle Firestore-style timestamp
+  if (typeof input === "object" && input.seconds) {
+    date = new Date(input.seconds * 1000);
+  }
+  // Handle string ISO format
+  else if (typeof input === "string") {
+    // Try to parse the ISO string safely
+    const cleaned = input.replace(/\.(\d{3})\d+/, '.$1'); // Trim microseconds if too long
+    date = new Date(cleaned);
+  } else {
+    return "N/A";
+  }
+
+  // Final validation
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  const year = date.getFullYear().toString().slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${day}/${month}/${year}`;
+};
+
 
 const Approved_Rejected = () => {
   interface Data {
@@ -26,9 +52,23 @@ const Approved_Rejected = () => {
     to: string;
     class: string;
     mode: string;
-    dateOfIssue: number;
+    dateOfIssue: string;
     address: string;
     status: string;
+  }
+
+  interface RawHistoryItem {
+    passNum: string;
+    firstName?: string;
+    gender?: string;
+    dob?: { seconds: number };
+    from?: string;
+    to?: string;
+    class?: string;
+    duration?: string;
+    lastPassIssued?: { seconds: number };
+    address?: string;
+    status?: string;
   }
 
   const columns: ColumnDef<Data, any>[] = [
@@ -142,17 +182,25 @@ const Approved_Rejected = () => {
         );
       },
       cell: ({ row }) => {
-        const cellData = row.getValue("dateOfIssue") as number;
+        const cellData = row.getValue("dateOfIssue") as string;
         return (
-          <div className="flex h-[6vh] text-center items-center justify-center ">
-            {dateFormat(cellData)}
+          <div className="flex h-[6vh] text-center items-center justify-center">
+            {cellData}
           </div>
         );
       },
       sortingFn: (rowA, rowB) => {
-        return rowA.original.dateOfIssue - rowB.original.dateOfIssue;
+        const parseDate = (dateStr: string) => {
+          const [day, month, year] = dateStr.split("/").map(Number);
+          return new Date(year, month - 1, day).getTime(); // JS months are 0-indexed
+        };
+    
+        const dateA = parseDate(rowA.original.dateOfIssue);
+        const dateB = parseDate(rowB.original.dateOfIssue);
+    
+        return dateA - dateB;
       },
-    },   
+    },
     {
       accessorKey: "address",
       header: () => <div className="w-[200px] text-center">Address</div>,
@@ -264,49 +312,98 @@ const Approved_Rejected = () => {
   //   fetchUserData();
   // }, []);
 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const concessionHistoryDoc = doc(db, "ConcessionHistory", "History");
+  //       const docSnapshot = await getDoc(concessionHistoryDoc);
+
+  //       if (docSnapshot.exists()) {
+  //         const history = docSnapshot.data().history || [];
+
+  //         const userMap = new Map();
+
+  //         history.forEach((item: any, index: number) => {
+  //           if (item.status === "serviced" || item.status === "cancelled") {
+  //             const existingItem = userMap.get(item.passNum);
+
+  //             if (!existingItem || existingItem.index < index) {
+  //               userMap.set(item.passNum, {
+  //                 certificateNumber: item.passNum || "N/A",
+  //                 name: item.firstName || "N/A",
+  //                 gender: item.gender || "N/A",
+  //                 dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : "N/A",
+  //                 from: item.from || "N/A",
+  //                 to: item.to || "N/A",
+  //                 class: item.class || "N/A",
+  //                 mode: item.duration || "N/A",
+  //                 dateOfIssue: item.lastPassIssued?.seconds || 0,
+  //                 address: item.address || "N/A",
+  //                 status: item.status || "N/A",
+  //                 index: index,
+  //               });
+  //             }
+  //           }
+  //         });
+
+  //         const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
+  //           return b.dateOfIssue - a.dateOfIssue;
+  //         });
+
+  //         const userList = sortedUserArray.map(({ index, ...rest }) => rest);
+  //         setData(userList);
+  //       } else {
+  //         console.error("Document does not exist");
+  //       }
+  //     } catch (err) {
+  //       console.error("Error fetching data: ", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, []);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const concessionHistoryDoc = doc(db, "ConcessionHistory", "History");
-        const docSnapshot = await getDoc(concessionHistoryDoc);
+        const storage = getStorage();
+        const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
+        const url = await getDownloadURL(fileRef);
+        const response = await fetch(url);
+        const history: RawHistoryItem[] = await response.json();
 
-        if (docSnapshot.exists()) {
-          const history = docSnapshot.data().history || [];
+        const userMap = new Map<string, Data & { index: number }>();
 
-          const userMap = new Map();
+        history.forEach((item, index) => {
+          if (item.status === "serviced" || item.status === "cancelled") {
+            const existing = userMap.get(item.passNum);
 
-          history.forEach((item: any, index: number) => {
-            if (item.status === "serviced" || item.status === "cancelled") {
-              const existingItem = userMap.get(item.passNum);
-
-              if (!existingItem || existingItem.index < index) {
-                userMap.set(item.passNum, {
-                  certificateNumber: item.passNum || "N/A",
-                  name: item.firstName || "N/A",
-                  gender: item.gender || "N/A",
-                  dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : "N/A",
-                  from: item.from || "N/A",
-                  to: item.to || "N/A",
-                  class: item.class || "N/A",
-                  mode: item.duration || "N/A",
-                  dateOfIssue: item.lastPassIssued?.seconds || 0,
-                  address: item.address || "N/A",
-                  status: item.status || "N/A",
-                  index: index,
-                });
-              }
+            if (!existing || existing.index < index) {
+              userMap.set(item.passNum, {
+                certificateNumber: item.passNum || "N/A",
+                name: item.firstName || "N/A",
+                gender: item.gender || "N/A",
+                dob: dateFormat(item.dob) || "N/A",
+                from: item.from || "N/A",
+                to: item.to || "N/A",
+                class: item.class || "N/A",
+                mode: item.duration || "N/A",
+                dateOfIssue: dateFormat(item.lastPassIssued) || "N/A",
+                address: item.address || "N/A",
+                status: item.status || "N/A",
+                index,
+              });
             }
-          });
+          }
+        });
 
-          const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
-            return b.dateOfIssue - a.dateOfIssue;
-          });
+        const sortedArray = Array.from(userMap.values())
+          .sort((a, b) => new Date(b.dateOfIssue).getTime() - new Date(a.dateOfIssue).getTime())
+          .map(({ index, ...rest }) => rest); // Strip `index`
 
-          const userList = sortedUserArray.map(({ index, ...rest }) => rest);
-          setData(userList);
-        } else {
-          console.error("Document does not exist");
-        }
+        setData(sortedArray);
       } catch (err) {
         console.error("Error fetching data: ", err);
       } finally {

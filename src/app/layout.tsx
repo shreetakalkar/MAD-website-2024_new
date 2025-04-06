@@ -25,7 +25,7 @@ export default function RootLayout({
 
   useEffect(() => {
     const fetchMaintenanceStatus = async () => {
-      const docRef = doc(db, "Maintainance", "Web Maintenance"); // mujhse zada spelling mistake koi nhi karta hoga
+      const docRef = doc(db, "Maintainance", "Web Maintenance1"); // mujhse zada spelling mistake koi nhi karta hoga
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setIsUnderMaintenance(docSnap.data().underMaintenance);

@@ -39,6 +39,12 @@ import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { dateFormat } from "@/constants/dateFormat";
 import { Check, X } from 'lucide-react';
+import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
 
 const RailwayUpdateCard = ({
   formSchema,
@@ -69,6 +75,7 @@ const RailwayUpdateCard = ({
     }
     setIsEditable(!isEditable);
   };
+
   const extractRequiredFields = (schema: any) => {
     const requiredFields = [];
 
@@ -83,6 +90,7 @@ const RailwayUpdateCard = ({
     }
     return requiredFields;
   };
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
@@ -183,6 +191,10 @@ const RailwayUpdateCard = ({
 
   const cancelForm = async () => {
     setLoading(true);
+
+    const storage = getStorage();
+    const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
+
     try {
       const concessionRef = doc(db, "ConcessionDetails", passData.uid);
       await updateDoc(concessionRef, {
@@ -198,33 +210,28 @@ const RailwayUpdateCard = ({
       });
 
       // Update history array in concessionHistory
-      const historyRef = doc(db, "ConcessionHistory", "History");
-      const historySnap = await getDoc(historyRef);
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const existingData = await response.json();
 
-      if (historySnap.exists()) {
-        let history = historySnap.data().history;
+      const history: any[] = Array.isArray(existingData) ? existingData : [];
 
-        let updated = false;
-
-        // console.log("Pass: ", passData.certNo);
-
-        for (let i = history.length - 1; i >= 0; i--) {
-          if (history[i].passNum === passData.certNo) {
-            history[i].status = "cancelled";
-            updated = true;
-            break;
-          }
+      let updated = false;
+      for (let i = history.length - 1; i >= 0; i--) {
+        if (history[i].passNum === passData.certNo) {
+          history[i].status = "cancelled";
+          updated = true;
+          break;
         }
+      }
 
-        if (updated) {
-          await updateDoc(historyRef, {
-            history: history,
-          });
-        } else {
-          console.error("Pass number not found in history.");
-        }
+      if (updated) {
+        await uploadString(fileRef, JSON.stringify(history, null, 2), "raw", {
+          contentType: "application/json",
+        });
+        console.log("Status updated in concessionHistory.json");
       } else {
-        console.error("History document does not exist.");
+        console.error("Pass number not found in history.");
       }
 
       // For Stats UPDATE PASS

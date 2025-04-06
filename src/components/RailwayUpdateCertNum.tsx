@@ -13,13 +13,48 @@ import {
   where,
   setDoc
 } from "firebase/firestore";
-import { dateFormat } from "@/constants/dateFormat";
+// import { dateFormat } from "@/constants/dateFormat";
 import { useToast } from "@/components/ui/use-toast";
-
+import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
 
 type UpdateCertificateNumberProps = {
     setShowUpdateCertNum: React.Dispatch<React.SetStateAction<boolean>>;
-  };
+};
+
+const dateFormat = (input: string | { seconds: number } | null | undefined): string => {
+  if (!input) return "N/A";
+
+  let date: Date;
+
+  // Handle Firestore-style timestamp
+  if (typeof input === "object" && input.seconds) {
+    date = new Date(input.seconds * 1000);
+  }
+  // Handle string ISO format
+  else if (typeof input === "string") {
+    // Try to parse the ISO string safely
+    const cleaned = input.replace(/\.(\d{3})\d+/, '.$1'); // Trim microseconds if too long
+    date = new Date(cleaned);
+  } else {
+    return "N/A";
+  }
+
+  // Final validation
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  const year = date.getFullYear().toString().slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${day}/${month}/${year}`;
+};
 
 const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
     setShowUpdateCertNum,
@@ -35,35 +70,71 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
     setShowUpdateCertNum(false); // Set the state to false to hide this component
   };
 
+  // const handleSearchForCertNum = async () => {
+  //   if (!searchInput) return;
+
+  //   setLoading(true);
+
+  //   try {
+  //     // Reference to the 'Concession History' collection and 'History' document
+  //     console.log("UPDATE PASS NUM: ", searchInput)
+  //     const historyDocRef = doc(db, "ConcessionHistory", "History");
+  //     const historyDocSnap = await getDoc(historyDocRef);
+
+  //     if (historyDocSnap.exists()) {
+  //       const history = historyDocSnap.data()?.history as Array<any>;
+
+  //       const matchedHistory = history
+  //         .reverse()
+  //         .find((entry) => entry.certificateNumber === searchInput);
+
+  //       if (matchedHistory) {
+  //         setCurrUser(matchedHistory);
+  //         setNewCertificateNumber(matchedHistory.certificateNumber); // Set initial value
+  //       } else {
+  //         // console.log("No matching certificate number found.");
+  //       }
+  //     } else {
+  //       // console.log("No such document!");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching history:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSearchForCertNum = async () => {
     if (!searchInput) return;
-
+  
     setLoading(true);
-
+  
     try {
-      // Reference to the 'Concession History' collection and 'History' document
-      console.log("UPDATE PASS NUM: ", searchInput)
-      const historyDocRef = doc(db, "ConcessionHistory", "History");
-      const historyDocSnap = await getDoc(historyDocRef);
-
-      if (historyDocSnap.exists()) {
-        const history = historyDocSnap.data()?.history as Array<any>;
-
-        const matchedHistory = history
+      const storage = getStorage();
+      const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
+  
+      // Fetch the JSON file from Firebase Storage
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const history = await response.json();
+  
+      if (Array.isArray(history)) {
+        // Search for matching certificate number (latest first)
+        const matchedHistory = [...history]
           .reverse()
           .find((entry) => entry.certificateNumber === searchInput);
-
+  
         if (matchedHistory) {
           setCurrUser(matchedHistory);
           setNewCertificateNumber(matchedHistory.certificateNumber); // Set initial value
         } else {
-          // console.log("No matching certificate number found.");
+          console.log("No matching certificate number found.");
         }
       } else {
-        // console.log("No such document!");
+        console.error("Invalid history data format in JSON.");
       }
     } catch (error) {
-      console.error("Error fetching history:", error);
+      console.error("Error fetching history from JSON:", error);
     } finally {
       setLoading(false);
     }
@@ -88,31 +159,47 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
 
     setLoading(true);
 
+    const storage = getStorage();
+    const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
+
+
     try {
+      
       // Step 1: Update ConcessionHistory
-      const concessionHistoryRef = doc(db, "ConcessionHistory", "History");
-      const historyDocSnap = await getDoc(concessionHistoryRef);
-      const historyData = historyDocSnap.data()?.history || [];
+      const url = await getDownloadURL(fileRef);
+      const response = await fetch(url);
+      const historyData = await response.json();
+
+      if (!Array.isArray(historyData)) {
+        console.error("Invalid history format in JSON file.");
+        return;
+      }
 
       let historyUpdated = false;
 
-      // Reverse traverse the history array to find the matching certificate number
+      // Step 2: Update all matching entries
       for (let i = historyData.length - 1; i >= 0; i--) {
-        const historyItem = historyData[i];
-        if (historyItem.certificateNumber === currUser.certificateNumber) {
-          // Update the history item
-          historyItem.certificateNumber = newCertificateNumber;
-          historyItem.passNum = newCertificateNumber;
+        const item = historyData[i];
+        if (item.certificateNumber === currUser.certificateNumber) {
+          item.certificateNumber = newCertificateNumber;
+          item.passNum = newCertificateNumber;
           historyUpdated = true;
-          // break; // Nah bhai. Dekh when there will be multiple updated on wrong pass number then woh case me tujhe woh sare updates ke pass num theek karna hoga.
         }
       }
 
-      // If we found the history item and updated it, save the changes back to Firestore
+      // Step 3: If updated, upload the new JSON
       if (historyUpdated) {
-        await updateDoc(concessionHistoryRef, {
-          history: historyData,
-        });
+        await uploadString(
+          fileRef,
+          JSON.stringify(historyData, null, 2),
+          "raw",
+          {
+            contentType: "application/json",
+          }
+        );
+        console.log("✅ Certificate number updated in JSON.");
+      } else {
+        console.warn("No matching certificate number found.");
       }
 
       // Step 2: Update ConcessionRequest collection
@@ -160,7 +247,7 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
       // Update Stats
       const concessionHistoryStatRef = doc(db, "ConcessionHistory", "DailyStats");
       const concessionHistorySnap = await getDoc(concessionHistoryStatRef);
-      const currentDate = dateFormat(new Date())
+      const currentDate = dateFormat(new Date().toISOString());
   
       if (concessionHistorySnap.exists()) {
         const historyData = concessionHistorySnap.data();
@@ -311,7 +398,7 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
                           </label>
                           <input
                             type="text"
-                            value={dateFormat(currUser.lastPassIssued.seconds)}
+                            value={dateFormat(currUser.lastPassIssued)}
                             disabled
                             className="mt-1 block w-full px-3 py-2 text-sm text-gray-500 bg-gray-100 border border-gray-300 rounded-md"
                           />
