@@ -280,6 +280,11 @@ export const createExcelFile = async (
     
     // Add the data rows to the worksheet
     batch.enquiries.forEach((enquiry, index) => {
+
+      const toDate = (value: string | { toDate: () => Date }) => {
+        return typeof value === "string" ? new Date(value) : value.toDate();
+      };
+
       const formatDate = (date: Date) => {
         const d = new Date(date);
         const year = d.getFullYear().toString().substr(-2);
@@ -287,6 +292,8 @@ export const createExcelFile = async (
         const day = String(d.getDate()).padStart(2, "0");
         return `${day}/${month}/${year}`;
       };
+
+
 
       // Insert the "Thadomal Shahani Engineering College" row after every 20 entries
       if (index > 0 && index % 20 === 0) {
@@ -366,13 +373,13 @@ export const createExcelFile = async (
           passNum: enquiry.passNum,
           name: `${enquiry.lastName.toUpperCase()} ${enquiry.firstName.toUpperCase()} ${enquiry.middleName.toUpperCase()}`,
           gender: enquiry.gender === "Male" ? "M" : "F",
-          dob: formatDate(new Date(enquiry.dob)),
+          dob: formatDate(toDate(enquiry.dob)),
           from: enquiry.from.toUpperCase(),
           to: enquiry.to.toUpperCase(),
           class: enquiry.class,
           mode: enquiry.duration === "Monthly" ? "Mly" : "Qty",
           lastPassIssued: enquiry.lastPassIssued
-            ? formatDate(new Date(enquiry.lastPassIssued))
+            ? formatDate(toDate(enquiry.lastPassIssued))
             : "",
           address: enquiry.address.toUpperCase(),
         };
