@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import DataTable from "@/components/datatable";
 import { ColumnDef } from "@tanstack/react-table";
 import { db } from "@/config/firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, arrayRemove, updateDoc} from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { any } from "zod";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 
 const dateFormat = (input: string | { seconds: number } | null | undefined): string => {
   if (!input) return "N/A";
@@ -231,143 +231,87 @@ const Approved_Rejected = () => {
 
   const [data, setData] = useState<Data[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTransferComplete, setIsTransferComplete] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const concessionHistoryRef = collection(db, "ConcessionHistory");
+  const storage = getStorage();
+  const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
 
-  //       const querySnapshot = await getDocs(concessionHistoryRef);
-
-  //       const userMap = new Map<string, {
-  //         certificateNumber: string;
-  //         name: string;
-  //         gender: string;
-  //         dob: string;
-  //         from: string;
-  //         to: string;
-  //         class: string;
-  //         mode: string;
-  //         dateOfIssue: string;
-  //         address: string;
-  //         status: string;
-  //         index: number;
-  //       }>();
-
-  //       querySnapshot.docs.forEach((doc) => {
-  //         const history = doc.data().history;
-
-  //         history.forEach((item: any, index: number) => {
-  //           if (item.status === "serviced" || item.status === "cancelled") {
-  //             const existingItem = userMap.get(item.passNum);
-
-  //             if (!existingItem || existingItem.index < index) {
-  //               userMap.set(item.passNum, {
-  //                 certificateNumber: item.passNum || "N/A",
-  //                 name: item.firstName || "N/A",
-  //                 gender: item.gender || "N/A",
-  //                 dob: item.dob?.seconds
-  //                   ? dateFormat(item.dob.seconds)
-  //                   : "N/A",
-  //                 from: item.from || "N/A",
-  //                 to: item.to || "N/A",
-  //                 class: item.class || "N/A",
-  //                 mode: item.duration || "N/A",
-  //                 dateOfIssue: item.lastPassIssued?.seconds
-  //                   ? dateFormat(item.lastPassIssued.seconds)
-  //                   : "N/A",
-  //                 address: item.address || "N/A",
-  //                 status: item.status || "N/A",
-  //                 index: index
-  //               });
-  //             }
-  //           }
-  //         });
-  //       });
-
-  //       const parseDate = (dateStr: string): Date => {
-  //         const [day, month, year] = dateStr.split("/auth").map(Number);
-  //         return new Date(year, month - 1, day);
-  //       };
-
-  //       const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
-  //         const dateA =
-  //           a.dateOfIssue !== "N/A" ? parseDate(a.dateOfIssue).getTime() : 0;
-  //         const dateB =
-  //           b.dateOfIssue !== "N/A" ? parseDate(b.dateOfIssue).getTime() : 0;
-  //         return dateA - dateB;
-  //       });
-
-  //       const userList = sortedUserArray.map(({ index, ...rest }) => rest);
-
-  //       setData(userList);
-  //     } catch (err) {
-  //       console.error("Error fetching data: ", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-
-  //   };
-
-  //   fetchUserData();
-  // }, []);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const concessionHistoryDoc = doc(db, "ConcessionHistory", "History");
-  //       const docSnapshot = await getDoc(concessionHistoryDoc);
-
-  //       if (docSnapshot.exists()) {
-  //         const history = docSnapshot.data().history || [];
-
-  //         const userMap = new Map();
-
-  //         history.forEach((item: any, index: number) => {
-  //           if (item.status === "serviced" || item.status === "cancelled") {
-  //             const existingItem = userMap.get(item.passNum);
-
-  //             if (!existingItem || existingItem.index < index) {
-  //               userMap.set(item.passNum, {
-  //                 certificateNumber: item.passNum || "N/A",
-  //                 name: item.firstName || "N/A",
-  //                 gender: item.gender || "N/A",
-  //                 dob: item.dob?.seconds ? dateFormat(item.dob.seconds) : "N/A",
-  //                 from: item.from || "N/A",
-  //                 to: item.to || "N/A",
-  //                 class: item.class || "N/A",
-  //                 mode: item.duration || "N/A",
-  //                 dateOfIssue: item.lastPassIssued?.seconds || 0,
-  //                 address: item.address || "N/A",
-  //                 status: item.status || "N/A",
-  //                 index: index,
-  //               });
-  //             }
-  //           }
-  //         });
-
-  //         const sortedUserArray = Array.from(userMap.values()).sort((a, b) => {
-  //           return b.dateOfIssue - a.dateOfIssue;
-  //         });
-
-  //         const userList = sortedUserArray.map(({ index, ...rest }) => rest);
-  //         setData(userList);
-  //       } else {
-  //         console.error("Document does not exist");
-  //       }
-  //     } catch (err) {
-  //       console.error("Error fetching data: ", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, []);
+  // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
+  useEffect(() => {
+    const requiredFields = [
+      "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",
+      "dob", "duration", "firstName", "from", "gender", "gradyear", "idCardURL",
+      "idCardURL2", "lastName", "lastPassIssued", "middleName", "passNum",
+      "phoneNum", "previousPassURL", "status", "statusMessage", "to", "travelLane"
+    ];
+  
+    const isValidObject = (obj:any) => {
+      return requiredFields.every(field => {
+        const value = obj[field];
+        if (value === null || value === undefined) return false;
+        if (typeof value === "string" && value.trim() === "") return false;
+        if (typeof value === "number" && isNaN(value)) return false;
+        return true;
+      });
+    };
+  
+    const checkAndTransferTempHistory = async () => {
+      setLoading(true);
+      try {
+        const tempHistoryRef = doc(db, "ConcessionTempHistory", "TempHistory");
+        const tempHistorySnap = await getDoc(tempHistoryRef);
+  
+        if (!tempHistorySnap.exists()) return;
+  
+        const tempData = tempHistorySnap.data();
+        const TempData = tempData.TempData || [];
+  
+        const validObjects = TempData.filter(isValidObject);
+  
+        if (validObjects.length > 0) {
+          // Fetch existing history.json data
+          const url = await getDownloadURL(fileRef);
+          const response = await fetch(url);
+          const existingData = await response.json();
+          const history = Array.isArray(existingData) ? existingData : [];
+  
+          const updatedHistory = [...history, ...validObjects];
+  
+          // Upload updated history
+          await uploadString(fileRef, JSON.stringify(updatedHistory, null, 2), "raw", {
+            contentType: "application/json",
+          });
+  
+          // Delete valid objects from Firestore array
+          for (const obj of validObjects) {
+            await updateDoc(tempHistoryRef, {
+              TempData: arrayRemove(obj)
+            });
+          }
+  
+          console.log(`Transferred ${validObjects.length} objects and removed them from Firestore.`);
+        } else {
+          console.log("No valid data found in TempData.");
+        }
+      } catch (err) {
+        console.error("Error transferring and cleaning up temp history:", err);
+      } finally {
+        setLoading(false);
+        setIsTransferComplete(true);
+      }
+    };
+  
+    checkAndTransferTempHistory();
+    
+  }, []);
 
   useEffect(() => {
+
+    if (!isTransferComplete) return;
+    
     const fetchUserData = async () => {
       try {
+        setLoading(true);
         const storage = getStorage();
         const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
         const url = await getDownloadURL(fileRef);
@@ -412,7 +356,7 @@ const Approved_Rejected = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [isTransferComplete]);
 
   if (loading) {
     return (
@@ -421,7 +365,7 @@ const Approved_Rejected = () => {
       </div>
     );
   }
-  //test123
+
   return (
     <div>
       <div className="w-[99vw] h-[99vh] flex flex-col">
