@@ -52,3 +52,6 @@ firestorageRule.rs
 
 .firebase
 .github
+
+/public/robots.txt
+/public/sitemap*.xml
