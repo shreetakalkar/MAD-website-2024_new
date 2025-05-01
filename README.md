@@ -1,49 +1,18 @@
-# DEVS CLUB-website-2024
-## DEVS CLUB Website
+# TSEC Developers Club Website (2024 Onwards)
 
-This official website of [TSEC](https://tsec.edu) maintained by TSEC DEVS Club.
+Welcome to the official repository of the [Developers Club of TSEC](https://tsecdevsclub.com). This site serves as the digital hub for our student-driven community, showcasing our projects, initiatives, and impact on the TSEC campus.
 
-## Code formating
-Use latest version of Prettier - Code formatter.
-## Contributing
+---
 
-DEVS CLUB website is a fully open-source project, and we welcome contributions. Information on how to get started can be found at our [contributor guide](./CONTRIBUTING.md).
+## 🧑‍💻 Tech Stack
 
+This project is built using [Next.js](https://nextjs.org/), bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app), and utilizes modern tools for styling, font optimization, and deployment.
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+---
 
-## Getting Started
+## 🚀 Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
+To run the development server locally:
 
 ```bash
 npm run dev
@@ -55,23 +24,44 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and visit [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can begin editing the website by modifying `app/page.tsx`. Changes are hot-reloaded automatically.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+---
 
-## Learn More
+## 📁 File Structure Notes
 
-To learn more about Next.js, take a look at the following resources:
+- Main content starts at: `src/`
+- API routes (if any) are defined in `src/app/*`
+- Fonts are managed using [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) with automatic optimization
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 🎯 Code Formatting
 
-## Deploy on Vercel
+Please use the latest version of **Prettier** for consistent code formatting.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🤝 Contributing
+
+The TSEC Developers Club website is an open-source project. We welcome all kinds of contributions—whether it's fixing bugs, improving performance, or adding new features.
+
+See our [contributor guide](./CONTRIBUTING.md) to get started.
+
+---
+
+## 📚 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs) – Explore Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) – An interactive learning experience.
+- [Vercel Deployment Guide](https://nextjs.org/docs/deployment) – Best practices for deploying with Vercel.
+
+---
+
+## 🌐 Deployment
+
+This site is deployed on [Vercel](https://vercel.com/), the platform built by the creators of Next.js. For easy deployment:
+
+[Deploy on Vercel →](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
