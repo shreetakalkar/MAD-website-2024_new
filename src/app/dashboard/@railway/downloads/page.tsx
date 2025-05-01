@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc,getDocs,setDoc,Timestamp,updateDoc,arrayRemove} from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { createExcelFile, downloadExcelFile } from "@/lib/excelUtils";
 import { useTheme } from "next-themes";
@@ -38,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Loader } from "lucide-react";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, uploadString} from "firebase/storage";
 
 export interface BatchElement {
   enquiries: Enquiry[];
@@ -74,6 +65,7 @@ const Downloads: React.FC = () => {
   const [batchedEnquiries, setBatchedEnquiries] = useState<BatchElement[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredBatches, setFilteredBatches] = useState<BatchElement[]>([]);
+  const [isTransferComplete, setIsTransferComplete] = useState(false);
 
   // For adding new Pass Book
   const [rangeStart, setRangeStart] = useState("");
@@ -81,6 +73,9 @@ const Downloads: React.FC = () => {
   const [travelLane, setTravelLane] = useState("Select Lane");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(Boolean);
+
+  const storage = getStorage();
+  const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
 
   // To Save New Pass Book
   const handleSave = async () => {
@@ -354,9 +349,79 @@ const Downloads: React.FC = () => {
     }
   };
 
+  // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
   useEffect(() => {
+    const requiredFields = [
+      "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",
+      "dob", "duration", "firstName", "from", "gender", "gradyear", "idCardURL",
+      "idCardURL2", "lastName", "lastPassIssued", "middleName", "passNum",
+      "phoneNum", "previousPassURL", "status", "statusMessage", "to", "travelLane"
+    ];
+  
+    const isValidObject = (obj:any) => {
+      return requiredFields.every(field => {
+        const value = obj[field];
+        if (value === null || value === undefined) return false;
+        if (typeof value === "string" && value.trim() === "") return false;
+        if (typeof value === "number" && isNaN(value)) return false;
+        return true;
+      });
+    };
+  
+    const checkAndTransferTempHistory = async () => {
+      setLoading(true);
+      try {
+        const tempHistoryRef = doc(db, "ConcessionTempHistory", "TempHistory");
+        const tempHistorySnap = await getDoc(tempHistoryRef);
+  
+        if (!tempHistorySnap.exists()) return;
+  
+        const tempData = tempHistorySnap.data();
+        const TempData = tempData.TempData || [];
+  
+        const validObjects = TempData.filter(isValidObject);
+  
+        if (validObjects.length > 0) {
+          // Fetch existing history.json data
+          const url = await getDownloadURL(fileRef);
+          const response = await fetch(url);
+          const existingData = await response.json();
+          const history = Array.isArray(existingData) ? existingData : [];
+  
+          const updatedHistory = [...history, ...validObjects];
+  
+          // Upload updated history
+          await uploadString(fileRef, JSON.stringify(updatedHistory, null, 2), "raw", {
+            contentType: "application/json",
+          });
+  
+          // Delete valid objects from Firestore array
+          for (const obj of validObjects) {
+            await updateDoc(tempHistoryRef, {
+              TempData: arrayRemove(obj)
+            });
+          }
+  
+          console.log(`Transferred ${validObjects.length} objects and removed them from Firestore.`);
+        } else {
+          console.log("No valid data found in TempData.");
+        }
+      } catch (err) {
+        console.error("Error transferring and cleaning up temp history:", err);
+      } finally {
+        setLoading(false);
+        setIsTransferComplete(true);
+      }
+    };
+  
+    checkAndTransferTempHistory();
+    
+  }, []);  
+
+  useEffect(() => {
+    if (!isTransferComplete) return;
     fetchEnquiries();
-  }, []);
+  }, [isTransferComplete]);
 
   useEffect(() => {
     let allBatches = batchedEnquiries;
