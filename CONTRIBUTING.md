@@ -13,7 +13,7 @@ If you are contributing for the first time then take a look at [this](https://ww
 ## Project structure we follow
 
 ```
-TSEC_New_Web
+MAD-Website-2024
 ├─ .eslintrc.json
 ├─ CODE_OF_CONDUCT.md
 ├─ components.json
