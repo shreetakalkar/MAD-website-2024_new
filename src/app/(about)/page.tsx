@@ -132,7 +132,7 @@ export default function Page() {
             </a>
             <Image
               src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
-              alt="Playstore QR"
+              alt="Download TSEC App on Google Play - QR Code"
               className="h-auto rounded-md mb-2 w-full"
               width={300}
               height={300}
