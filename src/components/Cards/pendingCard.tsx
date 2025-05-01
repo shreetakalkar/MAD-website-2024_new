@@ -301,6 +301,7 @@ const Modal: React.FC<ModalProps> = ({
     } else {
       setError("");
       onSubmit(certificateNumber)
+      setShowConfirmation(false)
     }
   };
 
