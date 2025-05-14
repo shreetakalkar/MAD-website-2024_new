@@ -353,9 +353,9 @@ const Downloads: React.FC = () => {
   useEffect(() => {
     const requiredFields = [
       "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",
-      "dob", "duration", "firstName", "from", "gender", "gradyear", "idCardURL",
-      "idCardURL2", "lastName", "lastPassIssued", "middleName", "passNum",
-      "phoneNum", "previousPassURL", "status", "statusMessage", "to", "travelLane"
+      "dob", "duration", "firstName", "from", "gender", "gradyear",
+      "lastName", "lastPassIssued", "middleName", "passNum",
+      "phoneNum", "status", "statusMessage", "to", "travelLane"
     ];
   
     const isValidObject = (obj:any) => {
