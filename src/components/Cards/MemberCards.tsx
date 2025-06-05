@@ -15,8 +15,8 @@ const MemberCard = ({ member }: any) => {
             <div className="relative w-40 h-40 ">
               <Image
                 src={member.image}
-                height="600"
-                width="600"
+                height={600}
+                width={600}
                 className="h-full w-full object-cover rounded-xl group-hover/card:shadow-xl"
                 alt={member.name}
               />
@@ -30,22 +30,20 @@ const MemberCard = ({ member }: any) => {
               className="text-2xl font-bold text-gray-400 dark:text-gray-500"
             >
               <div className="min-h-[4rem] break-words flex flex-col justify-end">
-                <div>
-                  {member.name}
-                </div>
+                <div>{member.name}</div>
               </div>
             </CardItem>
-            
+
             <div className="w-12 h-0.5 bg-blue-600 my-4"></div>
-            
+
+            {/* ✅ FIXED: Changed 'as="p"' to just a div wrapper */}
             <CardItem
-              as="p"
               translateZ="60"
               className="text-base text-gray-500 dark:text-gray-400"
             >
-              <div className="min-h-[3rem] break-words">
+              <span className="min-h-[3rem] break-words">
                 {member.role}
-              </div>
+              </span>
             </CardItem>
 
             {/* Social Links */}
