@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Sun, Moon, ArrowRight } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { ModeToggle } from '../modeToggle'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
@@ -17,6 +17,13 @@ export function Navbar() {
   const pathname = usePathname()
   const { theme } = useTheme()
 
+  // 👇 Add mount check to prevent hydration mismatch
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -26,13 +33,15 @@ export function Navbar() {
     >
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src={theme === "dark" ? DevsDark : DevsLight}
-            alt="logo"
-            width={65}
-            height={65}
-            priority
-          />
+          {mounted && (
+            <Image
+              src={theme === "dark" ? DevsDark : DevsLight}
+              alt="logo"
+              width={65}
+              height={65}
+              priority
+            />
+          )}
         </Link>
         <div className="flex items-center gap-6">
           <nav className="hidden md:block">
@@ -55,9 +64,7 @@ export function Navbar() {
               className="hidden md:block"
             >
               <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
-                <Link href="/auth">
-                  Sign In
-                </Link>
+                <Link href="/auth">Sign In</Link>
               </Button>
             </motion.div>
             <ModeToggle />
