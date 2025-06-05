@@ -1,4 +1,3 @@
-
 import "./globals.css";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
@@ -7,6 +6,7 @@ import ClientAppWrapper from "@/components/ClientAppWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tsecdevsclub.com"),
   title: "Developers Club of TSEC | TSEC Devs Club",
   description: "Creators of the official TSEC App...",
   openGraph: {
@@ -16,28 +16,33 @@ export const metadata: Metadata = {
     url: "https://tsecdevsclub.com",
     images: [
       {
-        url: "/devsLogo.png",
+        url: "/devsLogo.png", // This becomes absolute with metadataBase
         width: 1200,
         height: 630,
         alt: "TSEC Devs Club Banner",
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Developers Club of TSEC",
+    description: "Explore our features...",
+    images: ["/devsLogo.png"], // Will resolve to https://tsecdevsclub.com/devsLogo.png
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-  <html lang="en" suppressHydrationWarning>
-    <head>
-      <link rel="icon" href="/devBlackLogo.ico" />
-      <link rel="canonical" href="https://tsecdevsclub.com/" />
-    </head>
-    <body className={inter.className}>
-      <ClientAppWrapper>
-        {children}
-      </ClientAppWrapper>
-    </body>
-  </html>
-);
-
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/devBlackLogo.ico" />
+        <link rel="canonical" href="https://tsecdevsclub.com/" />
+      </head>
+      <body className={inter.className}>
+        <ClientAppWrapper>
+          {children}
+        </ClientAppWrapper>
+      </body>
+    </html>
+  );
 }
