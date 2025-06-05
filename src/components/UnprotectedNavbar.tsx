@@ -9,25 +9,39 @@ import Image from "next/image";
 import DevsDark from "@/public/images/devs-dark.png";
 import DevsLight from "@/public/images/devs-light.png";
 import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation"; // Import the usePathname hook
+import { usePathname } from "next/navigation";
 
 export default function UnprotectedNavbar() {
-  const { theme } = useTheme();
+  const { theme, systemTheme } = useTheme();
   const pathname = usePathname();
 
+  // Solution 1: Render both images and show/hide based on theme
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <Image
-              src={theme === "dark" ? DevsDark : DevsLight}
-              alt="logo"
-              width={50}
-              height={50}
-              className="rounded-md"
-            />
+            {/* Render both images and toggle visibility */}
+            <div className="relative w-[50px] h-[50px]">
+              <Image
+                src={DevsLight}
+                alt="logo"
+                width={50}
+                height={50}
+                className="rounded-md dark:hidden block"
+                priority
+              />
+              <Image
+                src={DevsDark}
+                alt="logo"
+                width={50}
+                height={50}
+                className="rounded-md hidden dark:block"
+                priority
+              />
+            </div>
           </div>
+
           {pathname === "/auth/change-password" && (
             <Button variant={"link"}>
               <Link href="/dashboard" className="flex items-center">
