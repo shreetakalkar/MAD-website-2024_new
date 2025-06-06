@@ -1,4 +1,6 @@
-![TSEC Developers Club Banner](./src/public/devsLogo.png)
+<div align="center" style="display:inline-block;">
+  <img src="./src/public/devsLogo.png" alt="TSEC Developers Club Banner" width="200" style="border:2px solid #000; border-radius:8px;" />
+</div>
 
 # TSEC Developers Club Website
 
