@@ -1,6 +1,6 @@
-# TSEC Developers Club Website
-
 ![TSEC Developers Club Banner](./src/public/devsLogo.png)
+
+# TSEC Developers Club Website
 
 Welcome to the official repository of the [Developers Club of TSEC](https://tsecdevsclub.com). This site serves as the digital hub for our student-driven community, showcasing our projects, initiatives, and impact on the TSEC campus.
 
