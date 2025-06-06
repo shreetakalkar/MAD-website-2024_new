@@ -10,7 +10,7 @@ const MemberCard = ({ member }: any) => {
     <CardContainer className="inter-var">
       <CardBody className="bg-gray-100/50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-gray-800/50 dark:border-white/[0.2] border-black/[0.1] w-[320px] sm:w-[400px] md:w-[480px] h-auto rounded-xl p-8 border">
         <div className="flex flex-col md:flex-row gap-6 items-center">
-          {/* Image Section */}
+      
           <CardItem translateZ="100" className="w-full md:w-1/2 flex flex-col items-center justify-center">
             <div className="relative w-40 h-40 ">
               <Image
@@ -23,7 +23,7 @@ const MemberCard = ({ member }: any) => {
             </div>
           </CardItem>
 
-          {/* Content Section */}
+        
           <div className="flex flex-col w-full md:w-1/2">
             <CardItem
               translateZ="50"
@@ -36,7 +36,6 @@ const MemberCard = ({ member }: any) => {
 
             <div className="w-12 h-0.5 bg-blue-600 my-4"></div>
 
-            {/* ✅ FIXED: Changed 'as="p"' to just a div wrapper */}
             <CardItem
               translateZ="60"
               className="text-base text-gray-500 dark:text-gray-400"
@@ -46,7 +45,6 @@ const MemberCard = ({ member }: any) => {
               </span>
             </CardItem>
 
-            {/* Social Links */}
             <div className="flex gap-6 mt-6">
               {member.linkedin && (
                 <CardItem
