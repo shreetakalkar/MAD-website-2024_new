@@ -1,8 +1,9 @@
-
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
-import HydrationHandler from "../components/HydrationHandler"
 import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import ClientAppWrapper from "@/components/ClientAppWrapper"
+import { ThemeInitializer } from "@/components/ThemeInitializer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -10,7 +11,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://tsecdevsclub.com"),
   title: "Developers Club of TSEC | TSEC Devs Club",
   description: "Creators of the official TSEC App and innovative tech solutions for the TSEC community",
-  keywords: "TSEC, developers club, tech, programming, coding, student developers",
+  keywords: [
+    "TSEC",
+    "developers club",
+    "tech",
+    "programming",
+    "coding",
+    "student developers",
+  ],
   robots: {
     index: true,
     follow: true,
@@ -48,8 +56,6 @@ export const metadata: Metadata = {
   },
   other: {
     "facebook-domain-verification": "[your-verification-code]",
-    "og:type": "website",
-    "og:locale": "en_US",
     "linkedin:owner": "tsecdevsclub",
     "instagram:creator": "tsecdevsclub",
   },
@@ -57,23 +63,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" id="theme-root">
       <head>
         <link rel="icon" href="/devBlackLogo.ico" />
-        <link rel="canonical" href="https://tsecdevsclub.com/" />
         <link rel="alternate" href="https://tsecdevsclub.com/" hrefLang="en" />
         <link rel="me" href="https://linkedin.com/company/tsecdevsclub" />
         <link rel="me" href="https://instagram.com/tsecdevsclub" />
         <link rel="me" href="https://facebook.com/tsecdevsclub" />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:site_name" content="TSEC Developers Club" />
-        <meta property="og:url" content="https://tsecdevsclub.com" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="linkedin:profile" content="tsecdevsclub" />
       </head>
-      <body className={inter.className}>
-        <HydrationHandler>{children}</HydrationHandler>
+      <body className={`${inter.className} bg-white dark:bg-gray-900 transition-colors duration-200`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="theme"
+        >
+          <ThemeInitializer />
+          <ClientAppWrapper>{children}</ClientAppWrapper>
+        </ThemeProvider>
       </body>
     </html>
   )
