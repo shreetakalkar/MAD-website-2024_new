@@ -57,5 +57,3 @@ firestorageRule.rs
 
 /public/robots.txt
 /public/sitemap*.xml
-package-lock.json
-package.json
