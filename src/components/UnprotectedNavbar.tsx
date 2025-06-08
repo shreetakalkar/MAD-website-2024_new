@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -12,10 +12,17 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 
 export default function UnprotectedNavbar() {
-  const { theme, systemTheme } = useTheme();
+  const { theme, systemTheme, resolvedTheme } = useTheme();
+  // console.log(resolvedTheme);
+  
+  const [mounted, setMounted] = useState(false)
+  
+    useEffect(() => {
+      setMounted(true)
+    }, [])
   const pathname = usePathname();
 
-  // Solution 1: Render both images and show/hide based on theme
+  // Same approach that is used in navbar component
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800">
       <div className="container mx-auto px-4">
@@ -23,22 +30,18 @@ export default function UnprotectedNavbar() {
           <div className="flex items-center space-x-4">
             {/* Render both images and toggle visibility */}
             <div className="relative w-[50px] h-[50px]">
-              <Image
-                src={DevsLight}
-                alt="logo"
-                width={50}
-                height={50}
-                className="rounded-md dark:hidden block"
-                priority
-              />
-              <Image
-                src={DevsDark}
-                alt="logo"
-                width={50}
-                height={50}
-                className="rounded-md hidden dark:block"
-                priority
-              />
+            <Link href="/" className="flex items-center gap-2">
+              {mounted && (
+                <Image
+                  src={resolvedTheme === "dark" ? DevsDark : DevsLight}
+                  alt="logo"
+                  width={50}
+                  height={50}
+                  className="rounded-md"
+                  priority
+                />
+              )}
+            </Link>
             </div>
           </div>
 

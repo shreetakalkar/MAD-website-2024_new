@@ -15,7 +15,10 @@ import DevsLight from "@/public/images/devs-light.png"
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const { resolvedTheme } = useTheme()
+
+  const { theme, systemTheme, resolvedTheme } = useTheme();
+  // console.log(resolvedTheme);
+   
 
   // 👇 Add mount check to prevent hydration mismatch
   const [mounted, setMounted] = useState(false)
@@ -37,8 +40,9 @@ export function Navbar() {
             <Image
               src={resolvedTheme === "dark" ? DevsDark : DevsLight}
               alt="logo"
-              width={65}
-              height={65}
+              width={50}
+              height={50}
+              className="rounded-md"
               priority
             />
           )}
