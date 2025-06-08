@@ -17,7 +17,7 @@ import {
   Cross,
   Ban
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
 const MobileHeader = ({ userType }: { userType: string }) => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const { user, setUser, setLoggedIn } = useUser();
   const router = useRouter();
 
@@ -73,6 +73,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
         </SheetTrigger>
 
         <SheetContent side="left" className="flex flex-col w-[50%]">
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           {/* Links */}
 
           <nav className="grid gap-2 text-sm font-medium mt-[20%] space-y-3">
@@ -205,7 +206,7 @@ const MobileHeader = ({ userType }: { userType: string }) => {
 
       <div className="flex float-right space-x-3">
         <Image
-          src={theme == "dark" ? DevsDark : DevsLight}
+          src={resolvedTheme == "dark" ? DevsDark : DevsLight}
           alt="logo"
           width={60}
           height={60}

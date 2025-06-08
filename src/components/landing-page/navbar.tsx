@@ -15,7 +15,7 @@ import DevsLight from "@/public/images/devs-light.png"
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   // 👇 Add mount check to prevent hydration mismatch
   const [mounted, setMounted] = useState(false)
@@ -35,7 +35,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           {mounted && (
             <Image
-              src={theme === "dark" ? DevsDark : DevsLight}
+              src={resolvedTheme === "dark" ? DevsDark : DevsLight}
               alt="logo"
               width={65}
               height={65}
