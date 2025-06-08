@@ -15,10 +15,10 @@ import DevsLight from "@/public/images/devs-light.png"
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+
   const { theme, systemTheme, resolvedTheme } = useTheme();
   // console.log(resolvedTheme);
-    
- 
+   
 
   // 👇 Add mount check to prevent hydration mismatch
   const [mounted, setMounted] = useState(false)

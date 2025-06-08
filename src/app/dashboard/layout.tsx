@@ -30,7 +30,7 @@ export default function Home({
   professor: React.ReactNode;
   tpo: React.ReactNode;
 }) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const { user } = useUser();
   const [userType, setUserType] = useState<string | null>(null);
 
@@ -56,7 +56,7 @@ export default function Home({
 
   return (
     <ProtectionProvider>
-      <div className={`min-h-screen w-full ${theme}`}>
+      <div className={`min-h-screen w-full ${resolvedTheme}`}>
         <Header userType={userType ? userType : ""} />
         <MobileHeader userType={userType ? userType : ""} />
         <div className="flex flex-col mt-4">
