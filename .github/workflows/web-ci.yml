@@ -1,7 +1,7 @@
 name: MAD-Website CI
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
   push:
@@ -14,8 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout base branch (safe)
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
