@@ -83,5 +83,18 @@
   },
   "overrides": {
     "tar-fs": "2.1.3"
-  }
+  },
+  "description": "<div align=\"center\" style=\"display:inline-block;\">\r   <img src=\"./src/public/devsLogo.png\" alt=\"TSEC Developers Club Banner\" width=\"200\" style=\"border:2px solid #000; border-radius:8px;\" />\r </div>",
+  "main": "next-sitemap.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NuhaG/MAD-Website-25.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NuhaG/MAD-Website-25/issues"
+  },
+  "homepage": "https://github.com/NuhaG/MAD-Website-25#readme"
 }

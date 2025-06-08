@@ -20,7 +20,7 @@ import LeftSideLinks from "@/components/LeftSideLinks";
 import Link from "next/link";
 
 const Header = ({ userType }: { userType: string }) => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const { user, setUser, setLoggedIn } = useUser();
   const router = useRouter();
 
@@ -38,11 +38,12 @@ const Header = ({ userType }: { userType: string }) => {
   };
 
   return (
-    <div className={`w-full border-b ${theme} hidden md:flex`}>
+    <div className={`w-full border-b ${resolvedTheme} hidden md:flex`}> 
+    {/* using theme above won't work incase of system  */}
       <div className="flex items-center justify-between p-4 w-full">
         <div className="flex items-center">
           <Image
-            src={theme == "dark" ? DevsDark : DevsLight}
+            src={resolvedTheme == "dark" ? DevsDark : DevsLight}
             alt="logo"
             width={65}
             height={65}
