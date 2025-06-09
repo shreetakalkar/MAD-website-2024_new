@@ -198,7 +198,7 @@ const UpdateCertificateNumber = () => {
               </div>
               <button
                 onClick={handleUpdatePassClick}
-                className="ml-5 px-5 py-4 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
+                className="ml-5 px-5 py-4 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
               >
                 Update Pass
               </button>
@@ -206,7 +206,7 @@ const UpdateCertificateNumber = () => {
             <div className="w-full h-1/2 flex items-center justify-center p-5">
               <Input
                 type="text"
-                className="w-full max-w-sm p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                className="w-full max-w-sm p-3 border border-gray-300 rounded-lg shadow-xs focus:outline-hidden focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 placeholder="Enter Certificate No"
                 value={searchInput}
                 onChange={handleSearchInputChange}
@@ -214,7 +214,7 @@ const UpdateCertificateNumber = () => {
               />
               <button
                 onClick={handleSearch}
-                className="ml-5 px-5 py-4 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
+                className="ml-5 px-5 py-4 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
               >
                 Search
               </button>
@@ -313,13 +313,13 @@ const UpdateCertificateNumber = () => {
                       <div className="flex justify-end gap-4 mt-4">
                         <button
                           onClick={handleSave}
-                          className="px-5 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
+                          className="px-5 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-hidden focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
                         >
                           Save
                         </button>
                         <button
                           onClick={handleCancel}
-                          className="px-5 py-2 font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm"
+                          className="px-5 py-2 font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm"
                         >
                           Cancel
                         </button>

@@ -29,7 +29,7 @@ const MemberCard = ({ member }: any) => {
               translateZ="50"
               className="text-2xl font-bold text-gray-400 dark:text-gray-500"
             >
-              <div className="min-h-[4rem] break-words flex flex-col justify-end">
+              <div className="min-h-16 break-words flex flex-col justify-end">
                 <div>{member.name}</div>
               </div>
             </CardItem>
@@ -40,7 +40,7 @@ const MemberCard = ({ member }: any) => {
               translateZ="60"
               className="text-base text-gray-500 dark:text-gray-400"
             >
-              <span className="min-h-[3rem] break-words">
+              <span className="min-h-12 break-words">
                 {member.role}
               </span>
             </CardItem>

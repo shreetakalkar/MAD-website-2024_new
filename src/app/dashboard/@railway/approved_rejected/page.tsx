@@ -369,8 +369,8 @@ const Approved_Rejected = () => {
   return (
     <div>
       <div className="w-[99vw] h-[99vh] flex flex-col">
-        <div className="h-[100%] flex items-center justify-center">
-          <div className="overflow-auto m-2 w-[100%] h-[100%]">
+        <div className="h-full flex items-center justify-center">
+          <div className="overflow-auto m-2 w-full h-full">
             <DataTable data={data} columns={columns} />
           </div>
         </div>

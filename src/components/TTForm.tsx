@@ -95,7 +95,7 @@ const TTForm: React.FC<TTFormProps> = ({
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
-                  variant={"outline"}
+                  variant={"outline-solid"}
                   className={cn(
                     " pl-3 text-left font-normal flex",
                     !field.value && "text-muted-foreground"

@@ -350,7 +350,7 @@ const RailwayUpdateCard = ({
             <form method="post" className="space-y-8">
               <div className="grid gap-4 ">
                 {/* Heading */}
-                <div className="card-head-wrapper w-[100%]  flex justify-between items-center">
+                <div className="card-head-wrapper w-full  flex justify-between items-center">
                   <div className="flex gap-2 w-[55%]">
                     {" "}
                     <div className="grid gap-2 ">
@@ -431,7 +431,7 @@ const RailwayUpdateCard = ({
                 <div className="card-other-details flex justify-between">
                   {/* Other Details */}
                   <div className="personal-details gap-6">
-                    <div className="grid grid-cols-3 gap-2 w-[100%] mb-2">
+                    <div className="grid grid-cols-3 gap-2 w-full mb-2">
                       <div className="grid gap-2">
                         {" "}
                         <FormField
@@ -477,7 +477,7 @@ const RailwayUpdateCard = ({
                                 <PopoverTrigger asChild>
                                   <FormControl className="flex items-center justify-center">
                                     <Button
-                                      variant={"outline"}
+                                      variant={"outline-solid"}
                                       onClick={() => {
                                        // console.log(format(field.value, "PPP"));
                                       }}
@@ -537,7 +537,7 @@ const RailwayUpdateCard = ({
                                 <PopoverTrigger asChild>
                                   <FormControl className="flex items-center justify-center">
                                     <Button
-                                      variant={"outline"}
+                                      variant={"outline-solid"}
                                       onClick={() => {
                                         // console.log(format(field.value, "PPP"));
                                       }}
@@ -870,7 +870,7 @@ const RailwayUpdateCard = ({
                           type="button"
                           onClick={toggleEditMode}
                           className={`bg-green-500 text-white py-2 px-4 rounded-lg shadow transition duration-300 flex items-center 
-                            hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 
+                            hover:bg-green-600 focus:outline-hidden focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 
                             ${isEditable ? 'cursor-pointer' : 'cursor-default'}`}
                 
                         >
@@ -898,7 +898,7 @@ const RailwayUpdateCard = ({
                           <Button
                             type="button"
                             onClick={toggleEditMode}
-                            className="bg-red-500 text-white py-2 rounded-lg shadow hover:bg-red-600 transition duration-300 flex items-center"
+                            className="bg-red-500 text-white py-2 rounded-lg shadow-sm hover:bg-red-600 transition duration-300 flex items-center"
                           >
                             <X className="h-5 w-5 mr-2" /> {/* X icon */}
                             Close
@@ -913,7 +913,7 @@ const RailwayUpdateCard = ({
                               setIsDialogOpen(true);
                               setIsModalOpen(true);
                             }}
-                            className="bg-red-500 text-white py-2 rounded-lg shadow hover:bg-red-600 transition duration-300"
+                            className="bg-red-500 text-white py-2 rounded-lg shadow-sm hover:bg-red-600 transition duration-300"
                           >
                             {/* Delete */}
                             Cancel Pass
@@ -931,7 +931,7 @@ const RailwayUpdateCard = ({
       )}
       
       {isModalOpen ? (
-        <div className="fixed inset-0 flex items-center z-[100] justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center z-100 justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col justify-between h-[40vh] w-[50vw] max-w-md">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-4">
               Delete Pass
@@ -946,13 +946,13 @@ const RailwayUpdateCard = ({
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => handleSave(statusMessage)}
-                className="bg-red-500 text-white px-5 py-3 rounded-lg shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="bg-red-500 text-white px-5 py-3 rounded-lg shadow-sm hover:bg-red-600 focus:outline-hidden focus:ring-2 focus:ring-red-500"
               >
                 Delete Pass
               </button>
               <button
                 onClick={handleCancel}
-                className="bg-gray-100 text-gray-800 px-5 py-3 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="bg-gray-100 text-gray-800 px-5 py-3 rounded-lg shadow-sm hover:bg-gray-400 focus:outline-hidden focus:ring-2 focus:ring-gray-400"
               >
                 Close
               </button>

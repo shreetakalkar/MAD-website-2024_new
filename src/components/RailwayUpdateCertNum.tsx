@@ -306,7 +306,7 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
             <div className="w-full h-1/2 flex items-center px-5 text-gray-700 relative">
                 <button
                 onClick={handleUpdatePassClick}
-                className="absolute left-10 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
+                className="absolute left-10 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-hidden focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
                 >
                 <ArrowLeft className="w-4 h-4" />
                 Update Pass Data
@@ -323,7 +323,7 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
             <div className="w-full h-1/2 flex items-center justify-center p-5">
               <Input
                 type="text"
-                className="w-full max-w-sm p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                className="w-full max-w-sm p-3 border border-gray-300 rounded-lg shadow-xs focus:outline-hidden focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 placeholder="Enter Certificate No"
                 value={searchInput}
                 onChange={handleSearchInputChange}
@@ -331,7 +331,7 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
               />
               <button
                 onClick={handleSearchForCertNum}
-                className="ml-5 px-5 py-3 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
+                className="ml-5 px-5 py-3 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-hidden focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
               >
                 Search
               </button>
@@ -431,13 +431,13 @@ const UpdateCertificateNumber: React.FC<UpdateCertificateNumberProps> = ({
                       <div className="flex justify-end gap-4 mt-4">
                         <button
                           onClick={handleSave}
-                          className="px-5 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
+                          className="px-5 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-hidden focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
                         >
                           Update
                         </button>
                         <button
                           onClick={handleClose}
-                          className="px-5 py-2 font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm"
+                          className="px-5 py-2 font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-sm"
                         >
                           Close
                         </button>

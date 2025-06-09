@@ -187,7 +187,7 @@ const RailwayUpdateConc = () => {
             <span className="text-3xl font-bold">Extend Date, Change Data & Cancel Pass</span>
             <button
               onClick={handleCertNumClick}
-              className="absolute right-2 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
+              className="absolute right-2 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-hidden focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
             >
               Update Certificate Number
               <ArrowRight className="w-4 h-4"/>
@@ -196,14 +196,14 @@ const RailwayUpdateConc = () => {
           <div className="flex items-center w-full max-w-md">
             <Input
               type="text"
-              className="flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+              className="grow p-3 border border-gray-300 rounded-lg shadow-xs focus:outline-hidden focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
               placeholder="Enter Certificate No"
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={handleKeyDown}
             />
             <button
               onClick={handleSearch}
-              className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Search
             </button>

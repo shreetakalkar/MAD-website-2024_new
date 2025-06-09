@@ -138,7 +138,7 @@ const PendingRequests = () => {
         </div>
       ) : data.length > 0 ? (
         <div className="flex flex-col space-y-2">
-          <div className="w-[100%] text-right">
+          <div className="w-full text-right">
             <h2 className="float-right p-3 rounded-md text-[#3a3737b1]">
               Passes remaining : {data.length}
             </h2>

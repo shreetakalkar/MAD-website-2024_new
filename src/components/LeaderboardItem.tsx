@@ -10,11 +10,11 @@ const LeaderboardItem = ({ student, rank }: LeaderboardItemProps) => {
   const getMedalColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-gradient-to-r from-yellow-300 to-yellow-500' // Gold
+        return 'bg-linear-to-r from-yellow-300 to-yellow-500' // Gold
       case 2:
-        return 'bg-gradient-to-r from-gray-300 to-gray-400' // Silver
+        return 'bg-linear-to-r from-gray-300 to-gray-400' // Silver
       case 3:
-        return 'bg-gradient-to-r from-yellow-700 to-yellow-800' // Bronze
+        return 'bg-linear-to-r from-yellow-700 to-yellow-800' // Bronze
       default:
         return 'bg-[#3B82F6]'
     }

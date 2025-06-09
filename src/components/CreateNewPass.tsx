@@ -465,7 +465,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
-        className="w-[100%] no-scrollbar shadow-box"
+        className="w-full no-scrollbar shadow-box"
       >
         {loading && <p>Loading...</p>}
         <CardHeader>
@@ -482,7 +482,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
               <div className="grid gap-4">
                 {" "}
                 <div className="grid gap-2 mt-[2.5%] mb-[2.5%]">
-                  <Command className={cn(" h-[10rem] bg-[#6c6c6c67]")}>
+                  <Command className={cn(" h-40 bg-[#6c6c6c67]")}>
                     {/* 52525267 */}
                     <CommandInput placeholder="Search email..." />
                     <CommandList
@@ -694,7 +694,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                             <PopoverTrigger asChild>
                               <FormControl>
                                 <Button
-                                  variant={"outline"}
+                                  variant={"outline-solid"}
                                   className={cn(
                                     "w-[240px] pl-3 text-left font-normal flex",
                                     !field.value && "text-muted-foreground"

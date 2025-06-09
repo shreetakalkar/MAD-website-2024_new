@@ -30,7 +30,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
     `;
   };
 
-  const iconClass = "h-4 w-4 transition-transform duration-300 group-hover:scale-110 flex-shrink-0";
+  const iconClass = "h-4 w-4 transition-transform duration-300 group-hover:scale-110 shrink-0";
 
   const NavLink = ({ href, icon: Icon, children }: { href: string, icon: React.ComponentType<{ className?: string }>, children: React.ReactNode }) => (
     <Link href={href} className={getLinkClasses(href)}>

@@ -147,7 +147,7 @@ export default function Page() {
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  variant={"outline"}
+                  variant={"outline-solid"}
                   className={cn(
                     "w-[280px] justify-start text-left font-normal",
                     !selectedDate && "text-muted-foreground"
@@ -188,7 +188,7 @@ export default function Page() {
                   selected={selectedDate || new Date()} // Set the selected date
                   onSelect={setSelectedDate} // Update selected date on change
                   filterDate={isDateAvailable}
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+                  className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-xs focus:outline-hidden focus:ring-2 focus:ring-primary-500 bg-gray-50"
                   dateFormat="dd/MM/yyyy"
                 />
               </PopoverContent>

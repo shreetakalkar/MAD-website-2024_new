@@ -114,7 +114,7 @@ const LaunchForm = () => {
     <div className="container mx-auto px-4 py-4">
       <UnprotectedNavbar />
       <div className="flex justify-center px-4 py-6 sm:p-6 lg:p-10">
-        <div className="w-full max-w-lg p-4 sm:p-6 border border-gray-300 rounded-lg shadow-sm">
+        <div className="w-full max-w-lg p-4 sm:p-6 border border-gray-300 rounded-lg shadow-xs">
           <div className="text-center mb-4">
             <b>Oh cool, did you unlock? What&#39;s your name?</b>
           </div>

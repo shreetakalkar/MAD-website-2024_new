@@ -174,7 +174,7 @@ const PrincipalHodInterface = () => {
 
   return (
     <>
-      <div className="w-[100%] flex justify-center items-center">
+      <div className="w-full flex justify-center items-center">
         {loading && (
           <div className="flex items-center justify-center h-screen">
             <Loader className="w-10 h-10 animate-spin" />

@@ -30,7 +30,7 @@ const DownloadTableRow: React.FC<DownloadTableRowProps> = ({
         </Button>
       </TableCell>
       <TableCell>{batch.isDownloaded ? 'Yes' : 'No'}</TableCell>
-      <TableCell className="pl-[2rem]">{batch.date ?dateFormat(batch.date) : '-'}</TableCell>
+      <TableCell className="pl-8">{batch.date ?dateFormat(batch.date) : '-'}</TableCell>
     </TableRow>
   );
 };

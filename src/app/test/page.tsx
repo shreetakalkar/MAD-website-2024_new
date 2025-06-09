@@ -10,7 +10,7 @@ import Hackathon from "@/components/Hackathon";
 
 const pendingRequests = () => {
   return (
-    <div className="h-[100vh]">
+    <div className="h-screen">
       <Hackathon />
       {/* <ImportantNotices /> */}
       {/* <NoticeHistory /> */}

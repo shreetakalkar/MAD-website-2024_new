@@ -190,11 +190,11 @@ export default function DiscardPass() {
               name="passNum"
               type="text"
               placeholder="Enter Pass Number"
-              className="flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+              className="grow p-3 border border-gray-300 rounded-lg shadow-xs focus:outline-hidden focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
             />
             <Button
               type="submit"
-              className="ml-5 px-5 py-3 font-semibold text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+              className="ml-5 px-5 py-3 font-semibold text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700 focus:outline-hidden focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
             >
               Submit
             </Button>

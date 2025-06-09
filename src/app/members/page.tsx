@@ -60,7 +60,7 @@ export default function MembersPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-32">
+      <main className="grow container mx-auto px-4 py-32">
         <motion.div
           variants={fadeInUp}
           initial="initial"
@@ -80,7 +80,7 @@ export default function MembersPage() {
         {teamData.map((team) => (
           <div key={team.title} className="w-full dark:bg-gray-900/50 bg-white dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative">
             {/* Radial gradient for the container to give a faded look */}
-            <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+            <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white mask-[radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
             
             <TeamSection
               title={team.title}

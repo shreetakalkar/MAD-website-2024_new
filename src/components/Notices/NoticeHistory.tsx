@@ -26,7 +26,7 @@ const Modal: React.FC<{
       <div className="relative bg-white dark:bg-muted p-4 rounded-md w-[60%] h-[80%]">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 z-[100] bg-red-500 text-white p-2 rounded-full"
+          className="absolute top-2 right-2 z-100 bg-red-500 text-white p-2 rounded-full"
         >
           Close
         </button>

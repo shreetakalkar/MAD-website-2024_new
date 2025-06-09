@@ -2,8 +2,8 @@ import React from 'react'
 
 const Page = () => {
   return (
-    <div className="w-[100%] min-h-screen -mt-10 flex justify-center items-center ">
-      <div className="text-center p-10 rounded-xl shadow-lg bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 backdrop-blur-md">
+    <div className="w-full min-h-screen -mt-10 flex justify-center items-center ">
+      <div className="text-center p-10 rounded-xl shadow-lg bg-linear-to-r from-purple-500 via-pink-500 to-red-500 backdrop-blur-md">
         <h1 className="text-4xl font-extrabold text-white mb-4 animate-pulse">Dekha Jo Tujhe Yaar</h1>
         <h1 className="text-4xl font-extrabold text-white mb-4 animate-pulse">Dil mein baji guitar</h1>
         <br/>

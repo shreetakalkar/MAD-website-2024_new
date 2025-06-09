@@ -92,7 +92,7 @@ const isButtonDisabled = () => {
 
 function InputWithLabel({ label, input }: { label: any; input: any }) {
   return (
-    <div className="flex flex-col h-[100%]">
+    <div className="flex flex-col h-full">
       <div className=" h-[35%] text-[0.94rem] xl:text-sm font-[550] pt-1">
         {label}
       </div>
@@ -348,7 +348,7 @@ const Modal: React.FC<ModalProps> = ({
                   placeholder="Enter Certificate Number..."
                   value={certificateNumber}
                   onChange={(e) => setCertificateNumber(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 {error && (
                   <p className="text-red-500 mt-2 text-sm">{error}</p>
@@ -365,7 +365,7 @@ const Modal: React.FC<ModalProps> = ({
                   placeholder="Enter Reason..."
                   value={data.reason}
                   onChange={(e) => data.setReason(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-hidden focus:ring-2 focus:ring-red-500"
                 />
               </div>
             )}
@@ -631,7 +631,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
         </div>
       )}
 
-      <div className="p-[0.8%] flex rounded-xl border-[2px] border-[#bfc3c7] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
+      <div className="p-[0.8%] flex rounded-xl border-2 border-[#bfc3c7] w-[95vw] h-[90vh] temp-> ml-[20px] my-[20px]">
         <div className="w-[70%] h-full flex flex-col">
           <div className=" flex h-[20%]">
             <div className="h-full w-1/2 ">
@@ -702,7 +702,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
               <div className="w-full h-1/2 flex items-end justify-center">
                 <button
                   // disabled={isButtonDisabled()}
-                  className="disabled:opacity-85 disabled:cursor-not-allowed disabled:hover:bg-green-500 bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
+                  className="disabled:opacity-85 disabled:cursor-not-allowed disabled:hover:bg-green-500 bg-green-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-hidden focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleApprove}
                 >
                   Approve
@@ -711,7 +711,7 @@ const PendingCard: React.FC<PendingCardProps> = ({
               <div className="w-full h-1/2 flex items-center justify-center">
                 <button
                   // disabled={isButtonDisabled()}
-                  className="disabled:opacity-85 disabled:cursor-not-allowed  disabled:hover:bg-red-500 bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
+                  className="disabled:opacity-85 disabled:cursor-not-allowed  disabled:hover:bg-red-500 bg-red-500 w-4/5 h-12 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-hidden focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-all duration-200"
                   onClick={handleReject}
                 >
                   Reject

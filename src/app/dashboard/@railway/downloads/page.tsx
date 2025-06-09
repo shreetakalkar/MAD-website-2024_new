@@ -464,7 +464,7 @@ const Downloads: React.FC = () => {
   
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Add New Pass Book</Button>
+                <Button variant="outline" className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Add New Pass Book</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -516,7 +516,7 @@ const Downloads: React.FC = () => {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onClick={handleSave}>
+                  <Button type="button" className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onClick={handleSave}>
                     Create
                   </Button>
                 </DialogFooter>
