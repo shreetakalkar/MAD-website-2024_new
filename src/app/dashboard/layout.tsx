@@ -52,7 +52,7 @@ export default function Home({
     };
 
     fetchUserType({ uid: user?.uid || "" });
-  }, []);
+  }, [user?.uid]);
 
   return (
     <ProtectionProvider>

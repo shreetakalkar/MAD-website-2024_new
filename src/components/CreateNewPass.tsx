@@ -1,105 +1,55 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { ToastAction } from "@/components/ui/toast";
-import { useToast } from "@/components/ui/use-toast";
-import useGradYear from "@/constants/gradYearList";
-import { dateFormat } from "@/constants/dateFormat";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import type { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import { useToast } from "@/components/ui/use-toast"
+import useGradYear from "@/constants/gradYearList"
+import { dateFormat } from "@/constants/dateFormat"
 
-import {
-  getStorage,
-  ref as storageRef,
-  getDownloadURL,
-  uploadString,
-} from "firebase/storage";
+import { getStorage, ref as storageRef, getDownloadURL, uploadString } from "firebase/storage"
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import React, { useEffect, useState } from "react";
-import {
-  addDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  setDoc,
-  Timestamp,
-  Firestore,
-  doc,
-  arrayUnion,
-  getDoc,
-} from "firebase/firestore";
-import { db } from "@/config/firebase";
-import { error } from "console";
-import { Value } from "@radix-ui/react-select";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { branches } from "@/constants/branches";
-import { travelFromLocations } from "@/constants/travelFromLocations";
-import { calculateAge } from "@/constants/AgeCalc";
-import "@/app/globals.css";
-import { ZodSchema, infer as zodInfer } from "zod";
-import { Loader } from "lucide-react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type React from "react"
+import { useEffect, useState, useCallback } from "react" // Import useCallback
+import { collection, getDocs, updateDoc, setDoc, doc, getDoc } from "firebase/firestore"
+import { db } from "@/config/firebase"
+import { Check } from "lucide-react"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { branches } from "@/constants/branches"
+import { travelFromLocations } from "@/constants/travelFromLocations"
+import { calculateAge } from "@/constants/AgeCalc"
+import "@/app/globals.css"
+import { Loader } from "lucide-react"
 
-type CreateNewPassProps = {
-  formSchema: ZodSchema<any>; // Adjust any to the appropriate schema type
-  emails: string[];
-};
+interface CreateNewPassProps {
+  formSchema: z.AnyZodObject // Changed from z.ZodType<any> to z.AnyZodObject
+  emails: string[]
+}
 
-const CreateNewPass: React.FC<CreateNewPassProps> = ({
-  formSchema,
-  emails,
-}) => {
-  type FormValues = z.infer<typeof formSchema>; // Define FormValues using formSchema
+const CreateNewPass: React.FC<CreateNewPassProps> = ({ formSchema, emails }) => {
+  type FormValues = z.infer<typeof formSchema> // Define FormValues using formSchema
 
-  const [value, setValue] = useState<string>("");
-  const [studentId, setStudentId] = useState("");
-  const [diffInDays, setDiffInDays] = useState<number | null>(null);
-  const [daysLeft, setDaysLeft] = useState<number | null>(null);
-  const [canRenewPass, setCanRenewPass] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const gradYearList = useGradYear();
-  const { toast } = useToast();
+  const [value, setValue] = useState<string>("")
+  const [studentId, setStudentId] = useState("")
+  const [diffInDays, setDiffInDays] = useState<number | null>(null)
+  const [daysLeft, setDaysLeft] = useState<number | null>(null)
+  const [canRenewPass, setCanRenewPass] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const gradYearList = useGradYear()
+  const { toast } = useToast()
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       branch: "",
@@ -119,120 +69,152 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
       to: "Bandra",
       certNo: "",
     },
-  });
+  })
 
-  const setStudentData = async (value: string) => {
-    if (!value) {
-      form.reset();
-      return;
-    }
+  // canIssuePass function definition (moved up for clarity in dependencies)
+  const canIssuePass = useCallback(
+    async (lastPass: Date, status: string, duration: string): Promise<boolean> => {
+      if (status.toLowerCase() === "rejected") {
+        return true
+      } else if (status.toLowerCase() === "unserviced") {
+        toast({
+          description: "Cannot issue a new pass. The previous request is pending.",
+          variant: "destructive",
+        })
+        return false
+      } else {
+        const today = new Date()
+        const diffInMs: number = today.getTime() - lastPass.getTime()
+        const differenceInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
 
-    setLoading(true);
-    try {
-      const lowerCaseEmail = value.toLowerCase();
-      const studentsRef = collection(db, "Students ");
-      const querySnapshot = await getDocs(studentsRef);
+        const futurePass = new Date(lastPass)
+        if (duration === "Monthly") {
+          futurePass.setDate(futurePass.getDate() + 26)
+        } else if (duration === "Quarterly") {
+          futurePass.setDate(futurePass.getDate() + 86)
+        }
 
-      for (const studentDoc of querySnapshot.docs) {
-        const studentData = studentDoc.data();
-        const storedEmail = studentData?.email?.toLowerCase();
+        const daysRemaining = Math.ceil((futurePass.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 
-        if (storedEmail === lowerCaseEmail) {
-          const studentId = studentDoc.id;
-          const studentDetailsRef = doc(db, "ConcessionDetails", studentId);
-          const studentDetailsDoc = await getDoc(studentDetailsRef);
+        if (duration === "Monthly" && differenceInDays < 26) {
+          toast({
+            description: `Cannot renew pass. Number of days left: ${daysRemaining}`,
+            variant: "destructive",
+          })
+          return false
+        } else if (duration === "Quarterly" && differenceInDays < 86) {
+          toast({
+            description: `Cannot renew pass. Number of days left: ${daysRemaining}`,
+            variant: "destructive",
+          })
+          return false
+        }
 
-          if (studentDetailsDoc.exists()) {
-            const studentDetails = studentDetailsDoc.data();
-            const lastPass = studentDetails.lastPassIssued.toDate();
+        return true
+      }
+    },
+    [toast], // canIssuePass depends on toast
+  )
 
-            const canRenew = await canIssuePass(
-              lastPass,
-              studentDetails.status,
-              studentDetails.duration
-            );
+  // Wrapped setStudentData with useCallback
+  const setStudentData = useCallback(
+    async (value: string) => {
+      if (!value) {
+        form.reset()
+        return
+      }
 
-            if (!canRenew) {
-              return; // Exit early if cannot renew pass
+      setLoading(true)
+      try {
+        const lowerCaseEmail = value.toLowerCase()
+        const studentsRef = collection(db, "Students ")
+        const querySnapshot = await getDocs(studentsRef)
+
+        for (const studentDoc of querySnapshot.docs) {
+          const studentData = studentDoc.data()
+          const storedEmail = studentData?.email?.toLowerCase()
+
+          if (storedEmail === lowerCaseEmail) {
+            const studentId = studentDoc.id
+            const studentDetailsRef = doc(db, "ConcessionDetails", studentId)
+            const studentDetailsDoc = await getDoc(studentDetailsRef)
+
+            if (studentDetailsDoc.exists()) {
+              const studentDetails = studentDetailsDoc.data()
+              const lastPass = studentDetails.lastPassIssued.toDate()
+
+              // canIssuePass is used here
+              const canRenew = await canIssuePass(lastPass, studentDetails.status, studentDetails.duration)
+
+              if (!canRenew) {
+                return // Exit early if cannot renew pass
+              }
+
+              // Set form values
+              const { firstName, middleName, lastName, address, phoneNum, from, travelLane, dob, gender } =
+                studentDetails
+              form.setValue("firstName", firstName)
+              form.setValue("middleName", middleName)
+              form.setValue("lastName", lastName)
+              form.setValue("address", address)
+              form.setValue("phoneNum", phoneNum.toString())
+              form.setValue("from", from)
+              form.setValue("travelLane", travelLane)
+              form.setValue("dob", dob.toDate())
+              form.setValue("gender", gender)
+            } else {
+              // If no ConcessionDetails found, set basic info from Students collection
+              const name = studentData.Name.trim()
+              const nameParts = name.split(" ")
+              const firstName = nameParts[0] || ""
+              const middleName = nameParts[1] || ""
+              const lastName = nameParts[nameParts.length - 1] || ""
+
+              form.setValue("firstName", firstName)
+              form.setValue("middleName", middleName)
+              form.setValue("lastName", lastName)
             }
 
-            // Set form values
-            const {
-              firstName,
-              middleName,
-              lastName,
-              address,
-              phoneNum,
-              from,
-              travelLane,
-              dob,
-              gender,
-            } = studentDetails;
-            form.setValue("firstName", firstName);
-            form.setValue("middleName", middleName);
-            form.setValue("lastName", lastName);
-            form.setValue("address", address);
-            form.setValue("phoneNum", phoneNum.toString());
-            form.setValue("from", from);
-            form.setValue("travelLane", travelLane);
-            form.setValue("dob", dob.toDate());
-            form.setValue("gender", gender);
-          } else {
-            // If no ConcessionDetails found, set basic info from Students collection
-            const name = studentData.Name.trim();
-            const nameParts = name.split(" ");
-            const firstName = nameParts[0] || "";
-            const middleName = nameParts[1] || "";
-            const lastName = nameParts[nameParts.length - 1] || "";
-
-            form.setValue("firstName", firstName);
-            form.setValue("middleName", middleName);
-            form.setValue("lastName", lastName);
+            // Set other form values
+            form.setValue("branch", studentData.Branch)
+            form.setValue("email", value)
+            setStudentId(studentId)
+            break // Exit loop once student is found
           }
-
-          // Set other form values
-          form.setValue("branch", studentData.Branch);
-          form.setValue("email", value);
-          setStudentId(studentId);
-          break; // Exit loop once student is found
         }
+      } catch (error) {
+        toast({
+          description: "Error fetching student data",
+          variant: "destructive",
+        })
+        console.error("Error getting student document:", error)
+        throw error
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      toast({
-        description: "Error fetching student data",
-        variant: "destructive",
-      });
-      console.error("Error getting student document:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [form, toast, canIssuePass, setStudentId, setLoading], // Added canIssuePass to dependencies
+  )
 
   useEffect(() => {
-    setStudentData(value);
-    setCanRenewPass(true);
-    setDaysLeft(null);
-    setDiffInDays(null);
-    form.reset();
-  }, [value]);
+    setStudentData(value)
+    setCanRenewPass(true)
+    setDaysLeft(null)
+    setDiffInDays(null)
+    form.reset()
+  }, [value, form, setStudentData])
 
-  const createConcDetailsAndRequestDocs = async (
-    studentId: string,
-    values: FormValues
-  ) => {
-    setLoading(true);
+  const createConcDetailsAndRequestDocs = async (studentId: string, values: FormValues) => {
+    setLoading(true)
     try {
-      const { ageYears, ageMonths } = calculateAge(values.dob);
-      const { email, certNo, gradYear, phoneNum, ...formData } = values;
+      const { ageYears, ageMonths } = calculateAge(values.dob)
+      const { email, certNo, gradYear, phoneNum, ...formData } = values
 
-      const selectedGradYear = gradYearList.find(
-        (item) => item.year === gradYear
-      )?.gradYear;
-      const parsedPhoneNum = parseInt(phoneNum, 10);
+      const selectedGradYear = gradYearList.find((item) => item.year === gradYear)?.gradYear
+      const parsedPhoneNum = Number.parseInt(phoneNum, 10)
 
-      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId);
-      const concessionRequestRef = doc(db, "ConcessionRequest", studentId);
+      const concessionDetailsRef = doc(db, "ConcessionDetails", studentId)
+      const concessionRequestRef = doc(db, "ConcessionRequest", studentId)
 
       await setDoc(concessionDetailsRef, {
         ...formData,
@@ -246,7 +228,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
         lastPassIssued: new Date(),
         status: "serviced",
         statusMessage: "Your request has been serviced",
-      });
+      })
 
       await setDoc(concessionRequestRef, {
         notificationTime: new Date(),
@@ -259,34 +241,32 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
           date: new Date(),
           collected: "1",
         },
-      });
+      })
 
       // For Stats UPDATE PASS
-      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats");
-      const concessionHistorySnap = await getDoc(concessionHistoryRef);
-      const currentDate = dateFormat(new Date());
+      const concessionHistoryRef = doc(db, "ConcessionHistory", "DailyStats")
+      const concessionHistorySnap = await getDoc(concessionHistoryRef)
+      const currentDate = dateFormat(new Date())
 
       if (concessionHistorySnap.exists()) {
-        const historyData = concessionHistorySnap.data();
-        let statsArray = historyData.stats || [];
-        const dateIndex = statsArray.findIndex(
-          (entry: any) => entry.date === currentDate
-        );
+        const historyData = concessionHistorySnap.data()
+        const statsArray = historyData.stats || []
+        const dateIndex = statsArray.findIndex((entry: any) => entry.date === currentDate)
 
         if (dateIndex >= 0) {
           // Initialize createdPass if it doesn't exist
           if (typeof statsArray[dateIndex].createdPass !== "number") {
-            statsArray[dateIndex].createdPass = 0;
+            statsArray[dateIndex].createdPass = 0
           }
-          statsArray[dateIndex].createdPass += 1;
+          statsArray[dateIndex].createdPass += 1
         } else {
           statsArray.push({
             date: currentDate,
             createdPass: 1,
-          });
+          })
         }
 
-        await updateDoc(concessionHistoryRef, { stats: statsArray });
+        await updateDoc(concessionHistoryRef, { stats: statsArray })
       } else {
         await setDoc(concessionHistoryRef, {
           stats: [
@@ -295,35 +275,33 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
               createdPass: 1,
             },
           ],
-        });
+        })
       }
 
       toast({
         description: "Concession request has been created!",
-      });
+      })
     } catch (error) {
       toast({
         description: "Error while processing request!",
         variant: "destructive",
-      });
-      console.error("Error while creating docs", error);
+      })
+      console.error("Error while creating docs", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const appendFEDataInConcHistory = async (values: FormValues) => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const { ageYears, ageMonths } = calculateAge(values.dob);
-      const { email, certNo, gradYear, phoneNum, ...formData } = values;
-  
-      const selectedGradYear = gradYearList.find(
-        (item) => item.year === gradYear
-      )?.gradYear;
-  
-      const parsedPhoneNum = parseInt(phoneNum, 10);
-  
+      const { ageYears, ageMonths } = calculateAge(values.dob)
+      const { email, certNo, gradYear, phoneNum, ...formData } = values
+
+      const selectedGradYear = gradYearList.find((item) => item.year === gradYear)?.gradYear
+
+      const parsedPhoneNum = Number.parseInt(phoneNum, 10)
+
       const formattedData = {
         ...formData,
         ageYears,
@@ -334,127 +312,77 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
         lastPassIssued: new Date().toISOString(),
         status: "serviced",
         statusMessage: "Your request has been serviced",
-      };
-  
-      const storage = getStorage();
-      const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json");
-  
-      const url = await getDownloadURL(fileRef);
-      const response = await fetch(url);
-      const existingData = await response.json();
-  
-      const history: any[] = Array.isArray(existingData) ? existingData : [];
-  
-      history.push(formattedData);
-  
+      }
+
+      const storage = getStorage()
+      const fileRef = storageRef(storage, "RailwayConcession/concessionHistory.json")
+      const url = await getDownloadURL(fileRef)
+      const response = await fetch(url)
+      const existingData = await response.json()
+
+      const history: any[] = Array.isArray(existingData) ? existingData : []
+
+      history.push(formattedData)
+
       await uploadString(fileRef, JSON.stringify(history, null, 2), "raw", {
         contentType: "application/json",
-      });
-  
+      })
+
       toast({
         description: "Concession request has been created!",
-      });
+      })
     } catch (error) {
       toast({
         description: "Error while processing request!",
         variant: "destructive",
-      });
-      console.error("An error occurred while appending data", error);
+      })
+      console.error("An error occurred while appending data", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const canIssuePass = async (
-    lastPass: Date,
-    status: string,
-    duration: string
-  ): Promise<boolean> => {
-    if (status.toLowerCase() === "rejected") {
-      return true;
-    } else if (status.toLowerCase() === "unserviced") {
-      toast({
-        description:
-          "Cannot issue a new pass. The previous request is pending.",
-        variant: "destructive",
-      });
-      return false;
-    } else {
-      const today = new Date();
-      const diffInMs: number = today.getTime() - lastPass.getTime();
-      const differenceInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-      const futurePass = new Date(lastPass);
-      if (duration === "Monthly") {
-        futurePass.setDate(futurePass.getDate() + 26);
-      } else if (duration === "Quarterly") {
-        futurePass.setDate(futurePass.getDate() + 86);
-      }
-
-      const daysRemaining = Math.ceil(
-        (futurePass.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      if (duration === "Monthly" && differenceInDays < 26) {
-        toast({
-          description: `Cannot renew pass. Number of days left: ${daysRemaining}`,
-          variant: "destructive",
-        });
-        return false;
-      } else if (duration === "Quarterly" && differenceInDays < 86) {
-        toast({
-          description: `Cannot renew pass. Number of days left: ${daysRemaining}`,
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      return true;
-    }
-  };
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!canRenewPass) {
       toast({
         description: `Cannot renew pass. Number of days left: ${daysLeft}`,
         variant: "destructive",
-      });
-      return;
+      })
+      return
     }
 
     try {
       if (values.gradYear === "FE" && value === "") {
-        await appendFEDataInConcHistory(values);
+        await appendFEDataInConcHistory(values)
       } else {
         if (studentId) {
-          await createConcDetailsAndRequestDocs(studentId, values);
+          await createConcDetailsAndRequestDocs(studentId, values)
         } else {
           toast({
             description: "No such student found!",
             variant: "destructive",
-          });
+          })
         }
       }
 
-      form.reset();
-      setValue("");
-      setStudentId("");
+      form.reset()
+      setValue("")
+      setStudentId("")
     } catch (error) {
       toast({
         description: "An error occurred",
         variant: "destructive",
-      });
-      console.error("Error ", error);
+      })
+      console.error("Error ", error)
     }
-  };
-
+  }
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="w-10 h-10 animate-spin" />
       </div>
-    );
+    )
   }
-
   return (
     <>
       {" "}
@@ -474,11 +402,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
         <CardContent>
           {" "}
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              method="post"
-              className="space-y-8"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} method="post" className="space-y-8">
               <div className="grid gap-4">
                 {" "}
                 <div className="grid gap-2 mt-[2.5%] mb-[2.5%]">
@@ -494,27 +418,17 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       }}
                       className={cn("max-h-[100px] no-scrollbar")}
                     >
-                      <CommandEmpty>
-                        No such email found. Please enter all the fields
-                        manually.
-                      </CommandEmpty>
+                      <CommandEmpty>No such email found. Please enter all the fields manually.</CommandEmpty>
                       <CommandGroup>
                         {emails.map((email, index) => (
                           <CommandItem
                             key={index}
                             value={email}
                             onSelect={(currentValue) => {
-                              setValue(
-                                currentValue === value ? "" : currentValue
-                              );
+                              setValue(currentValue === value ? "" : currentValue)
                             }}
                           >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                value === email ? "opacity-100" : "opacity-0"
-                              )}
-                            />
+                            <Check className={cn("mr-2 h-4 w-4", value === email ? "opacity-100" : "opacity-0")} />
                             {email}
                           </CommandItem>
                         ))}
@@ -596,10 +510,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Branch</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select branch" />
@@ -611,7 +522,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                                   <SelectItem key={index} value={branch}>
                                     {branch}
                                   </SelectItem>
-                                );
+                                )
                               })}
                             </SelectContent>
                           </Select>
@@ -628,10 +539,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Year</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select year" />
@@ -643,7 +551,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                                   <SelectItem key={index} value={year.year}>
                                     {year.year}
                                   </SelectItem>
-                                );
+                                )
                               })}
                             </SelectContent>
                           </Select>
@@ -663,10 +571,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Gender</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select gender" />
@@ -697,31 +602,20 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                                   variant={"outline"}
                                   className={cn(
                                     "w-[240px] pl-3 text-left font-normal flex",
-                                    !field.value && "text-muted-foreground"
+                                    !field.value && "text-muted-foreground",
                                   )}
                                 >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
+                                  {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto  p-0"
-                              align="start"
-                            >
+                            <PopoverContent className="w-auto  p-0" align="start">
                               <Calendar
                                 mode="single"
-                                selected={new Date(2003, 5, 1)}
-                                defaultMonth={new Date(2003, 5, 1)}
+                                selected={field.value} // Use field.value instead of hardcoded date
                                 onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date > new Date() ||
-                                  date < new Date("2000-01-01")
-                                }
+                                disabled={(date) => date > new Date() || date < new Date("2000-01-01")}
                                 initialFocus
                               />
                             </PopoverContent>
@@ -742,10 +636,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter phone number"
-                              {...field}
-                            />
+                            <Input placeholder="Enter phone number" {...field} />
                           </FormControl>
 
                           <FormMessage />
@@ -761,11 +652,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                         <FormItem>
                           <FormLabel>Address</FormLabel>
                           <FormControl>
-                            <Textarea
-                              placeholder="Enter student address"
-                              className="resize-none"
-                              {...field}
-                            />
+                            <Textarea placeholder="Enter student address" className="resize-none" {...field} />
                           </FormControl>
 
                           <FormMessage />
@@ -783,10 +670,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Class</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select class" />
@@ -811,10 +695,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Duration</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select pass duration" />
@@ -822,9 +703,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="Monthly">Monthly</SelectItem>
-                              <SelectItem value="Quarterly">
-                                Quarterly
-                              </SelectItem>
+                              <SelectItem value="Quarterly">Quarterly</SelectItem>
                             </SelectContent>
                           </Select>
 
@@ -840,10 +719,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Travel lane</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select travel lane" />
@@ -871,10 +747,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>From</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select station" />
@@ -903,11 +776,7 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
                         <FormItem>
                           <FormLabel>To</FormLabel>
                           <FormControl>
-                            <Input
-                              className="cursor-default"
-                              readOnly
-                              {...field}
-                            />
+                            <Input className="cursor-default" readOnly {...field} />
                           </FormControl>
 
                           <FormMessage />
@@ -939,6 +808,6 @@ const CreateNewPass: React.FC<CreateNewPassProps> = ({
         </CardContent>
       </Card>
     </>
-  );
-};
-export default CreateNewPass;
+  )
+}
+export default CreateNewPass

@@ -63,7 +63,7 @@ const ImportantNotices: React.FC = () => {
     };
 
     fetchNotices();
-  }, []);
+  }, [userType]);
 
   // console.log(notices);
   const [loading, setLoading] = useState<boolean>(true);
