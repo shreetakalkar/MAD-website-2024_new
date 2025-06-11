@@ -119,7 +119,7 @@ export default function Page() {
         <div className="flex flex-wrap justify-around p-6">
           <motion.div
             variants={fadeInUp}
-            className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-60 sm:max-w-60 md:max-w-sm lg:max-w-md m-2"
+            className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
           >
             <a
               href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application"
@@ -142,7 +142,7 @@ export default function Page() {
 
           <motion.div
             variants={fadeInUp}
-            className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-60 sm:max-w-60 md:max-w-sm lg:max-w-md m-2"
+            className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
           >
             <a
               href="https://apps.apple.com/in/app/tsec-app/id6446188102"
