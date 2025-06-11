@@ -11,6 +11,7 @@ import AppEvents from "@/public/images/landing/app-events.jpg";
 import AppDepartment from "@/public/images/landing/app-dept.jpg";
 import AppCommittees from "@/public/images/landing/app-committees.jpg";
 import { PhoneMockup } from "@/components/landing-page/PhoneMockup";
+import FeaturesSection from "./features"
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
@@ -101,6 +102,7 @@ export default function Page() {
       </motion.section>
 
       {/* Barcodes Section */}
+      <div className="bg-[linear-gradient(180deg,_#ffffff_0%,_#e0f7ff_15%,_#ffffff_30%,_#d6f4ff_45%,_#ffffff_60%,_#c8f0ff_75%,_#ffffff_90%)] dark:bg-[linear-gradient(180deg,_#0b1120_0%,_#0b1120_15%,_#172554_30%,_#0b1120_50%,_#1e3a8a_65%,_#0b1120_85%,_#0b1120_100%)] dark:text-white">
       <motion.section
         initial="hidden"
         animate="visible"
@@ -166,7 +168,7 @@ export default function Page() {
       </motion.section>
 
       {/* Features Section */}
-      <section className="bg-black dark:bg-white dark:text-black py-16 md:py-24 text-white rounded-[15px]">
+      {/* <section className="bg-black dark:bg-white dark:text-black py-16 md:py-24 text-white rounded-[15px]">
         <motion.div
           initial="initial"
           whileInView="animate"
@@ -238,7 +240,11 @@ export default function Page() {
             ))}
           </div>
         </motion.div>
-      </section>
+      </section> */}
+
+      <FeaturesSection />
+      </div> 
+      {/* barcode+features div for bg */}
     </div>
   );
 }
