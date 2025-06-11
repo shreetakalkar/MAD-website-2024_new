@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useEffect, useState, useCallback } from "react" // Import useCallback
+import { useEffect, useState, useCallback } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { doc, getDoc, setDoc, Timestamp, updateDoc, arrayRemove } from "firebase/firestore"
 import { db } from "@/config/firebase"
@@ -54,6 +54,80 @@ interface HistoryItem {
   passNum: string
 }
 
+// Moved outside component as it's a pure function
+const parseKeyRanges = (data: any) => {
+  return Object.keys(data).reduce((acc: any, key: string) => {
+    const [start, end] = key.split("-")
+
+    // remove prefix if exists in the ranges of the filename
+    const low = Number.parseInt(start.replace(/^[A-Za-z]\s*/, ""))
+    const high = Number.parseInt(end.replace(/^[A-Za-z]\s*/, ""))
+
+    acc[key] = { low, high }
+    return acc
+  }, {})
+}
+
+// Moved outside component as it's a pure function
+const makeBatches = (data: Enquiry[], downloadHistory: Download[], passBookRanges: PassBookRanges) => {
+  const seenPassNums = new Set<string>()
+  const uniqueData: Enquiry[] = []
+  const batchedEnquiries: BatchElement[] = []
+
+  // Get unique entries (latest first)
+  for (let i = 0; i < data.length; i++) {
+    const enquiry = data[i]
+    if (!seenPassNums.has(enquiry.passNum)) {
+      seenPassNums.add(enquiry.passNum)
+      uniqueData.push(enquiry)
+    }
+  }
+
+  const isDownloaded = (fileName: string) => {
+    return downloadHistory.some((d) => d.filename === fileName)
+  }
+
+  const getDownloadDate = (fileName: string) => {
+    const download = downloadHistory.find((d) => d.filename === fileName)
+    return download ? new Date(download.date) : null
+  }
+
+  Object.entries(passBookRanges).forEach(([rangeKey, range]) => {
+    const enquiriesInRange = uniqueData.filter((enquiry) => {
+      const passNum = Number.parseInt(enquiry.passNum.replace(/^[A-Za-z]\s*/, ""))
+
+      return (
+        (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
+        passNum >= range.low &&
+        passNum <= range.high
+      )
+    })
+
+    if (enquiriesInRange.length > 0) {
+      const fileName = rangeKey // Using the original range key as filename
+      batchedEnquiries.push({
+        enquiries: enquiriesInRange,
+        fileName: fileName,
+        lane: enquiriesInRange[0].travelLane as "Central" | "Western", // Taking first entry's lane
+        isDownloaded: isDownloaded(fileName),
+        date: getDownloadDate(fileName),
+      })
+    }
+  })
+
+  // Sort batches by filename
+  const sortedBatches = batchedEnquiries.sort((a, b) => {
+    // Extract numbers from filenames for proper numeric sorting
+    const aNum = Number.parseInt(a.fileName.replace(/^[A-Za-z]\s*/, "").split("-")[0])
+    const bNum = Number.parseInt(b.fileName.replace(/^[A-Za-z]\s*/, "").split("-")[0])
+    return aNum - bNum
+  })
+
+  // console.log(sortedBatches);
+
+  return sortedBatches
+}
+
 const Downloads: React.FC = () => {
   const { theme } = useTheme()
   const { toast } = useToast()
@@ -67,7 +141,7 @@ const Downloads: React.FC = () => {
   const [rangeEnd, setRangeEnd] = useState("")
   const [travelLane, setTravelLane] = useState("Select Lane")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [loading, setLoading] = useState(false) // Initialize with false
+  const [loading, setLoading] = useState(Boolean)
 
   const storage = getStorage()
   const fileRef = ref(storage, "RailwayConcession/concessionHistory.json")
@@ -113,7 +187,7 @@ const Downloads: React.FC = () => {
     }
   }
 
-  const fetchDownloadHistory = async () => {
+  const fetchDownloadHistory = useCallback(async () => {
     try {
       const concessionHistoryRef = doc(db, "ConcessionHistory", "History")
       const docSnap = await getDoc(concessionHistoryRef)
@@ -125,9 +199,9 @@ const Downloads: React.FC = () => {
       console.error("Error fetching download history:", error)
       return []
     }
-  }
+  }, []) // Removed 'db'
 
-  const fetchPassBookDetails = async () => {
+  const fetchPassBookDetails = useCallback(async () => {
     try {
       const passBookRef = doc(db, "ConcessionHistory", "PassBook")
       const docSnap = await getDoc(passBookRef)
@@ -139,79 +213,7 @@ const Downloads: React.FC = () => {
       console.error("Error fetching pass book details:", error)
       return []
     }
-  }
-
-  const parseKeyRanges = (data: any) => {
-    return Object.keys(data).reduce((acc: any, key: string) => {
-      const [start, end] = key.split("-")
-
-      // remove prefix if exists in the ranges of the filename
-      const low = Number.parseInt(start.replace(/^[A-Za-z]\s*/, ""))
-      const high = Number.parseInt(end.replace(/^[A-Za-z]\s*/, ""))
-
-      acc[key] = { low, high }
-      return acc
-    }, {})
-  }
-
-  const makeBatches = (data: Enquiry[], downloadHistory: Download[], passBookRanges: PassBookRanges) => {
-    const seenPassNums = new Set<string>()
-    const uniqueData: Enquiry[] = []
-    const batchedEnquiries: BatchElement[] = []
-
-    // Get unique entries (latest first)
-    for (let i = 0; i < data.length; i++) {
-      const enquiry = data[i]
-      if (!seenPassNums.has(enquiry.passNum)) {
-        seenPassNums.add(enquiry.passNum)
-        uniqueData.push(enquiry)
-      }
-    }
-
-    const isDownloaded = (fileName: string) => {
-      return downloadHistory.some((d) => d.filename === fileName)
-    }
-
-    const getDownloadDate = (fileName: string) => {
-      const download = downloadHistory.find((d) => d.filename === fileName)
-      return download ? new Date(download.date) : null
-    }
-
-    Object.entries(passBookRanges).forEach(([rangeKey, range]) => {
-      const enquiriesInRange = uniqueData.filter((enquiry) => {
-        const passNum = Number.parseInt(enquiry.passNum.replace(/^[A-Za-z]\s*/, ""))
-
-        return (
-          (enquiry.status === "serviced" || enquiry.status === "cancelled") &&
-          passNum >= range.low &&
-          passNum <= range.high
-        )
-      })
-
-      if (enquiriesInRange.length > 0) {
-        const fileName = rangeKey // Using the original range key as filename
-        batchedEnquiries.push({
-          enquiries: enquiriesInRange,
-          fileName: fileName,
-          lane: enquiriesInRange[0].travelLane as "Central" | "Western", // Taking first entry's lane
-          isDownloaded: isDownloaded(fileName),
-          date: getDownloadDate(fileName),
-        })
-      }
-    })
-
-    // Sort batches by filename
-    const sortedBatches = batchedEnquiries.sort((a, b) => {
-      // Extract numbers from filenames for proper numeric sorting
-      const aNum = Number.parseInt(a.fileName.replace(/^[A-Za-z]\s*/, "").split("-")[0])
-      const bNum = Number.parseInt(b.fileName.replace(/^[A-Za-z]\s*/, "").split("-")[0])
-      return aNum - bNum
-    })
-
-    // console.log(sortedBatches);
-
-    return sortedBatches
-  }
+  }, []) // Removed 'db'
 
   const handleDownloadBatchExcel = async (batch: BatchElement) => {
     try {
@@ -322,7 +324,7 @@ const Downloads: React.FC = () => {
         description: "Failed to fetch data. Please try again later.",
       })
     }
-  }, [fileRef, toast, setBatchedEnquiries, setFilteredBatches]) // Add dependencies for useCallback
+  }, [toast, fetchDownloadHistory, fetchPassBookDetails, fileRef, setBatchedEnquiries, setFilteredBatches]) // Removed 'db'
 
   // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
   useEffect(() => {
@@ -355,7 +357,7 @@ const Downloads: React.FC = () => {
         const value = obj[field]
         if (value === null || value === undefined) return false
         if (typeof value === "string" && value.trim() === "") return false
-        if (typeof value === "number" && Number.isNaN(value)) return false
+        if (typeof value === "number" && isNaN(value)) return false
         return true
       })
     }
@@ -407,12 +409,12 @@ const Downloads: React.FC = () => {
     }
 
     checkAndTransferTempHistory()
-  }, [fileRef]) // Add fileRef to dependencies
+  }, [fileRef, setLoading, setIsTransferComplete]) // Removed 'db'
 
   useEffect(() => {
     if (!isTransferComplete) return
     fetchEnquiries()
-  }, [isTransferComplete, fetchEnquiries]) // Add fetchEnquiries to dependencies
+  }, [isTransferComplete, fetchEnquiries])
 
   useEffect(() => {
     const allBatches = batchedEnquiries
@@ -438,19 +440,18 @@ const Downloads: React.FC = () => {
               textAlign: "center",
             }}
           >
-            {
-              "Download Excel Files ONLY when All passes are collected. If there are few passes which are not Collected then Cancel those passes from Update Pass."
-            }
+            Download Excel Files ONLY when All passes are collected. If there are few passes which are not Collected
+            then Cancel those passes from Update Pass.
           </div>
-          <div className="mb-4 flex items-center justify-between p-5">
-            <div className="flex w-full flex-wrap items-center justify-between">
-              <h2 className="text-2xl font-semibold max-sm:text-xl mr-4">Downloads</h2>
+          <div className="flex items-center justify-between mb-4 p-5">
+            <div className="flex w-full justify-between flex-wrap items-center">
+              <h2 className="text-2xl max-sm:text-xl font-semibold mr-4">Downloads</h2>
 
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
-                    className="ml-5 rounded-lg bg-blue-500 px-5 py-3 font-semibold text-white shadow-md hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Add New Pass Book
                   </Button>
@@ -501,7 +502,7 @@ const Downloads: React.FC = () => {
                   <DialogFooter>
                     <Button
                       type="button"
-                      className="ml-5 rounded-lg bg-blue-500 px-5 py-3 font-semibold text-white shadow-md hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="ml-5 px-5 py-3 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       onClick={handleSave}
                     >
                       Create
@@ -510,7 +511,7 @@ const Downloads: React.FC = () => {
                 </DialogContent>
               </Dialog>
 
-              <div className="relative flex space-x-4 items-center">
+              <div className="flex space-x-4 relative">
                 <div className="relative flex items-center">
                   <span className="absolute inset-y-0 left-2 flex items-center text-gray-500">
                     <svg
