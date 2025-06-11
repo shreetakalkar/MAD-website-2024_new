@@ -29,7 +29,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="relative w-full">
+    <div className="relative max-w-90 dark:bg-neutral-950">
       <ResizableNavbar>
         {/* Desktop Navigation */}
         <NavBody>
@@ -69,7 +69,7 @@ export function Navbar() {
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-neutral-100 dark:text-neutral-100 font-light"
+                className="relative text-neutral-800 dark:text-neutral-100 font-normal"
               >
                 <span className="block">{item.name}</span>
               </a>
@@ -79,6 +79,7 @@ export function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="primary"
                 className="w-80"
+                href="/auth"
               >
                 Login
               </NavbarButton>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/landing-page/navbar";
 import React from "react";
+import { useTheme } from "next-themes";
 import AppTT from "@/public/images/landing/app-tt.jpg";
 import AppPlacement from "@/public/images/landing/app-placement.jpg";
 import AppRailway from "@/public/images/landing/app-railway.jpg";
@@ -11,8 +12,11 @@ import AppEvents from "@/public/images/landing/app-events.jpg";
 import AppDepartment from "@/public/images/landing/app-dept.jpg";
 import AppCommittees from "@/public/images/landing/app-committees.jpg";
 import { PhoneMockup } from "@/components/landing-page/PhoneMockup";
-import BgImage from "@/public/images/landing/app-bg-image.png";
-import AppFeatures from "@/public/images/landing/app-features.png"
+import BgImageLight from "@/public/images/landing/app-bg-image-light.png";
+import BgImageDark from "@/public/images/landing/app-bg-image-dark.png";
+import AppFeatures from "@/public/images/landing/app-features.png";
+import AppAnnounce from "@/public/images/landing/app-announcement.png";
+import AppApply from "@/public/images/landing/app-apply.png";
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
@@ -29,6 +33,9 @@ const stagger = {
 };
 
 export default function Page() {
+  const { resolvedTheme } = useTheme();
+  const BgImage = resolvedTheme === "light" ? BgImageLight : BgImageDark;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -71,9 +78,11 @@ export default function Page() {
                 whileTap={{ scale: 0.95 }}
                 className="w-full sm:w-auto"
               >
-                <button className="px-4 sm:px-6 py-3 font-normal text-white bg-[#35a7ff] hover:bg-blue-700 sm:text-lg text-sm rounded-full transition-colors duration-300 shadow-lg">
-                  GET STARTED
-                </button>
+                <a href="/auth">
+                  <button className="px-4 sm:px-6 py-3 font-normal text-white bg-[#35a7ff] hover:bg-blue-700 sm:text-lg text-sm rounded-full transition-colors duration-300 shadow-lg">
+                    GET STARTED
+                  </button>
+                </a>
               </motion.div>
             </motion.div>
             <motion.div
@@ -96,7 +105,7 @@ export default function Page() {
                   {feature}
                 </motion.div>
               ))} */}
-              <Image className = "py-5" src={AppFeatures} alt="feature" />
+              <Image className="py-5" src={AppFeatures} alt="feature" />
             </motion.div>
           </div>
           <motion.div
@@ -105,7 +114,22 @@ export default function Page() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="relative mx-auto w-full max-w-sm md:max-w-md"
           >
-            <PhoneMockup img={AppRailway} />
+            <div className="relative flex flex-col items-center justify-center">
+              {/* Phone UI */}
+              <div className="relative z-10">
+                <PhoneMockup img={AppRailway} />
+
+                {/* Announcement Box (Left) */}
+                <div className="absolute -left-40 top-[35%] z-20 hidden xl:block">
+                  <Image src={AppAnnounce} alt="announce" width={203} className="w-[203px] "/>
+                </div>
+
+                {/* Apply Now Box (Right) */}
+                <div className="absolute -right-40 top-[45%] z-20 hidden xl:block">
+                  <Image src={AppApply} alt="apply" width={263} className="w-[263px]"/>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </motion.section>
       </div>
