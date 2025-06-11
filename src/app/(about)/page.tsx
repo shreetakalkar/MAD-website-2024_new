@@ -48,7 +48,7 @@ export default function Page() {
           initial="initial"
           animate="animate"
           variants={stagger}
-          className="container grid items-center gap-12 pb-12 pt-32 md:grid-cols-2 md:gap-8 md:py-24 md:px-10"
+          className="container grid items-center gap-12 pb-12 pt-32 md:grid-cols-2 md:gap-8 md:py-24 md:px-10 hero"
         >
           <div className="flex flex-col gap-8">
             <motion.div variants={fadeInUp} className="space-y-4">
@@ -105,7 +105,7 @@ export default function Page() {
                   {feature}
                 </motion.div>
               ))} */}
-              <Image className="py-5" src={AppFeatures} alt="feature" />
+              <Image className="py-5 sm:pl-8 md:pl-14" src={AppFeatures} alt="feature" />
             </motion.div>
           </div>
           <motion.div

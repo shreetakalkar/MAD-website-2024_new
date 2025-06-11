@@ -2,8 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   box-sizing: border-box;
+}
+
+.hero {
+  transform: scale(0.9);
+  transform-origin: top center;
+  width: 111.11%;
 }
 
 @layer base {
