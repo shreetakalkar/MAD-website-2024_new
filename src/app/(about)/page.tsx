@@ -11,6 +11,8 @@ import AppEvents from "@/public/images/landing/app-events.jpg";
 import AppDepartment from "@/public/images/landing/app-dept.jpg";
 import AppCommittees from "@/public/images/landing/app-committees.jpg";
 import { PhoneMockup } from "@/components/landing-page/PhoneMockup";
+import BgImage from "@/public/images/landing/app-bg-image.png";
+import AppFeatures from "@/public/images/landing/app-features.png"
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
@@ -30,53 +32,60 @@ export default function Page() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-
-      {/* Hero Section */}
-      <motion.section
-        initial="initial"
-        animate="animate"
-        variants={stagger}
-        className="container grid items-center gap-12 pb-8 pt-32 md:grid-cols-2 md:gap-8 md:py-24 md:px-10"
+      <div
+        className="bg-top bg-no-repeat bg-cover min-w-full"
+        style={{ backgroundImage: `url(${BgImage.src})` }}
       >
-        <div className="flex flex-col gap-8">
-          <motion.div variants={fadeInUp} className="space-y-4">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
-              Welcome to the{" "}
-              <span className="text-blue-600">TSEC Dev&apos;s Club</span>
-            </h1>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg md:text-xl text-blue-600"
-            >
-              Creators of the TSEC App
-            </motion.p>
-          </motion.div>
-          <motion.div
-            variants={fadeInUp}
-            className="flex max-w-md flex-col gap-4"
-          >
-            <p className="text-sm text-muted-foreground">
-              We&apos;re a team of passionate developers creating innovative
-              solutions for TSEC students. Our flagship product, the TSEC App,
-              enhances your academic experience and streamlines access to
-              important college information.
-            </p>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto"
-            >
-              <button className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-colors duration-300 shadow-lg">
-                Get Started
-              </button>
+        {/* Hero Section */}
+        <motion.section
+          initial="initial"
+          animate="animate"
+          variants={stagger}
+          className="container grid items-center gap-12 pb-12 pt-32 md:grid-cols-2 md:gap-8 md:py-24 md:px-10"
+        >
+          <div className="flex flex-col gap-8">
+            <motion.div variants={fadeInUp} className="space-y-4">
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                Welcome to the{" "}
+                <span className="text-[#2262C1]">TSEC Dev&apos;s Club</span>
+              </h1>
+              <motion.p
+                variants={fadeInUp}
+                className="sm:text-2xl font-semibold text-lg text-[#3082FD]"
+              >
+                Creators of the TSEC App
+              </motion.p>
             </motion.div>
-          </motion.div>
-          <motion.div
-            variants={fadeInUp}
-            className="flex flex-wrap items-center gap-4 sm:gap-8"
-          >
-            {["Timetable", "Notes", "Railway Concession", "Notifications"].map(
-              (feature, i) => (
+            <motion.div
+              variants={fadeInUp}
+              className="flex max-w-md flex-col gap-4"
+            >
+              <p className="text-sm text-muted-foreground font-semibold">
+                We&apos;re a team of passionate developers creating innovative
+                solutions for TSEC students. Our flagship product, the TSEC App,
+                enhances your academic experience and streamlines access to
+                important college information.
+              </p>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto"
+              >
+                <button className="px-4 sm:px-6 py-3 font-normal text-white bg-[#35a7ff] hover:bg-blue-700 sm:text-lg text-sm rounded-full transition-colors duration-300 shadow-lg">
+                  GET STARTED
+                </button>
+              </motion.div>
+            </motion.div>
+            <motion.div
+              variants={fadeInUp}
+              className="flex flex-wrap items-center gap-4 sm:gap-8"
+            >
+              {/* {[
+                "Timetable",
+                "Notes",
+                "Railway Concession",
+                "Notifications",
+              ].map((feature, i) => (
                 <motion.div
                   key={feature}
                   initial={{ opacity: 0 }}
@@ -86,19 +95,20 @@ export default function Page() {
                 >
                   {feature}
                 </motion.div>
-              )
-            )}
+              ))} */}
+              <Image className = "py-5" src={AppFeatures} alt="feature" />
+            </motion.div>
+          </div>
+          <motion.div
+            initial={{ x: 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative mx-auto w-full max-w-sm md:max-w-md"
+          >
+            <PhoneMockup img={AppRailway} />
           </motion.div>
-        </div>
-        <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative mx-auto w-full max-w-sm md:max-w-md"
-        >
-          <PhoneMockup img={AppRailway} />
-        </motion.div>
-      </motion.section>
+        </motion.section>
+      </div>
 
       {/* Barcodes Section */}
       <motion.section
@@ -108,7 +118,7 @@ export default function Page() {
           hidden: { opacity: 0 },
           visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
         }}
-        className="container py-16"
+        className="container py-20"
       >
         <motion.h2
           variants={fadeInUp}
@@ -219,7 +229,6 @@ export default function Page() {
                   "Learn about the various committees in the college and stay updated.",
                 image: AppCommittees,
               },
-              
             ].map((feature, i) => (
               <motion.div
                 key={feature.title}
