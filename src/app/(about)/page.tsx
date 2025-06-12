@@ -42,15 +42,19 @@ export default function Page() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <div
-        className="bg-top bg-no-repeat bg-cover min-w-full"
-        style={{ backgroundImage: `url(${BgImage.src})` }}
-      >
+          className={`relative bg-top bg-no-repeat bg-contain sm:bg-cover min-w-full flex justify-center items-center p-0 m-0 backdrop-blur-md ${
+            resolvedTheme === "dark"
+              ? "dark:bg-[#0b1120] after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-b after:from-transparent after:from-[90%] after:to-[#0b1120] after:to-100% after:pointer-events-none after:z-10"
+              : "bg-white after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-b after:from-transparent after:from-[80%] after:to-white after:to-100% after:pointer-events-none after:z-10"
+          }`}
+          style={{ backgroundImage: `url(${BgImage.src})` }}
+        >
         {/* Hero Section */}
         <motion.section
           initial="initial"
           animate="animate"
           variants={stagger}
-          className="container grid items-center gap-12 pb-12 pt-32 md:grid-cols-2 md:gap-8 md:py-24 md:px-10 hero"
+          className="container grid items-center justify-center gap-12 pb-12 sm:pt-32 pt-20 md:grid-cols-2 md:gap-8 md:py-24 md:px-10 hero m-0"
         >
           <div className="flex flex-col gap-8">
             <motion.div variants={fadeInUp} className="space-y-4">
@@ -145,7 +149,7 @@ export default function Page() {
           hidden: { opacity: 0 },
           visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
         }}
-        className="container py-16"
+        className="container py-20"
       >
         <motion.h2
           variants={fadeInUp}
