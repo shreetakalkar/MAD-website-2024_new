@@ -36,6 +36,7 @@ function FeaturesSection() {
             width: "30%",
             height: "auto",
           },
+          
         },
         {
           src: EventCard2,
@@ -48,6 +49,9 @@ function FeaturesSection() {
           },
         },
       ],
+      podiumStyle: {
+        marginRight: "45px", // example adjustment
+      },
     },
     {
       title: "Timetable",
@@ -66,6 +70,9 @@ function FeaturesSection() {
           },
         },
       ],
+      podiumStyle: {
+        marginLeft: "50px", // example adjustment
+      },
     },
     {
       title: "Railway Concession",
@@ -86,13 +93,17 @@ function FeaturesSection() {
           src: RailwayCard2,
           alt: "Railway Card",
           style: {
-            bottom: "17%",
+            bottom: "20%",
             left: "56%",
-            width: "33%",
+            width: "30%",
             height: "auto",
           },
         },
       ],
+
+      podiumStyle: {
+        marginRight: "50px", // example adjustment
+      },
     },
     {
       title: "Department Section",
@@ -121,6 +132,10 @@ function FeaturesSection() {
           },
         },
       ],
+
+      podiumStyle: {
+        marginLeft: "50px", // example adjustment
+      },
     },
     {
       title: "Committees",
@@ -142,13 +157,17 @@ function FeaturesSection() {
           src: CommitteeCard2,
           alt: "Committee Card",
           style: {
-            bottom: "14%",
+            bottom: "18%",
             left: "50%",
-            width: "26%",
+            width: "22%",
             height: "auto",
           },
         },
       ],
+
+      podiumStyle: {
+        marginRight: "50px", // example adjustment
+      },
     },
     {
       title: "Placement",
@@ -177,6 +196,10 @@ function FeaturesSection() {
           },
         },
       ],
+
+      podiumStyle: {
+        marginLeft: "70px", // example adjustment
+      },
     },
   ];
 
@@ -204,6 +227,7 @@ function FeaturesSection() {
                 <PhoneDisplay
                   phoneImage={feature.image}
                   overlayCards={feature.overlayCards}
+                  podiumStyle={feature.podiumStyle}
                 />
               </div>
 
