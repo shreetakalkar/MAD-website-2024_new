@@ -36,7 +36,7 @@ const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
           alt="Phone"
           width={300}
           height={600}
-          className="absolute  z-[2] w-[240px] sm:w-[260px] md:w-[280px]"
+          className="absolute bottom-12  z-[2] w-[240px] sm:w-[260px] md:w-[280px]"
         />
 
         {/* Overlay Cards */}
