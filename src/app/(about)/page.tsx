@@ -5,18 +5,14 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/landing-page/navbar";
 import React from "react";
 import { useTheme } from "next-themes";
-import AppTT from "@/public/images/landing/app-tt.jpg";
-import AppPlacement from "@/public/images/landing/app-placement.jpg";
 import AppRailway from "@/public/images/landing/app-railway.jpg";
-import AppEvents from "@/public/images/landing/app-events.jpg";
-import AppDepartment from "@/public/images/landing/app-dept.jpg";
-import AppCommittees from "@/public/images/landing/app-committees.jpg";
 import { PhoneMockup } from "@/components/landing-page/PhoneMockup";
 import BgImageLight from "@/public/images/landing/app-bg-image-light.png";
 import BgImageDark from "@/public/images/landing/app-bg-image-dark.png";
 import AppFeatures from "@/public/images/landing/app-features.png";
 import AppAnnounce from "@/public/images/landing/app-announcement.png";
 import AppApply from "@/public/images/landing/app-apply.png";
+import FeaturesSection from "./features";
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
@@ -135,6 +131,7 @@ export default function Page() {
       </div>
 
       {/* Barcodes Section */}
+      <div className="bg-[linear-gradient(180deg,_#ffffff_0%,_#e0f7ff_15%,_#ffffff_30%,_#d6f4ff_45%,_#ffffff_60%,_#c8f0ff_75%,_#ffffff_90%)] dark:bg-[linear-gradient(180deg,_#0b1120_0%,_#0b1120_15%,_#172554_30%,_#0b1120_50%,_#1e3a8a_65%,_#0b1120_85%,_#0b1120_100%)] dark:text-white">
       <motion.section
         initial="hidden"
         animate="visible"
@@ -200,78 +197,9 @@ export default function Page() {
       </motion.section>
 
       {/* Features Section */}
-      <section className="bg-black dark:bg-white dark:text-black py-16 md:py-24 text-white rounded-[15px]">
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={stagger}
-          className="container space-y-12"
-        >
-          <motion.h2
-            variants={fadeInUp}
-            className="text-center text-2xl md:text-3xl font-bold "
-          >
-            Empowering TSEC Students with{" "}
-            <span className="text-blue-600">Cutting-Edge Technology</span>
-          </motion.h2>
-          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: "Events",
-                description:
-                  "Keep track of all the events happening in college.",
-                image: AppEvents,
-              },
-              {
-                title: "Timetable",
-                description:
-                  "Access your class-wise timetable for your specific batch and class.",
-                image: AppTT,
-              },
-              {
-                title: "Railway Concession",
-                description:
-                  "Simplify the process of requesting railway concessions.",
-                image: AppRailway,
-              },
-              {
-                title: "Placement",
-                description:
-                  "Students can view prospects for placements directly from the app.",
-                image: AppPlacement,
-              },
-              {
-                title: "Department Section",
-                description:
-                  "Find detailed information about every department within TSEC.",
-                image: AppDepartment,
-              },
-              {
-                title: "Committees",
-                description:
-                  "Learn about the various committees in the college and stay updated.",
-                image: AppCommittees,
-              },
-            ].map((feature, i) => (
-              <motion.div
-                key={feature.title}
-                variants={fadeInUp}
-                transition={{ delay: i * 0.1 }}
-                className="space-y-4"
-              >
-                <motion.div whileHover={{ y: -5 }} className="relative mx-auto">
-                  <PhoneMockup img={feature.image} />
-                </motion.div>
-                <h3 className="text-center text-lg font-semibold">
-                  {feature.title}
-                </h3>
-                <p className="text-center text-sm">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+      <FeaturesSection />
+      </div> 
+      {/* barcode+features div for bg */}
     </div>
   );
 }
