@@ -36,7 +36,11 @@ export default function Page() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <div
-        className="bg-top bg-no-repeat bg-cover min-w-full flex justify-center items-center p-0 m-0"
+        className={`relative bg-top bg-no-repeat bg-contain sm:bg-cover min-w-full flex justify-center items-center p-0 m-0 backdrop-blur-md ${
+          resolvedTheme === "dark"
+            ? "dark:bg-[#0b1120] after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-b after:from-transparent after:from-[90%] after:to-[#0b1120] after:to-100% after:pointer-events-none after:z-10"
+            : "bg-white after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-b after:from-transparent after:from-[80%] after:to-white after:to-100% after:pointer-events-none after:z-10"
+        }`}
         style={{ backgroundImage: `url(${BgImage.src})` }}
       >
         {/* Hero Section */}
@@ -101,7 +105,11 @@ export default function Page() {
                   {feature}
                 </motion.div>
               ))} */}
-              <Image className="py-5 sm:pl-8 md:pl-14" src={AppFeatures} alt="feature" />
+              <Image
+                className="py-5 sm:pl-8 md:pl-14"
+                src={AppFeatures}
+                alt="feature"
+              />
             </motion.div>
           </div>
           <motion.div
@@ -117,12 +125,22 @@ export default function Page() {
 
                 {/* Announcement Box (Left) */}
                 <div className="absolute -left-40 top-[35%] z-20 hidden xl:block">
-                  <Image src={AppAnnounce} alt="announce" width={203} className="w-[203px] "/>
+                  <Image
+                    src={AppAnnounce}
+                    alt="announce"
+                    width={203}
+                    className="w-[203px] "
+                  />
                 </div>
 
                 {/* Apply Now Box (Right) */}
                 <div className="absolute -right-40 top-[45%] z-20 hidden xl:block">
-                  <Image src={AppApply} alt="apply" width={263} className="w-[263px]"/>
+                  <Image
+                    src={AppApply}
+                    alt="apply"
+                    width={263}
+                    className="w-[263px]"
+                  />
                 </div>
               </div>
             </div>
@@ -132,73 +150,73 @@ export default function Page() {
 
       {/* Barcodes Section */}
       <div className="bg-[linear-gradient(180deg,_#ffffff_0%,_#e0f7ff_15%,_#ffffff_30%,_#d6f4ff_45%,_#ffffff_60%,_#c8f0ff_75%,_#ffffff_90%)] dark:bg-[linear-gradient(180deg,_#0b1120_0%,_#0b1120_15%,_#172554_30%,_#0b1120_50%,_#1e3a8a_65%,_#0b1120_85%,_#0b1120_100%)] dark:text-white">
-      <motion.section
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
-        }}
-        className="container py-20"
-      >
-        <motion.h2
-          variants={fadeInUp}
-          className="text-center text-2xl md:text-3xl font-bold mb-12"
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
+          }}
+          className="container py-20"
         >
-          Download Our App
-        </motion.h2>
-        <div className="flex flex-wrap justify-around p-6">
-          <motion.div
+          <motion.h2
             variants={fadeInUp}
-            className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
+            className="text-center text-2xl md:text-3xl font-bold mb-12"
           >
-            <a
-              href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application"
-              target="_blank"
-              rel="noopener noreferrer"
+            Download Our App
+          </motion.h2>
+          <div className="flex flex-wrap justify-around p-6">
+            <motion.div
+              variants={fadeInUp}
+              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
             >
-              <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
-                TSEC App On Playstore
-              </h2>
-            </a>
-            <Image
-              src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
-              alt="Download TSEC App on Google Play - QR Code"
-              className="h-auto rounded-md mb-2 w-full"
-              width={300}
-              height={300}
-            />
-            <p>Devs App is available on Playstore</p>
-          </motion.div>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
+                  TSEC App On Playstore
+                </h2>
+              </a>
+              <Image
+                src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
+                alt="Download TSEC App on Google Play - QR Code"
+                className="h-auto rounded-md mb-2 w-full"
+                width={300}
+                height={300}
+              />
+              <p>Devs App is available on Playstore</p>
+            </motion.div>
 
-          <motion.div
-            variants={fadeInUp}
-            className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
-          >
-            <a
-              href="https://apps.apple.com/in/app/tsec-app/id6446188102"
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.div
+              variants={fadeInUp}
+              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
             >
-              <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
-                TSEC App On App Store
-              </h2>
-            </a>
-            <Image
-              src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
-              alt="Card 3"
-              className="w-full h-auto rounded-md mb-2"
-              width={300}
-              height={300}
-            />
-            <p>Devs App is available on App Store</p>
-          </motion.div>
-        </div>
-      </motion.section>
+              <a
+                href="https://apps.apple.com/in/app/tsec-app/id6446188102"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
+                  TSEC App On App Store
+                </h2>
+              </a>
+              <Image
+                src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
+                alt="Card 3"
+                className="w-full h-auto rounded-md mb-2"
+                width={300}
+                height={300}
+              />
+              <p>Devs App is available on App Store</p>
+            </motion.div>
+          </div>
+        </motion.section>
 
-      {/* Features Section */}
-      <FeaturesSection />
-      </div> 
+        {/* Features Section */}
+        <FeaturesSection />
+      </div>
       {/* barcode+features div for bg */}
     </div>
   );
