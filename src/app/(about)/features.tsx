@@ -8,7 +8,7 @@ import PlacementCard1 from "@/public/images/landing/FeaturesCard/placement-card1
 import PlacementCard2 from "@/public/images/landing/FeaturesCard/placement-card2.png";
 import AppRailway from "@/public/images/landing/FeaturesCard/railway-phone-1.png";
 import RailwayCard1 from "@/public/images/landing/FeaturesCard/railway-card1.png";
-import RailwayCard2 from "@/public/images/landing/FeaturesCard/railway-card21.png";
+import RailwayCard2 from "@/public/images/landing/FeaturesCard/railway-card2.png";
 import AppEvents from "@/public/images/landing/FeaturesCard/event-phone.png";
 import EventCard1 from "@/public/images/landing/FeaturesCard/event-card1.png";
 import EventCard2 from "@/public/images/landing/FeaturesCard/event-card2.png";

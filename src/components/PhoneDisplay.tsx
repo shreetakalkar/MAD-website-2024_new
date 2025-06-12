@@ -10,7 +10,7 @@ interface PhoneDisplayProps {
     src: string | StaticImageData;
     alt: string;
     style?: React.CSSProperties;
-    className?: string; // allow Tailwind classes too
+    className?: string; // Tailwind-based positioning preferred
   }[];
 }
 
@@ -26,7 +26,7 @@ const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
         alt="Podium"
         width={200}
         height={80}
-        className="absolute bottom-0 z-[1] w-[250px] sm:w-[370px] md:w-[300px]"
+        className="absolute bottom-0 z-[1] w-[250px] sm:w-[300px] md:w-[350px] mb-[18px]"
       />
 
       <div className="relative w-full flex justify-center items-end h-full">
@@ -36,7 +36,7 @@ const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
           alt="Phone"
           width={300}
           height={600}
-          className="absolute bottom-12  z-[2] w-[240px] sm:w-[260px] md:w-[280px]"
+          className="absolute bottom-18 z-[2] w-[240px] sm:w-[260px] md:w-[280px]"
         />
 
         {/* Overlay Cards */}
@@ -45,9 +45,7 @@ const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
             key={index}
             src={card.src}
             alt={card.alt}
-            // width={100}
-            // height={100}
-            className={`absolute z-[2] ${card.className ?? ""}`}
+            className={`absolute z-[3] ${card.className ?? ""}`}
             style={card.style}
           />
         ))}
