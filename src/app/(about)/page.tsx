@@ -36,7 +36,7 @@ export default function Page() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <div
-        className="bg-top bg-no-repeat bg-cover min-w-full"
+        className="bg-top bg-no-repeat bg-cover min-w-full flex justify-center items-center p-0 m-0"
         style={{ backgroundImage: `url(${BgImage.src})` }}
       >
         {/* Hero Section */}
@@ -44,7 +44,7 @@ export default function Page() {
           initial="initial"
           animate="animate"
           variants={stagger}
-          className="container grid items-center gap-12 pb-12 pt-32 md:grid-cols-2 md:gap-8 md:py-24 md:px-10 hero"
+          className="container grid items-center justify-center gap-12 pb-12 sm:pt-32 pt-20 md:grid-cols-2 md:gap-8 md:py-24 md:px-10 hero m-0"
         >
           <div className="flex flex-col gap-8">
             <motion.div variants={fadeInUp} className="space-y-4">
