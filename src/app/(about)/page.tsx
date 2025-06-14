@@ -137,15 +137,15 @@ export default function Page() {
             hidden: { opacity: 0 },
             visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
           }}
-          className="container py-20"
+          className="container py-20 px-5"
         >
           <motion.h2 variants={fadeInUp} className="text-center text-2xl md:text-3xl font-bold mb-12">
             Download Our App
           </motion.h2>
-          <div className="flex flex-wrap justify-around p-6">
+          <div className="flex flex-wrap justify-around py-6 px-3 gap-y-4">
             <motion.div
               variants={fadeInUp}
-              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
+              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2"
             >
               <a
                 href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application"
@@ -166,7 +166,7 @@ export default function Page() {
 
             <motion.div
               variants={fadeInUp}
-              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full max-w-[15rem] sm:max-w-[15rem] md:max-w-sm lg:max-w-md m-2"
+              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2"
             >
               <a href="https://apps.apple.com/in/app/tsec-app/id6446188102" target="_blank" rel="noopener noreferrer">
                 <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">TSEC App On App Store</h2>
