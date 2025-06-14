@@ -179,7 +179,7 @@ export default function Page() {
               variants={fadeInUp}
               className="rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2 
              border border-neutral-500 dark:border-[#3d4c63] 
-             bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#536d93,_#0f172a)] 
+             bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#1f2937,_#0f172a)] 
              text-black dark:text-white 
              transition-colors duration-300"
             >
