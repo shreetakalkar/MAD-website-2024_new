@@ -1,23 +1,23 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Navbar } from "@/components/landing-page/navbar"
-import AppRailway from "@/public/images/landing/app-railway.jpg"
-import { PhoneMockup } from "@/components/landing-page/PhoneMockup"
-import FeaturesSection from "./features"
-import AppApply from "@/public/images/landing/app-apply.png"
-import BgImageLight from "@/public/images/landing/app-bg-image-light.png"
-import BgImageDark from "@/public/images/landing/app-bg-image-dark.png"
-import AppFeatures from "@/public/images/landing/app-features.png"
-import { useTheme } from "next-themes"
-import AppAnnounce from "@/public/images/landing/app-announcement.png"
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Navbar } from "@/components/landing-page/navbar";
+import AppRailway from "@/public/images/landing/app-railway.jpg";
+import { PhoneMockup } from "@/components/landing-page/PhoneMockup";
+import FeaturesSection from "./features";
+import AppApply from "@/public/images/landing/app-apply.png";
+import BgImageLight from "@/public/images/landing/app-bg-image-light.png";
+import BgImageDark from "@/public/images/landing/app-bg-image-dark.png";
+import AppFeatures from "@/public/images/landing/app-features.png";
+import { useTheme } from "next-themes";
+import AppAnnounce from "@/public/images/landing/app-announcement.png";
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
   animate: { y: 0, opacity: 1 },
   transition: { duration: 0.5 },
-}
+};
 
 const stagger = {
   animate: {
@@ -25,11 +25,11 @@ const stagger = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 export default function Page() {
-  const { resolvedTheme } = useTheme()
-  const BgImage = resolvedTheme === "light" ? BgImageLight : BgImageDark
+  const { resolvedTheme } = useTheme();
+  const BgImage = resolvedTheme === "light" ? BgImageLight : BgImageDark;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -52,19 +52,31 @@ export default function Page() {
           <div className="flex flex-col gap-8">
             <motion.div variants={fadeInUp} className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Welcome to the <span className="text-[#2262C1]">TSEC Dev&apos;s Club</span>
+                Welcome to the{" "}
+                <span className="text-[#2262C1]">TSEC Dev&apos;s Club</span>
               </h1>
-              <motion.p variants={fadeInUp} className="sm:text-2xl font-semibold text-lg text-[#3082FD]">
+              <motion.p
+                variants={fadeInUp}
+                className="sm:text-2xl font-semibold text-lg text-[#3082FD]"
+              >
                 Creators of the TSEC App
               </motion.p>
             </motion.div>
-            <motion.div variants={fadeInUp} className="flex max-w-md flex-col gap-4">
+            <motion.div
+              variants={fadeInUp}
+              className="flex max-w-md flex-col gap-4"
+            >
               <p className="text-sm text-muted-foreground font-semibold">
-                We&apos;re a team of passionate developers creating innovative solutions for TSEC students. Our flagship
-                product, the TSEC App, enhances your academic experience and streamlines access to important college
-                information.
+                We&apos;re a team of passionate developers creating innovative
+                solutions for TSEC students. Our flagship product, the TSEC App,
+                enhances your academic experience and streamlines access to
+                important college information.
               </p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto"
+              >
                 <a href="/auth">
                   <button className="px-4 sm:px-6 py-3 font-normal text-white bg-[#35a7ff] hover:bg-blue-700 sm:text-lg text-sm rounded-full transition-colors duration-300 shadow-lg">
                     GET STARTED
@@ -72,7 +84,10 @@ export default function Page() {
                 </a>
               </motion.div>
             </motion.div>
-            <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-4 sm:gap-8">
+            <motion.div
+              variants={fadeInUp}
+              className="flex flex-wrap items-center gap-4 sm:gap-8"
+            >
               {/* {[
                 "Timetable",
                 "Notes",
@@ -89,7 +104,11 @@ export default function Page() {
                   {feature}
                 </motion.div>
               ))} */}
-              <Image className="py-5 sm:pl-8 md:pl-14" src={AppFeatures || "/placeholder.svg"} alt="feature" />
+              <Image
+                className="py-5 sm:pl-8 md:pl-14"
+                src={AppFeatures || "/placeholder.svg"}
+                alt="feature"
+              />
             </motion.div>
           </div>
           <motion.div
@@ -110,7 +129,12 @@ export default function Page() {
                   transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
                   className="absolute -left-40 top-[35%] z-20 hidden xl:block"
                 >
-                  <Image src={AppAnnounce || "/placeholder.svg"} alt="announce" width={203} className="w-[203px] " />
+                  <Image
+                    src={AppAnnounce || "/placeholder.svg"}
+                    alt="announce"
+                    width={203}
+                    className="w-[203px] "
+                  />
                 </motion.div>
 
                 {/* Apply Now Box (Right) */}
@@ -120,7 +144,12 @@ export default function Page() {
                   transition={{ delay: 1.0, duration: 0.5, ease: "easeOut" }}
                   className="absolute -right-40 top-[45%] z-20 hidden xl:block"
                 >
-                  <Image src={AppApply || "/placeholder.svg"} alt="apply" width={263} className="w-[263px]" />
+                  <Image
+                    src={AppApply || "/placeholder.svg"}
+                    alt="apply"
+                    width={263}
+                    className="w-[263px]"
+                  />
                 </motion.div>
               </div>
             </div>
@@ -139,20 +168,29 @@ export default function Page() {
           }}
           className="container py-20 px-5"
         >
-          <motion.h2 variants={fadeInUp} className="text-center text-2xl md:text-3xl font-bold mb-12">
+          <motion.h2
+            variants={fadeInUp}
+            className="text-center text-2xl md:text-3xl font-bold mb-12"
+          >
             Download Our App
           </motion.h2>
           <div className="flex flex-wrap justify-around py-6 px-3 gap-y-4">
             <motion.div
               variants={fadeInUp}
-              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2"
+              className="rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2 
+             border border-neutral-500 dark:border-[#3d4c63] 
+             bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#536d93,_#0f172a)] 
+             text-black dark:text-white 
+             transition-colors duration-300"
             >
               <a
                 href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">TSEC App On Playstore</h2>
+                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
+                  TSEC App On Playstore
+                </h2>
               </a>
               <Image
                 src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
@@ -166,10 +204,20 @@ export default function Page() {
 
             <motion.div
               variants={fadeInUp}
-              className="border border-gray-300 rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2"
+              className="rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2 
+             border border-neutral-500 dark:border-[#3d4c63] 
+             bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#1f2937,_#0f172a)] 
+             text-black dark:text-white 
+             transition-colors duration-300"
             >
-              <a href="https://apps.apple.com/in/app/tsec-app/id6446188102" target="_blank" rel="noopener noreferrer">
-                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">TSEC App On App Store</h2>
+              <a
+                href="https://apps.apple.com/in/app/tsec-app/id6446188102"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
+                  TSEC App On App Store
+                </h2>
               </a>
               <Image
                 src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
@@ -188,5 +236,5 @@ export default function Page() {
       </div>
       {/* barcode+features div for bg */}
     </div>
-  )
+  );
 }
