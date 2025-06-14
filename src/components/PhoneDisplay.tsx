@@ -4,6 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import React, { useRef } from "react";
 import podium from "../public/podium.png";
 import { motion, useInView } from "framer-motion";
+import { M_PLUS_1 } from "next/font/google";
 
 interface PhoneDisplayProps {
   phoneImage: string | StaticImageData;
@@ -65,7 +66,11 @@ const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
               delay: 0.2 + index * 0.2,
               ease: "easeOut",
             }}
-            className="absolute z-[3]"
+            whileHover={{
+              scale: 1.05,
+              transition: {duration: 0.3}
+            }}
+            className="absolute z-[3] cursor-pointer"
             style={card.style}
           >
             <Image src={card.src} alt={card.alt} />

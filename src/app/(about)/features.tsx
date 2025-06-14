@@ -36,7 +36,6 @@ function FeaturesSection() {
             width: "30%",
             height: "auto",
           },
-          
         },
         {
           src: EventCard2,
@@ -50,7 +49,7 @@ function FeaturesSection() {
         },
       ],
       podiumStyle: {
-        marginRight: "45px", // example adjustment
+        marginRight: "45px",
       },
     },
     {
@@ -71,7 +70,7 @@ function FeaturesSection() {
         },
       ],
       podiumStyle: {
-        marginLeft: "50px", // example adjustment
+        marginLeft: "50px",
       },
     },
     {
@@ -102,7 +101,7 @@ function FeaturesSection() {
       ],
 
       podiumStyle: {
-        marginRight: "50px", // example adjustment
+        marginRight: "50px",
       },
     },
     {
@@ -119,6 +118,10 @@ function FeaturesSection() {
             left: "8%",
             width: "40%",
             height: "auto",
+            // temp styling (replicating the figma card style)
+            border: "1px solid white",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.4)"
           },
         },
         {
@@ -134,7 +137,7 @@ function FeaturesSection() {
       ],
 
       podiumStyle: {
-        marginLeft: "50px", // example adjustment
+        marginLeft: "50px",
       },
     },
     {
@@ -166,7 +169,7 @@ function FeaturesSection() {
       ],
 
       podiumStyle: {
-        marginRight: "50px", // example adjustment
+        marginRight: "50px",
       },
     },
     {
@@ -198,7 +201,7 @@ function FeaturesSection() {
       ],
 
       podiumStyle: {
-        marginLeft: "70px", // example adjustment
+        marginLeft: "70px",
       },
     },
   ];
