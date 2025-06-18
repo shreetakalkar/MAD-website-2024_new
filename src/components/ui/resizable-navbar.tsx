@@ -80,15 +80,23 @@ export const ResizableNavbar = ({ children, className }: NavbarProps) => {
 };
 
 export const NavBody = ({ children, className, scrolled }: NavBodyProps) => {
+  const childrenArray = React.Children.toArray(children);
+  const [logo, ...otherChildren] = childrenArray;
+
   return (
     <div
       className={cn(
-        "relative z-[60] mx-auto flex max-w-7xl flex-row items-center justify-between px-4 py-3 transition-all duration-300",
+        "relative z-[60] mx-auto flex max-w-7xl w-full items-center justify-between px-6 transition-all duration-300",
         scrolled ? "py-2" : "py-3",
         className
       )}
     >
-      {children}
+      <div className="flex items-center flex-shrink-0">
+        {logo}
+      </div>
+      <div className="flex items-center gap-6">
+        {otherChildren}
+      </div>
     </div>
   );
 };

@@ -47,9 +47,9 @@ export default function Page() {
           initial="initial"
           animate="animate"
           variants={stagger}
-          className="container grid items-center justify-center gap-12 pb-12 sm:pt-32 pt-20 md:grid-cols-2 md:gap-8 md:py-24 md:px-10 hero m-0"
+          className="container flex flex-col md:flex-row items-center justify-center gap-12 pb-12 pt-32 sm:pt-32 md:py-24 px-4 md:px-10 mx-auto"
         >
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8 max-w-2xl text-center md:text-left">
             <motion.div variants={fadeInUp} className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 Welcome to the{" "}
@@ -64,9 +64,9 @@ export default function Page() {
             </motion.div>
             <motion.div
               variants={fadeInUp}
-              className="flex max-w-md flex-col gap-4"
+              className="flex flex-col gap-4 items-center md:items-start"
             >
-              <p className="text-sm text-muted-foreground font-semibold">
+              <p className="text-sm text-muted-foreground font-semibold max-w-md">
                 We&apos;re a team of passionate developers creating innovative
                 solutions for TSEC students. Our flagship product, the TSEC App,
                 enhances your academic experience and streamlines access to
@@ -86,78 +86,61 @@ export default function Page() {
             </motion.div>
             <motion.div
               variants={fadeInUp}
-              className="flex flex-wrap items-center gap-4 sm:gap-8"
+              className="flex justify-center md:justify-start"
             >
-              {/* {[
-                "Timetable",
-                "Notes",
-                "Railway Concession",
-                "Notifications",
-              ].map((feature, i) => (
-                <motion.div
-                  key={feature}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="text-xs sm:text-sm font-medium text-muted-foreground"
-                >
-                  {feature}
-                </motion.div>
-              ))} */}
               <Image
-                className="py-5 sm:pl-8 md:pl-14"
-                src={AppFeatures || "/placeholder.svg"}
-                alt="feature"
+                className="py-5"
+                src={AppFeatures}
+                alt="App features"
+                priority
               />
             </motion.div>
           </div>
+          
           <motion.div
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative mx-auto w-full max-w-sm md:max-w-md"
+            className="relative w-full max-w-sm md:max-w-md flex justify-center"
           >
             <div className="relative flex flex-col items-center justify-center">
-              {/* Phone UI */}
-              <div className="relative z-10">
-                <PhoneMockup img={AppRailway} />
+              <PhoneMockup img={AppRailway} />
 
-                {/* Announcement Box (Left) */}
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
-                  className="absolute -left-40 top-[35%] z-20 hidden xl:block"
-                >
-                  <Image
-                    src={AppAnnounce || "/placeholder.svg"}
-                    alt="announce"
-                    width={203}
-                    className="w-[203px] "
-                  />
-                </motion.div>
+              {/* Announcement Box (Left) */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
+                className="absolute -left-40 top-[35%] z-20 hidden xl:block"
+              >
+                <Image
+                  src={AppAnnounce}
+                  alt="Announcement preview"
+                  width={203}
+                  priority
+                />
+              </motion.div>
 
-                {/* Apply Now Box (Right) */}
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 1.0, duration: 0.5, ease: "easeOut" }}
-                  className="absolute -right-40 top-[45%] z-20 hidden xl:block"
-                >
-                  <Image
-                    src={AppApply || "/placeholder.svg"}
-                    alt="apply"
-                    width={263}
-                    className="w-[263px]"
-                  />
-                </motion.div>
-              </div>
+              {/* Apply Now Box (Right) */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 1.0, duration: 0.5, ease: "easeOut" }}
+                className="absolute -right-40 top-[45%] z-20 hidden xl:block"
+              >
+                <Image
+                  src={AppApply}
+                  alt="Apply now preview"
+                  width={263}
+                  priority
+                />
+              </motion.div>
             </div>
           </motion.div>
         </motion.section>
       </div>
 
-      {/* Barcodes Section */}
+      {/* App Download Section */}
       <div className="bg-[linear-gradient(180deg,_#ffffff_0%,_#e0f7ff_15%,_#ffffff_30%,_#d6f4ff_45%,_#ffffff_60%,_#c8f0ff_75%,_#ffffff_90%)] dark:bg-[linear-gradient(180deg,_#0b1120_0%,_#0b1120_15%,_#172554_30%,_#0b1120_50%,_#1e3a8a_65%,_#0b1120_85%,_#0b1120_100%)] dark:text-white">
         <motion.section
           initial="hidden"
@@ -166,7 +149,7 @@ export default function Page() {
             hidden: { opacity: 0 },
             visible: { opacity: 1, transition: { staggerChildren: 0.3 } },
           }}
-          className="container py-20 px-5"
+          className="container py-20 px-5 mx-auto"
         >
           <motion.h2
             variants={fadeInUp}
@@ -174,59 +157,53 @@ export default function Page() {
           >
             Download Our App
           </motion.h2>
-          <div className="flex flex-wrap justify-around py-6 px-3 gap-y-4">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 max-w-6xl mx-auto">
             <motion.div
               variants={fadeInUp}
-              className="rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2 
-             border border-neutral-500 dark:border-[#3d4c63] 
-             bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#1f2937,_#0f172a)] 
-             text-black dark:text-white 
-             transition-colors duration-300"
+              className="w-full max-w-md p-6 rounded-lg shadow-md border border-neutral-300 dark:border-[#3d4c63] 
+              bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#1f2937,_#0f172a)] 
+              text-black dark:text-white transition-colors duration-300"
             >
               <a
                 href="https://play.google.com/store/apps/details?id=com.madclubtsec.tsec_application"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="flex flex-col items-center"
               >
-                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
-                  TSEC App On Playstore
-                </h2>
+                <h3 className="text-xl font-bold mb-4">TSEC App On Playstore</h3>
+                <Image
+                  src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
+                  alt="Google Play Store QR Code"
+                  width={250}
+                  height={250}
+                  className="rounded-md mb-4"
+                />
+                <p className="text-sm">Devs App is available on Playstore</p>
               </a>
-              <Image
-                src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FplaystoreQR.jpg?alt=media&token=1cb6b370-f83c-46bd-b36e-1691ff467fec"
-                alt="Download TSEC App on Google Play - QR Code"
-                className="h-auto rounded-md mb-2 w-full"
-                width={300}
-                height={300}
-              />
-              <p>Devs App is available on Playstore</p>
             </motion.div>
 
             <motion.div
               variants={fadeInUp}
-              className="rounded-lg p-4 text-center shadow-md w-full md:max-w-md lg:max-w-lg m-2 
-             border border-neutral-500 dark:border-[#3d4c63] 
-             bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#1f2937,_#0f172a)] 
-             text-black dark:text-white 
-             transition-colors duration-300"
+              className="w-full max-w-md p-6 rounded-lg shadow-md border border-neutral-300 dark:border-[#3d4c63] 
+              bg-white dark:bg-[radial-gradient(circle_at_top_left,_#111827,_#1f2937,_#0f172a)] 
+              text-black dark:text-white transition-colors duration-300"
             >
               <a
                 href="https://apps.apple.com/in/app/tsec-app/id6446188102"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="flex flex-col items-center"
               >
-                <h2 className="text-lg sm:text-sm md:text-xl lg:text-2xl font-bold mb-2">
-                  TSEC App On App Store
-                </h2>
+                <h3 className="text-xl font-bold mb-4">TSEC App On App Store</h3>
+                <Image
+                  src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
+                  alt="Apple App Store QR Code"
+                  width={250}
+                  height={250}
+                  className="rounded-md mb-4"
+                />
+                <p className="text-sm">Devs App is available on App Store</p>
               </a>
-              <Image
-                src="https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2FCard%2FappStoreQR.jpg?alt=media&token=601f1bc3-2fdb-493f-9a42-4beff1087f1c"
-                alt="Card 3"
-                className="w-full h-auto rounded-md mb-2"
-                width={300}
-                height={300}
-              />
-              <p>Devs App is available on App Store</p>
             </motion.div>
           </div>
         </motion.section>
@@ -234,7 +211,6 @@ export default function Page() {
         {/* Features Section */}
         <FeaturesSection />
       </div>
-      {/* barcode+features div for bg */}
     </div>
   );
 }
