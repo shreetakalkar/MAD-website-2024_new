@@ -208,7 +208,7 @@ export default function Page() {
           </div>
         </motion.section>
 
-        {/* Features Section */}
+        
         <FeaturesSection />
       </div>
     </div>

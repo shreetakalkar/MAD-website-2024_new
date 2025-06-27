@@ -45,7 +45,7 @@
     "src/components/RailwayConcession/actions/CancelConcession.tsx",
     "src/pages/RailwayEntryInterface.jsx",
     "src/components/RailwayConcession/rcList/RailwayConcessionCard.jsx"
-  ],
+, "src/components/Report"  ],
   "exclude": [
     "node_modules"
   ]

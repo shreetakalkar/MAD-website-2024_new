@@ -63,6 +63,7 @@
     "react-day-picker": "^9.7.0",
     "react-dom": "^19",
     "react-dropzone": "^14.3.8",
+    "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.57.0",
     "react-pdf": "^9.2.1",
     "react-switch": "^7.1.0",

@@ -5,13 +5,15 @@ import {
   ShoppingCart, Home, ClipboardEdit, FilePlus,
   FileStack, GitPullRequestClosed, Download,
   FileBadge, Bell, History, CalendarClock,
-  HistoryIcon, Book, Cross, Ban
+  Book, Ban, Bug
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useUser } from "@/providers/UserProvider";
 
 const LeftSideLinks = ({ userType }: { userType: string }) => {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const { user } = useUser();
 
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path;
@@ -32,29 +34,41 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
 
   const iconClass = "h-4 w-4 transition-transform duration-300 group-hover:scale-110 flex-shrink-0";
 
-  const NavLink = ({ href, icon: Icon, children }: { href: string, icon: React.ComponentType<{ className?: string }>, children: React.ReactNode }) => (
+  const NavLink = ({
+    href,
+    icon: Icon,
+    children,
+  }: {
+    href: string;
+    icon: React.ComponentType<{ className?: string }>;
+    children: React.ReactNode;
+  }) => (
     <Link href={href} className={getLinkClasses(href)}>
       <Icon className={iconClass} />
       <span className={userType === "railway" ? "line-clamp-2" : "truncate"}>{children}</span>
     </Link>
   );
-  
 
   return (
     <nav className="w-full">
-      <div className={`
-        flex items-center gap-1 md:gap-2 p-2
+      <div className={`flex items-center gap-1 md:gap-2 p-2
         ${userType === "railway" 
           ? "flex-wrap" 
           : "overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"
-        }
-      `}>
+        }`}>
         <NavLink href="/dashboard" icon={Home}>Home</NavLink>
 
         {(userType === "committee" || userType === "admin") && (
           <NavLink href="/dashboard/history-page" icon={History}>
             Past Events
           </NavLink>
+        )}
+
+        {userType === "admin" && user?.name &&
+          (user.name === "Devs Admin" || user.name === "Testing Admin") && (
+            <NavLink href="/dashboard/bugs-report" icon={Bug}>
+              Bugs & Reports
+            </NavLink>
         )}
 
         {userType === "railway" && (
