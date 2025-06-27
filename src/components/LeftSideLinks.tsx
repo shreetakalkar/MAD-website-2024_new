@@ -67,7 +67,7 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
         {userType === "admin" && user?.name &&
           (user.name === "Devs Admin" || user.name === "Testing Admin") && (
             <NavLink href="/dashboard/bugs-report" icon={Bug}>
-              Bugs & Reports
+              Bugs and feedback Reports
             </NavLink>
         )}
 
