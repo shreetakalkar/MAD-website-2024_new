@@ -21,6 +21,7 @@ const BugReports = () => {
   const [reports, setReports] = useState<Report[]>([])
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -83,35 +84,70 @@ const BugReports = () => {
   }
 
   const handleImageClick = (url: string) => {
+    if (!url || !url.startsWith("http")) {
+      console.error("Invalid image URL:", url)
+      return
+    }
+
     setSelectedImage(url)
     setIsImageLoaded(false)
+    setImageError(false)
   }
 
   const handleCloseModal = () => {
     setSelectedImage(null)
     setIsImageLoaded(false)
+    setImageError(false)
+  }
+
+  const handleRetryLoad = () => {
+    setImageError(false)
+    setIsImageLoaded(false)
+    const currentImage = selectedImage
+    setSelectedImage(null)
+    setTimeout(() => setSelectedImage(currentImage), 10)
   }
 
   return (
     <div className="p-6">
-      {/* Image Modal */}
-      {selectedImage && (
+      {selectedImage && !isImageLoaded && !imageError && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          {!isImageLoaded ? (
-            // Show only spinner until image is loaded
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-            </div>
-          ) : (
-            // Show modal container only after image is loaded
-            <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-4xl max-h-[90vh] overflow-auto">
-              <button
-                onClick={handleCloseModal}
-                className="absolute top-2 right-2 z-10 text-xl font-bold text-black hover:text-gray-500 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md"
-              >
-                ✕
-              </button>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+        </div>
+      )}
 
+      {selectedImage && (isImageLoaded || imageError) && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-4xl max-h-[90vh] overflow-auto">
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-2 right-2 z-10 text-xl font-bold text-black hover:text-gray-500 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md"
+            >
+              ✕
+            </button>
+
+            {imageError && (
+              <div className="w-full max-w-md mx-auto text-center py-8">
+                <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                <h3 className="text-lg font-semibold mb-2">Failed to load image</h3>
+                <div className="bg-gray-100 p-3 rounded mb-4 overflow-x-auto">
+                  <code className="text-sm text-gray-800 break-all">{selectedImage}</code>
+                </div>
+                <p className="text-gray-600 mb-4 text-sm">
+                  The image could not be loaded. Check the URL above for issues.
+                </p>
+                <div className="flex gap-2 justify-center">
+                  <button
+                    onClick={handleRetryLoad}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isImageLoaded && !imageError && (
               <div className="relative w-full h-auto max-h-[80vh]">
                 <Image
                   src={selectedImage || "/placeholder.svg"}
@@ -119,34 +155,39 @@ const BugReports = () => {
                   width={800}
                   height={600}
                   className="rounded object-contain w-full h-auto max-h-[80vh]"
-                  onError={() => {
-                    console.error("Failed to load image:", selectedImage)
-                    handleCloseModal()
+                  unoptimized={true}
+                  onLoad={() => {
+                    setIsImageLoaded(true)
+                    setImageError(false)
                   }}
-                  priority
+                  onError={() => {
+                    console.error("Display image failed:", selectedImage)
+                    setImageError(true)
+                    setIsImageLoaded(false)
+                  }}
                 />
               </div>
-            </div>
-          )}
-
-          <div className="hidden">
-            <Image
-              src={selectedImage || "/placeholder.svg"}
-              alt="Preload"
-              width={800}
-              height={600}
-              onLoad={() => setIsImageLoaded(true)}
-              onError={() => {
-                console.error("Failed to preload image:", selectedImage)
-                handleCloseModal()
-              }}
-              priority
-            />
+            )}
           </div>
         </div>
       )}
 
-     
+      {selectedImage && (
+        <img
+          src={selectedImage || "/placeholder.svg"}
+          alt=""
+          style={{ display: "none" }}
+          onLoad={() => {
+            setIsImageLoaded(true)
+            setImageError(false)
+          }}
+          onError={() => {
+            setImageError(true)
+            setIsImageLoaded(false)
+          }}
+        />
+      )}
+
       <div className="overflow-x-auto rounded-lg border shadow">
         <table className="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-100 dark:bg-gray-800">
@@ -180,8 +221,10 @@ const BugReports = () => {
                 <td className="px-4 py-2">
                   {report.attachments?.length ? (
                     <div className="flex flex-col gap-2">
-                      {report.attachments.map((url, i) =>
-                        url.startsWith("http") ? (
+                      {report.attachments.map((url, i) => {
+                        const isValidUrl = url && (url.startsWith("http://") || url.startsWith("https://"))
+
+                        return isValidUrl ? (
                           <button
                             key={i}
                             onClick={() => handleImageClick(url)}
@@ -189,8 +232,12 @@ const BugReports = () => {
                           >
                             📎 Attachment {i + 1}
                           </button>
-                        ) : null,
-                      )}
+                        ) : (
+                          <span key={i} className="text-red-500 text-xs">
+                            Invalid URL
+                          </span>
+                        )
+                      })}
                     </div>
                   ) : (
                     <span className="text-gray-500">None</span>
