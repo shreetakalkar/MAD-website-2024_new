@@ -9,6 +9,7 @@ import {
   doc,
   DocumentData,
 } from "firebase/firestore";
+import Image from "next/image";
 
 interface Report {
   docId: string;
@@ -24,6 +25,8 @@ interface Report {
 
 const BugReports = () => {
   const [reports, setReports] = useState<Report[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -70,7 +73,6 @@ const BugReports = () => {
       const targetDoc = snapshot.docs.find((d) => d.id === report.docId);
 
       if (!targetDoc) throw new Error("Report document not found.");
-
       const currentReports = targetDoc.data().allReports || [];
 
       if (report.index >= currentReports.length) {
@@ -78,7 +80,6 @@ const BugReports = () => {
       }
 
       currentReports[report.index].isResolved = !report.isResolved;
-
       await updateDoc(ref, { allReports: currentReports });
 
       setReports((prev) =>
@@ -94,6 +95,55 @@ const BugReports = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Bug Reports</h2>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          {!isImageLoaded ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-4 border-white border-t-transparent"></div>
+            </div>
+          ) : (
+            <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-xl max-h-[90vh] overflow-auto">
+              <button
+                onClick={() => {
+                  setSelectedImage(null);
+                  setIsImageLoaded(false);
+                }}
+                className="absolute top-2 right-2 text-xl font-bold text-black hover:text-gray-500"
+              >
+                ❌
+              </button>
+              <div className="relative w-full h-auto max-h-[80vh]">
+                <Image
+                  src={selectedImage}
+                  alt="Preview"
+                  width={800}
+                  height={600}
+                  className="rounded object-contain"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* preload image invisibly */}
+          <div className="hidden">
+            <Image
+              src={selectedImage}
+              alt=""
+              width={1}
+              height={1}
+              onLoadingComplete={() => setIsImageLoaded(true)}
+              onError={() => {
+                setSelectedImage(null);
+                setIsImageLoaded(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Table */}
       <div className="overflow-x-auto rounded-lg border shadow">
         <table className="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-100 dark:bg-gray-800">
@@ -109,7 +159,9 @@ const BugReports = () => {
             {reports.map((report) => (
               <tr key={report.id}>
                 <td className="px-4 py-2 max-w-xs">{report.title}</td>
-                <td className="px-4 py-2 max-w-sm whitespace-pre-wrap">{report.description}</td>
+                <td className="px-4 py-2 max-w-sm whitespace-pre-wrap">
+                  {report.description}
+                </td>
                 <td className="px-4 py-2">{formatDate(report.reportTime)}</td>
                 <td className="px-4 py-2">
                   <button
@@ -124,22 +176,22 @@ const BugReports = () => {
                 </td>
                 <td className="px-4 py-2">
                   {report.attachments?.length ? (
-                    <ul className="list-disc pl-4 space-y-1">
+                    <div className="flex flex-col gap-2">
                       {report.attachments.map((url, i) =>
                         url.startsWith("http") ? (
-                          <li key={i}>
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 underline"
-                            >
-                              Attachment {i + 1}
-                            </a>
-                          </li>
+                          <button
+                            key={i}
+                            onClick={() => {
+                              setSelectedImage(url);
+                              setIsImageLoaded(false);
+                            }}
+                            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition text-sm w-fit"
+                          >
+                            Attachment {i + 1}
+                          </button>
                         ) : null
                       )}
-                    </ul>
+                    </div>
                   ) : (
                     "None"
                   )}
