@@ -11,8 +11,8 @@ import {
 } from "firebase/firestore";
 
 interface Report {
-  docId: string; // Firestore doc ID
-  index: number; // Index in allReports array
+  docId: string;
+  index: number;
   id: string;
   title: string;
   description: string;
@@ -73,7 +73,6 @@ const BugReports = () => {
 
       const currentReports = targetDoc.data().allReports || [];
 
-      // Ensure the index exists
       if (report.index >= currentReports.length) {
         throw new Error("Invalid report index.");
       }
