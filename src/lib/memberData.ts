@@ -59,6 +59,7 @@ export const teamData: TeamSection[] = [
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Faryancp.jpg?alt=media&token=caf8f08f-06d4-4919-9e55-8410c52057b8",
         linkedin: "https://www.linkedin.com/in/aryan-pathak-67a39b290?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BiheHAm3DTd6TIeZpGA4ddw%3D%3D",
         github: "https://github.com/CosmicRaptor",
+
       },
     ],
   },
@@ -72,6 +73,7 @@ export const teamData: TeamSection[] = [
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fjuhivcp.jpg?alt=media&token=d0ebffd1-1ed1-40fb-80fa-80c53d73c401",
         linkedin: "https://www.linkedin.com/in/juhideore?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3Bj7rrTlmSQBeXDD8Y5fNAiQ%3D%3D",
         github: "https://github.com/juhid30",
+
       },
     ],
   },
@@ -93,6 +95,7 @@ export const teamData: TeamSection[] = [
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fdarryl.jpg?alt=media&token=ab389b19-c41e-4a8d-8e8c-3a84f36bd3c3",
         linkedin: "https://www.linkedin.com/in/darryl-mathias-020241317?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BoF0d08KlSMi3GLegkROPew%3D%3D",
         github: "https://github.com/DarrylMathias",
+
       },
       {
         name: "Keerthan Poojary",
@@ -101,6 +104,7 @@ export const teamData: TeamSection[] = [
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fkeerthan.jpg?alt=media&token=ff9a954e-67c2-4ea0-8e03-26a0e0508094",
         linkedin: "https://www.linkedin.com/in/keerthan-poojary-a33639255?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BDL%2Bn%2Bq94QfCEV5%2BdPvE%2Fng%3D%3D",
         github: "https://github.com/Thundercloud12",
+
       },
       {
         name: "Nuha Ghojaria",
@@ -122,6 +126,7 @@ export const teamData: TeamSection[] = [
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fmanish.jpg?alt=media&token=38dff0bc-25a2-4d15-987c-2cd235016e06",
         linkedin: "https://www.linkedin.com/in/manish-rajarathinam-91466932b?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BAltMvNBqRvWduGWPS0sx%2Bw%3D%3D",
         github: "https://github.com/coder2505",
+
       },
       {
         name: "Ritesh Yadav",
@@ -172,11 +177,13 @@ export const teamData: TeamSection[] = [
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fsanika.jpg?alt=media&token=1adb5448-df33-40e0-aae9-860073c6700f",
         linkedin: "https://www.linkedin.com/in/sanika-sawant-33428a293?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
         github: "https://github.com/SanikaSawant2110",
+
       },
       {
         name: "Lubaib Mir",
         role: "UI/UX Designer",
         image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Flubaib.jpg?alt=media&token=27458288-48e7-4c7b-ae7d-0bc7e495c704",
+
         linkedin: "",
         github: "",
       },
