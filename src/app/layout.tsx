@@ -11,7 +11,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL("https://tsecdevsclub.com"),
   title: "Developers Club of TSEC | TSEC Devs Club",
-  description: "Creators of the official TSEC App. Learn more about what we build, how we empower students, and download the TSEC app.",
+  description:
+    "Creators of the official TSEC App. Learn more about what we build, how we empower students, and download the TSEC app.",
   alternates: {
     canonical: "https://tsecdevsclub.com",
   },
@@ -67,18 +68,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:image:alt" content="TSEC Devs Club Banner" />
         <meta property="og:image:type" content="image/png" />
         <meta name="twitter:image:alt" content="TSEC Devs Club Banner" />
-        <Script
-          id="organization-schema"
-          type="application/ld+json"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
       </head>
       <body className={`${inter.className} bg-white dark:bg-gray-900 transition-colors duration-200`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ThemeInitializer />
           <ClientAppWrapper>{children}</ClientAppWrapper>
         </ThemeProvider>
+
+        
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
       </body>
     </html>
   );

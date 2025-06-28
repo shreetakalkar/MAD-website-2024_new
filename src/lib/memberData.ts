@@ -170,13 +170,13 @@ export const teamData: TeamSection[] = [
         role: "Graphic Designer",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fsanika.jpg?alt=media&token=1adb5448-df33-40e0-aae9-860073c6700f",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/sanika-sawant-33428a293?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+        github: "https://github.com/SanikaSawant2110",
       },
       {
         name: "Lubaib Mir",
         role: "UI/UX Designer",
-        image: "/placeholder.svg?height=400&width=400",
+        image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Flubaib.jpg?alt=media&token=27458288-48e7-4c7b-ae7d-0bc7e495c704",
         linkedin: "",
         github: "",
       },
