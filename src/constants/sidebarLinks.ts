@@ -1,0 +1,96 @@
+import { userTypes } from "./types/userTypes";
+
+const Features = [
+  {
+    mainTitle: "Dashboard",
+    mainLink: "/auth",
+    lightIconLink: "assets/images/Dashboard.png",
+    darkIconLink: "assets/images/dashboard-dark.png",
+    type: [],
+  },
+  {
+    mainTitle: "Create Notifications",
+    mainLink: "/CreateNotification",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.ADMIN, userTypes.HOD, userTypes.PRINCIPAL],
+  },
+  {
+    mainTitle: "Past Notifications",
+    mainLink: "/PastNotification",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.ADMIN, userTypes.HOD, userTypes.PRINCIPAL],
+  },
+  {
+    mainTitle: "Create Notes",
+    mainLink: "/CreateNote",
+    lightIconLink: "assets/images/Notes.png",
+    darkIconLink: "assets/images/notes-dark.png",
+    type: [userTypes.HOD],
+  },
+  {
+    mainTitle: "Past Notes",
+    mainLink: "/PastNote",
+    lightIconLink: "assets/images/Notes.png",
+    darkIconLink: "assets/images/notes-dark.png",
+    type: [userTypes.HOD],
+  },
+  {
+    mainTitle: "Create Event",
+    mainLink: "/CreateEvent",
+    lightIconLink: "assets/images/Notes.png",
+    darkIconLink: "assets/images/notes-dark.png",
+    type: [userTypes.COMMITTEE],
+  },
+  {
+    mainTitle: "Approve Events",
+    mainLink: "/Admin",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.ADMIN],
+  },
+  {
+    mainTitle: "Coming Soon",
+    mainLink: "/auth",
+    lightIconLink: "assets/images/Notes.png",
+    darkIconLink: "assets/images/notes-dark.png",
+    type: [userTypes.COMMITTEE],
+  },
+  {
+    mainTitle: "New Requests",
+    mainLink: "/RailwayConcession",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.RAILWAY],
+  },
+  {
+    mainTitle: "Update Requests",
+    mainLink: "/RailwayUpdateConcession",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.RAILWAY],
+  },
+  {
+    mainTitle: "Rejected Requests",
+    mainLink: "/RailwayRejectedConcession",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.RAILWAY],
+  },
+  {
+    mainTitle: "Downloads",
+    mainLink: "/Downloads",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.RAILWAY],
+  },
+  {
+    mainTitle: "Notification",
+    mainLink: "/notification",
+    lightIconLink: "assets/images/Bell.png",
+    darkIconLink: "assets/images/bell-dark.png",
+    type: [userTypes.PROFESSOR],
+  },
+];
+export default Features;
