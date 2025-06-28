@@ -121,7 +121,7 @@ export const teamData: TeamSection[] = [
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fmanish.jpg?alt=media&token=38dff0bc-25a2-4d15-987c-2cd235016e06",
         linkedin: "https://www.linkedin.com/in/manish-rajarathinam-91466932b?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BAltMvNBqRvWduGWPS0sx%2Bw%3D%3D",
-        github: "",
+        github: "https://github.com/coder2505",
       },
       {
         name: "Ritesh Yadav",
