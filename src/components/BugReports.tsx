@@ -28,7 +28,6 @@ const BugReports = () => {
       try {
         const snapshot = await getDocs(collection(db, "Reports"))
         const data: Report[] = []
-
         snapshot.forEach((docSnap) => {
           const allReports = docSnap.data().allReports || []
           allReports.forEach((r: DocumentData, index: number) => {
@@ -45,7 +44,6 @@ const BugReports = () => {
             })
           })
         })
-
         setReports(data)
       } catch (error) {
         console.error("❌ Error fetching reports:", error)
@@ -68,6 +66,7 @@ const BugReports = () => {
       const targetDoc = snapshot.docs.find((d) => d.id === report.docId)
 
       if (!targetDoc) throw new Error("Report document not found.")
+
       const currentReports = targetDoc.data().allReports || []
 
       if (report.index >= currentReports.length) {
@@ -75,6 +74,7 @@ const BugReports = () => {
       }
 
       currentReports[report.index].isResolved = !report.isResolved
+
       await updateDoc(ref, { allReports: currentReports })
 
       setReports((prev) => prev.map((r) => (r.id === report.id ? { ...r, isResolved: !r.isResolved } : r)))
@@ -88,7 +88,6 @@ const BugReports = () => {
       console.error("Invalid image URL:", url)
       return
     }
-
     setSelectedImage(url)
     setIsImageLoaded(false)
     setImageError(false)
@@ -125,7 +124,6 @@ const BugReports = () => {
             >
               ✕
             </button>
-
             {imageError && (
               <div className="w-full max-w-md mx-auto text-center py-8">
                 <div className="text-red-500 text-6xl mb-4">⚠️</div>
@@ -172,11 +170,15 @@ const BugReports = () => {
         </div>
       )}
 
+      {/* ✅ FIXED: Replaced <img> with <Image> */}
       {selectedImage && (
-        <img
+        <Image
           src={selectedImage || "/placeholder.svg"}
           alt=""
+          width={1}
+          height={1}
           style={{ display: "none" }}
+          unoptimized={true}
           onLoad={() => {
             setIsImageLoaded(true)
             setImageError(false)
@@ -223,7 +225,6 @@ const BugReports = () => {
                     <div className="flex flex-col gap-2">
                       {report.attachments.map((url, i) => {
                         const isValidUrl = url && (url.startsWith("http://") || url.startsWith("https://"))
-
                         return isValidUrl ? (
                           <button
                             key={i}
