@@ -18,10 +18,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
-        pathname: "/v0/b/**", // allow all Firebase paths
+        pathname: "/v0/b/**",
       },
     ],
-    unoptimized: true,
+  
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },

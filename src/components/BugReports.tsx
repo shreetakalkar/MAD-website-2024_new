@@ -29,6 +29,7 @@ const BugReports = () => {
       try {
         const snapshot = await getDocs(collection(db, "Reports"))
         const data: Report[] = []
+
         snapshot.forEach((docSnap) => {
           const allReports = docSnap.data().allReports || []
           allReports.forEach((r: DocumentData, index: number) => {
@@ -45,6 +46,7 @@ const BugReports = () => {
             })
           })
         })
+
         setReports(data)
       } catch (error) {
         console.error("❌ Error fetching reports:", error)
@@ -67,7 +69,6 @@ const BugReports = () => {
       const targetDoc = snapshot.docs.find((d) => d.id === report.docId)
 
       if (!targetDoc) throw new Error("Report document not found.")
-
       const currentReports = targetDoc.data().allReports || []
 
       if (report.index >= currentReports.length) {
@@ -75,12 +76,12 @@ const BugReports = () => {
       }
 
       currentReports[report.index].isResolved = !report.isResolved
-
       await updateDoc(ref, { allReports: currentReports })
 
       setReports((prev) => prev.map((r) => (r.id === report.id ? { ...r, isResolved: !r.isResolved } : r)))
     } catch (error) {
       console.error("❌ Failed to update resolved status:", error)
+  
     }
   }
 
@@ -89,6 +90,8 @@ const BugReports = () => {
       console.error("Invalid image URL:", url)
       return
     }
+
+    console.log("Opening image:", url) // Debug log
     setSelectedImage(url)
     setIsImageLoaded(false)
     setImageError(false)
@@ -116,7 +119,7 @@ const BugReports = () => {
         </div>
       )}
 
-      {selectedImage && (isImageLoaded || imageError) && (
+      {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-4xl max-h-[90vh] overflow-auto">
             <button
@@ -125,6 +128,7 @@ const BugReports = () => {
             >
               ✕
             </button>
+
             {imageError && (
               <div className="w-full max-w-md mx-auto text-center py-8">
                 <div className="text-red-500 text-6xl mb-4">⚠️</div>
@@ -146,7 +150,7 @@ const BugReports = () => {
               </div>
             )}
 
-            {isImageLoaded && !imageError && (
+            {!imageError && (
               <div className="relative w-full h-auto max-h-[80vh]">
                 <Image
                   src={selectedImage || "/placeholder.svg"}
@@ -155,12 +159,14 @@ const BugReports = () => {
                   height={600}
                   className="rounded object-contain w-full h-auto max-h-[80vh]"
                   unoptimized={true}
-                  onLoad={() => {
+                  priority={true} 
+                  onLoadingComplete={() => {
+                    console.log("Image loaded successfully:", selectedImage) // Debug log
                     setIsImageLoaded(true)
                     setImageError(false)
                   }}
-                  onError={() => {
-                    console.error("Display image failed:", selectedImage)
+                  onError={(e) => {
+                    console.error("Image failed to load:", selectedImage, e) // Debug log
                     setImageError(true)
                     setIsImageLoaded(false)
                   }}
@@ -169,26 +175,6 @@ const BugReports = () => {
             )}
           </div>
         </div>
-      )}
-
-      {/* ✅ FIXED: Replaced <img> with <Image> */}
-      {selectedImage && (
-        <Image
-          src={selectedImage || "/placeholder.svg"}
-          alt=""
-          width={1}
-          height={1}
-          style={{ display: "none" }}
-          unoptimized={true}
-          onLoad={() => {
-            setIsImageLoaded(true)
-            setImageError(false)
-          }}
-          onError={() => {
-            setImageError(true)
-            setIsImageLoaded(false)
-          }}
-        />
       )}
 
       <div className="overflow-x-auto rounded-lg border shadow">
@@ -226,6 +212,7 @@ const BugReports = () => {
                     <div className="flex flex-col gap-2">
                       {report.attachments.map((url, i) => {
                         const isValidUrl = url && (url.startsWith("http://") || url.startsWith("https://"))
+
                         return isValidUrl ? (
                           <button
                             key={i}
