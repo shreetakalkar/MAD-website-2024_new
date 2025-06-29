@@ -103,7 +103,7 @@ const RailwayUpdateConc = () => {
     };
   
     checkAndTransferTempHistory();
-  }, []);
+  }, [fileRef]);
 
   const storage = getStorage();
   const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");

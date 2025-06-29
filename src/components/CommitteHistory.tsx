@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { useUser } from '@/providers/UserProvider';
 import DataTable from './datatable';
-import Modal from './Modal'; // Import the new Modal component
+import Modal from './Modal'; 
+
 import { ColumnDef } from "@tanstack/react-table";
 
 interface Event {

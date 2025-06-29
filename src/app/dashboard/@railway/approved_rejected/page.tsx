@@ -303,7 +303,7 @@ const Approved_Rejected = () => {
   
     checkAndTransferTempHistory();
     
-  }, []);
+  }, [fileRef]);
 
   useEffect(() => {
 

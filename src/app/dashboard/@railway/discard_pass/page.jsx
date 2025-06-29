@@ -78,7 +78,7 @@ export default function DiscardPass() {
     };
   
     checkAndTransferTempHistory();
-  }, []);
+  }, [fileRef]);
 
   const storage = getStorage();
   const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
