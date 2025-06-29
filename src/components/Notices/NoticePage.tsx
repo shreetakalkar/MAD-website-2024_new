@@ -11,14 +11,17 @@ import {
 } from "firebase/firestore";
 import { useUser } from "@/providers/UserProvider";
 import NoticeHistory from "./NoticeHistory";
-import { Loader } from "lucide-react";
+import { Loader2 as Loader } from "lucide-react";
+
+
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
 export interface Notice {
   id: string;
   title: string;
   content: {
     from: string;
-    // Include other fields from the content object as needed
   };
   date: string;
   batch: string;
@@ -34,39 +37,35 @@ export interface Notice {
 const ImportantNotices: React.FC = () => {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useUser(); // Get user from custom hook
-  const userType = user?.type || ""; // Default to empty string if user is undefined
+  const [loading, setLoading] = useState<boolean>(true);
+  const { user } = useUser();
+  const userType = user?.type || "";
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        // console.log(userType);
         const noticeDocRef = doc(db, "ImportantNotice", "Content");
         const noticeSnapshot = await getDoc(noticeDocRef);
 
         if (noticeSnapshot.exists()) {
           const docData = noticeSnapshot.data();
-          const content = docData["content"];
-          let filteredContent = [];
-
-          filteredContent = content.filter(
-            (item: any) => item.from === userType
+          const content = docData["content"] as Notice[];
+          const filteredContent = content.filter(
+            (item) => item.from === userType
           );
 
           setNotices(filteredContent);
-          setLoading(false);
         }
       } catch (err: any) {
         setError(err.message || "Unknown error occurred");
         console.error("Error fetching notices:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchNotices();
   }, [userType]);
-
-  // console.log(notices);
-  const [loading, setLoading] = useState<boolean>(true);
 
   if (loading) {
     return (
@@ -75,8 +74,17 @@ const ImportantNotices: React.FC = () => {
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="p-4">
       <NoticeHistory notices={notices} />
     </div>
   );
