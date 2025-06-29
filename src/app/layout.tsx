@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import ClientAppWrapper from "@/components/ClientAppWrapper";
 import { ThemeInitializer } from "@/components/ThemeInitializer";
@@ -7,14 +7,22 @@ import Script from "next/script";
 import type { Metadata } from "next";
 
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap'
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tsecdevsclub.com"),
   title: "Developers Club of TSEC | TSEC Devs Club",
   description:
     "Creators of the official TSEC App. Learn more about what we build, how we empower students, and download the TSEC app.",
-
+  
+  
+  keywords: "TSEC, Developers Club, TSEC App, Mumbai, Engineering, Student, Events, Placement, Timetable, College",
+  authors: [{ name: "TSEC Developers Club" }],
+  robots: "index, follow",
+  
   alternates: {
     canonical: "https://tsecdevsclub.com",
   },
@@ -23,14 +31,14 @@ export const metadata: Metadata = {
     description: "Explore our features like timetable, events, placement, and more!",
     type: "website",
     url: "https://tsecdevsclub.com",
+    siteName: "TSEC Devs Club", 
     images: [
       {
-
         url: "/devBlackLogo.ico",
         width: 1200,
         height: 630,
         alt: "TSEC Devs Club Banner",
-        type: "image/png",
+        type: "image/x-icon", 
       },
     ],
   },
@@ -40,9 +48,16 @@ export const metadata: Metadata = {
     description: "Explore our features like timetable, events, placement, and more!",
     images: ["/devBlackLogo.ico"],
     creator: "@tsecdevsclub",
+    site: "@tsecdevsclub", 
   },
   icons: {
     icon: "/devBlackLogo.ico",
+    apple: "/devBlackLogo.ico", 
+  },
+  
+ 
+  other: {
+    "theme-color": "#000000", 
   },
 };
 
@@ -68,10 +83,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" href="/devBlackLogo.ico" />
         <link rel="alternate" href="https://tsecdevsclub.com/" hrefLang="en" />
-        <meta name="keywords" content="TSEC, Developers Club, TSEC App, Mumbai, Engineering, Student, Events, Placement, Timetable, College" />
-        <meta name="author" content="TSEC Developers Club" />
         <meta property="og:image:alt" content="TSEC Devs Club Banner" />
-        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:type" content="image/x-icon" /> 
         <meta name="twitter:image:alt" content="TSEC Devs Club Banner" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Script
@@ -86,7 +99,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeInitializer />
           <ClientAppWrapper>{children}</ClientAppWrapper>
         </ThemeProvider>
-
       </body>
     </html>
   );

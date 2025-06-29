@@ -154,8 +154,8 @@ export const teamData: TeamSection[] = [
         role: "DevOps",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fayush.jpg?alt=media&token=e26d1214-90de-49f2-a898-ca6e621f54cd",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/awyushshukla/",
+        github: "https://github.com/awwyushh",
       },
       {
         name: "Kavya Chetwani",
