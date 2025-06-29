@@ -1,12 +1,14 @@
-import AdminHistory from '@/components/AdminHistory'
-import React from 'react'
+"use client"; 
 
-const page = () => {
+import AdminHistory from "@/components/AdminHistory";
+import React from "react";
+
+const Page = () => {
   return (
     <div>
-        <AdminHistory />
+      <AdminHistory />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;
