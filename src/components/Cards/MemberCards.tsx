@@ -21,8 +21,8 @@ const MemberCard = ({ member }: MemberCardProps) => {
               <Image
                 src={member.image || "/placeholder.svg?height=400&width=400"}
                 alt={`${member.name} - ${member.role}`}
-                width={160}
-                height={160}
+                fill
+                sizes="(max-width: 768px) 160px, 160px"
                 className="object-cover group-hover/card:shadow-xl transition-transform duration-300 group-hover/card:scale-105"
                 placeholder="blur"
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
