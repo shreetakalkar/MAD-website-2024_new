@@ -12,7 +12,7 @@ import { File } from "lucide-react";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-// Modal Component
+
 const Modal: React.FC<{
   isOpen: boolean;
   onClose: () => void;

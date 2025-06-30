@@ -205,8 +205,8 @@ export const teamData: TeamSection[] = [
         role: "Product Manager",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fricha.jpg?alt=media&token=6b7c3bec-9331-4dcb-9bd3-9be14d40130b",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/richa-sharangdhar-987100324",
+        github: "https://github.com/richa866",
       },
     ],
   },
