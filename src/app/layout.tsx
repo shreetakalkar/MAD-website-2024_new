@@ -34,11 +34,11 @@ export const metadata: Metadata = {
     siteName: "TSEC Devs Club", 
     images: [
       {
-        url: "/devBlackLogo.ico",
+        url: "/devsLogo.png",
         width: 1200,
         height: 630,
         alt: "TSEC Devs Club Banner",
-        type: "image/x-icon", 
+        type: "image/png", 
       },
     ],
   },
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Developers Club of TSEC",
     description: "Explore our features like timetable, events, placement, and more!",
-    images: ["/devBlackLogo.ico"],
+    images: ["/devsLogo.png"],
     creator: "@tsecdevsclub",
     site: "@tsecdevsclub", 
   },
@@ -84,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/devBlackLogo.ico" />
         <link rel="alternate" href="https://tsecdevsclub.com/" hrefLang="en" />
         <meta property="og:image:alt" content="TSEC Devs Club Banner" />
-        <meta property="og:image:type" content="image/x-icon" /> 
+        <meta property="og:image:type" content="image/png" /> 
         <meta name="twitter:image:alt" content="TSEC Devs Club Banner" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Script
