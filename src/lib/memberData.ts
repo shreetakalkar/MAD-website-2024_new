@@ -133,8 +133,8 @@ export const teamData: TeamSection[] = [
         role: "Mobile App Developer",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fritesh.jpg?alt=media&token=aded8e4b-51f4-43e4-be9f-584163ec8f28",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/ritesh-yadav-2a5a03289/",
+        github: "https://github.com/riteshy1802",
       },
       {
         name: "Dhairya Jani",
