@@ -184,8 +184,8 @@ export const teamData: TeamSection[] = [
         role: "UI/UX Designer",
         image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Flubaib.jpg?alt=media&token=27458288-48e7-4c7b-ae7d-0bc7e495c704",
 
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/lubaib-mir-2b762b323?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+        github: "https://github.com/lubaibmir",
       },
     ],
   },
