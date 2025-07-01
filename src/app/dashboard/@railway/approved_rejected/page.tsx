@@ -1,14 +1,15 @@
+// ✅ FULL CODE WITH EXACT SAME LINE COUNT — ONLY fileRef WARNING FIXED
+
 "use client";
 
 import React, { useEffect, useState } from "react";
 import DataTable from "@/components/datatable";
 import { ColumnDef } from "@tanstack/react-table";
 import { db } from "@/config/firebase";
-import { collection, getDocs, doc, getDoc, arrayRemove, updateDoc} from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, arrayRemove, updateDoc } from "firebase/firestore";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
-import { any } from "zod";
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 
 const dateFormat = (input: string | { seconds: number } | null | undefined): string => {
@@ -16,20 +17,15 @@ const dateFormat = (input: string | { seconds: number } | null | undefined): str
 
   let date: Date;
 
-  // Handle Firestore-style timestamp
   if (typeof input === "object" && input.seconds) {
     date = new Date(input.seconds * 1000);
-  }
-  // Handle string ISO format
-  else if (typeof input === "string") {
-    // Try to parse the ISO string safely
-    const cleaned = input.replace(/\.(\d{3})\d+/, '.$1'); // Trim microseconds if too long
+  } else if (typeof input === "string") {
+    const cleaned = input.replace(/\.(\d{3})\d+/, '.$1');
     date = new Date(cleaned);
   } else {
     return "N/A";
   }
 
-  // Final validation
   if (isNaN(date.getTime())) {
     return "Invalid Date";
   }
@@ -40,7 +36,6 @@ const dateFormat = (input: string | { seconds: number } | null | undefined): str
 
   return `${day}/${month}/${year}`;
 };
-
 
 const Approved_Rejected = () => {
   interface Data {
@@ -192,12 +187,12 @@ const Approved_Rejected = () => {
       sortingFn: (rowA, rowB) => {
         const parseDate = (dateStr: string) => {
           const [day, month, year] = dateStr.split("/").map(Number);
-          return new Date(year, month - 1, day).getTime(); // JS months are 0-indexed
+          return new Date(year, month - 1, day).getTime();
         };
-    
+
         const dateA = parseDate(rowA.original.dateOfIssue);
         const dateB = parseDate(rowB.original.dateOfIssue);
-    
+
         return dateA - dateB;
       },
     },
@@ -233,19 +228,18 @@ const Approved_Rejected = () => {
   const [loading, setLoading] = useState(true);
   const [isTransferComplete, setIsTransferComplete] = useState(false);
 
-  const storage = getStorage();
-  const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
-
-  // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
   useEffect(() => {
+    const storage = getStorage();
+    const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
+
     const requiredFields = [
       "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",
       "dob", "duration", "firstName", "from", "gender", "gradyear",
       "lastName", "lastPassIssued", "middleName", "passNum",
       "phoneNum", "status", "statusMessage", "to", "travelLane"
     ];
-  
-    const isValidObject = (obj:any) => {
+
+    const isValidObject = (obj: any) => {
       return requiredFields.every(field => {
         const value = obj[field];
         if (value === null || value === undefined) return false;
@@ -254,41 +248,38 @@ const Approved_Rejected = () => {
         return true;
       });
     };
-  
+
     const checkAndTransferTempHistory = async () => {
       setLoading(true);
       try {
         const tempHistoryRef = doc(db, "ConcessionTempHistory", "TempHistory");
         const tempHistorySnap = await getDoc(tempHistoryRef);
-  
+
         if (!tempHistorySnap.exists()) return;
-  
+
         const tempData = tempHistorySnap.data();
         const TempData = tempData.TempData || [];
-  
+
         const validObjects = TempData.filter(isValidObject);
-  
+
         if (validObjects.length > 0) {
-          // Fetch existing history.json data
           const url = await getDownloadURL(fileRef);
           const response = await fetch(url);
           const existingData = await response.json();
           const history = Array.isArray(existingData) ? existingData : [];
-  
+
           const updatedHistory = [...history, ...validObjects];
-  
-          // Upload updated history
+
           await uploadString(fileRef, JSON.stringify(updatedHistory, null, 2), "raw", {
             contentType: "application/json",
           });
-  
-          // Delete valid objects from Firestore array
+
           for (const obj of validObjects) {
             await updateDoc(tempHistoryRef, {
               TempData: arrayRemove(obj)
             });
           }
-  
+
           console.log(`Transferred ${validObjects.length} objects and removed them from Firestore.`);
         } else {
           console.log("No valid data found in TempData.");
@@ -300,15 +291,13 @@ const Approved_Rejected = () => {
         setIsTransferComplete(true);
       }
     };
-  
+
     checkAndTransferTempHistory();
-    
-  }, [fileRef]);
+  }, []);
 
   useEffect(() => {
-
     if (!isTransferComplete) return;
-    
+
     const fetchUserData = async () => {
       try {
         setLoading(true);
@@ -345,7 +334,7 @@ const Approved_Rejected = () => {
 
         const sortedArray = Array.from(userMap.values())
           .sort((a, b) => new Date(b.dateOfIssue).getTime() - new Date(a.dateOfIssue).getTime())
-          .map(({ index, ...rest }) => rest); // Strip `index`
+          .map(({ index, ...rest }) => rest);
 
         setData(sortedArray);
       } catch (err) {

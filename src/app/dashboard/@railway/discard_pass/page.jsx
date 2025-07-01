@@ -1,19 +1,20 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { db } from "@/config/firebase";
-import { arrayUnion, doc, updateDoc, Timestamp, getDoc, setDoc, arrayRemove} from "firebase/firestore";
-import { useToast } from "@/components/ui/use-toast";
-import React, { useState } from "react";
-import { Loader } from "lucide-react";
-import { dateFormat } from "@/constants/dateFormat";
+import { arrayRemove, arrayUnion, doc, getDoc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
-import { useEffect } from "react";
+import { Loader } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { dateFormat } from "@/constants/dateFormat";
 
 export default function DiscardPass() {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
+  // ✅ Transfer valid data from Firestore to JSON on first load
   useEffect(() => {
     const requiredFields = [
       "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",
@@ -21,7 +22,7 @@ export default function DiscardPass() {
       "lastName", "lastPassIssued", "middleName", "passNum",
       "phoneNum", "status", "statusMessage", "to", "travelLane"
     ];
-  
+
     const isValidObject = (obj) => {
       return requiredFields.every(field => {
         const value = obj[field];
@@ -31,60 +32,54 @@ export default function DiscardPass() {
         return true;
       });
     };
-  
+
     const checkAndTransferTempHistory = async () => {
       setLoading(true);
       try {
+        const storage = getStorage();
+        const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
+
         const tempHistoryRef = doc(db, "ConcessionTempHistory", "TempHistory");
         const tempHistorySnap = await getDoc(tempHistoryRef);
-  
+
         if (!tempHistorySnap.exists()) return;
-  
+
         const tempData = tempHistorySnap.data();
         const TempData = tempData.TempData || [];
-  
+
         const validObjects = TempData.filter(isValidObject);
-  
+
         if (validObjects.length > 0) {
-          // Fetch existing history.json data
           const url = await getDownloadURL(fileRef);
           const response = await fetch(url);
           const existingData = await response.json();
           const history = Array.isArray(existingData) ? existingData : [];
-  
+
           const updatedHistory = [...history, ...validObjects];
-  
-          // Upload updated history
+
           await uploadString(fileRef, JSON.stringify(updatedHistory, null, 2), "raw", {
             contentType: "application/json",
           });
-  
-          // Delete valid objects from Firestore array
+
           for (const obj of validObjects) {
             await updateDoc(tempHistoryRef, {
-              TempData: arrayRemove(obj)
+              TempData: arrayRemove(obj),
             });
           }
-  
-          console.log(`Transferred ${validObjects.length} objects and removed them from Firestore.`);
+
+          console.log(`✅ Transferred ${validObjects.length} objects and removed them from Firestore.`);
         } else {
-          console.log("No valid data found in TempData.");
+          console.log("ℹ️ No valid data found in TempData.");
         }
       } catch (err) {
-        console.error("Error transferring and cleaning up temp history:", err);
+        console.error("❌ Error transferring and cleaning up temp history:", err);
       } finally {
         setLoading(false);
       }
     };
-  
+
     checkAndTransferTempHistory();
-  }, [fileRef]);
-
-  const storage = getStorage();
-  const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
-
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -101,6 +96,8 @@ export default function DiscardPass() {
 
     setLoading(true);
     try {
+      const storage = getStorage();
+      const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
 
       const url = await getDownloadURL(fileRef);
       const response = await fetch(url);
@@ -115,75 +112,68 @@ export default function DiscardPass() {
       };
 
       history.push(newEntry);
-      
+
       await uploadString(fileRef, JSON.stringify(history, null, 2), "raw", {
         contentType: "application/json",
       });
 
-      // Update Stats
-      const concessionHistoryStatRef = doc(db, "ConcessionHistory", "DailyStats");
-      const concessionHistorySnap = await getDoc(concessionHistoryStatRef);
-      const currentDate = dateFormat(new Date())
-  
-      if (concessionHistorySnap.exists()) {
-        const historyData = concessionHistorySnap.data();
-        let statsArray = historyData.stats || [];
+      // Update discard stats in Firestore
+      const statRef = doc(db, "ConcessionHistory", "DailyStats");
+      const statSnap = await getDoc(statRef);
+      const currentDate = dateFormat(new Date());
+
+      if (statSnap.exists()) {
+        const statsArray = statSnap.data().stats || [];
         const dateIndex = statsArray.findIndex((entry) => entry.date === currentDate);
-  
+
         if (dateIndex >= 0) {
-          if (typeof statsArray[dateIndex].discardedPass !== 'number') {
+          if (typeof statsArray[dateIndex].discardedPass !== "number") {
             statsArray[dateIndex].discardedPass = 0;
           }
           statsArray[dateIndex].discardedPass += 1;
         } else {
-          statsArray.push({
-            date: currentDate,
-            discardedPass: 1,
-          });
+          statsArray.push({ date: currentDate, discardedPass: 1 });
         }
-  
-        await updateDoc(concessionHistoryStatRef, { stats: statsArray });
+
+        await updateDoc(statRef, { stats: statsArray });
       } else {
-        await setDoc(concessionHistoryStatRef, {
-          stats: [{
-            date: currentDate,
-            discardedPass: 1,
-          }],
+        await setDoc(statRef, {
+          stats: [{ date: currentDate, discardedPass: 1 }],
         });
       }
 
       toast({
-        // title: "Success",
         description: `Pass Number ${passNum} successfully discarded.`,
         variant: "default",
-        className: "bg-green-500 text-white", 
+        className: "bg-green-500 text-white",
       });
     } catch (error) {
-      console.error("Error updating document:", error);
+      console.error("❌ Error updating document:", error);
       toast({
         title: "Failed to Discard Pass",
         description: "There was an issue. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <> 
+    <>
       {loading ? (
         <div className="flex justify-center items-center h-screen">
           <Loader className="w-10 h-10 animate-spin" />
         </div>
       ) : (
-          <div className="flex flex-col items-center justify-center min-h-screenflex flex-col items-center justify-center min-h-[80vh] p-4 mt-[20vh]">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 mt-[20vh]">
           <h2 className="mb-8 text-lg font-semibold text-center text-gray-700">
             <span className="text-3xl font-bold">Do You Want To Discard a Pass?</span>
-            <p className="text-sm text-center text-gray-500 pt-50">
+            <p className="text-sm text-center text-gray-500 pt-2">
               Use this only when there is a pass missing in Excel and you want to cancel it.
             </p>
           </h2>
-          
+
           <form onSubmit={handleSubmit} className="flex items-center w-full max-w-md">
             <Input
               id="passNum"
@@ -200,9 +190,7 @@ export default function DiscardPass() {
             </Button>
           </form>
         </div>
-        )
-      }
+      )}
     </>
-    
   );
 }
