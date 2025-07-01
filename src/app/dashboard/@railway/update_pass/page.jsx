@@ -1,6 +1,15 @@
 "use client";
-import React, { useState } from "react";
-import { collection, doc, getDoc, query, where, onSnapshot, arrayRemove, updateDoc} from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import {
+  collection,
+  doc,
+  getDoc,
+  query,
+  where,
+  onSnapshot,
+  arrayRemove,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/config/firebase";
 import RailwayUpdateCard from "@/components/RailwayUpdateCard";
 import { Input } from "@/components/ui/input";
@@ -8,8 +17,12 @@ import { ArrowRight, Loader } from "lucide-react";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import UpdateCertificateNumber from "@/components/RailwayUpdateCertNum";
-import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
-import { useEffect } from "react";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
 
 const formSchema = z.object({
   branch: z.string(),
@@ -37,18 +50,42 @@ const formSchema = z.object({
 });
 
 const RailwayUpdateConc = () => {
+  const [pass, setPass] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const [showUpdateCertNum, setShowUpdateCertNum] = useState(false);
 
-  // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
   useEffect(() => {
+    const storage = getStorage();
+    const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
+
     const requiredFields = [
-      "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",
-      "dob", "duration", "firstName", "from", "gender", "gradyear",
-      "lastName", "lastPassIssued", "middleName", "passNum",
-      "phoneNum", "status", "statusMessage", "to", "travelLane"
+      "address",
+      "ageMonths",
+      "ageYears",
+      "branch",
+      "certificateNumber",
+      "class",
+      "dob",
+      "duration",
+      "firstName",
+      "from",
+      "gender",
+      "gradyear",
+      "lastName",
+      "lastPassIssued",
+      "middleName",
+      "passNum",
+      "phoneNum",
+      "status",
+      "statusMessage",
+      "to",
+      "travelLane",
     ];
-  
+
     const isValidObject = (obj) => {
-      return requiredFields.every(field => {
+      return requiredFields.every((field) => {
         const value = obj[field];
         if (value === null || value === undefined) return false;
         if (typeof value === "string" && value.trim() === "") return false;
@@ -56,42 +93,46 @@ const RailwayUpdateConc = () => {
         return true;
       });
     };
-  
+
     const checkAndTransferTempHistory = async () => {
       setLoading(true);
       try {
         const tempHistoryRef = doc(db, "ConcessionTempHistory", "TempHistory");
         const tempHistorySnap = await getDoc(tempHistoryRef);
-  
+
         if (!tempHistorySnap.exists()) return;
-  
+
         const tempData = tempHistorySnap.data();
         const TempData = tempData.TempData || [];
-  
+
         const validObjects = TempData.filter(isValidObject);
-  
+
         if (validObjects.length > 0) {
-          // Fetch existing history.json data
           const url = await getDownloadURL(fileRef);
           const response = await fetch(url);
           const existingData = await response.json();
           const history = Array.isArray(existingData) ? existingData : [];
-  
+
           const updatedHistory = [...history, ...validObjects];
-  
-          // Upload updated history
-          await uploadString(fileRef, JSON.stringify(updatedHistory, null, 2), "raw", {
-            contentType: "application/json",
-          });
-  
-          // Delete valid objects from Firestore array
+
+          await uploadString(
+            fileRef,
+            JSON.stringify(updatedHistory, null, 2),
+            "raw",
+            {
+              contentType: "application/json",
+            }
+          );
+
           for (const obj of validObjects) {
             await updateDoc(tempHistoryRef, {
-              TempData: arrayRemove(obj)
+              TempData: arrayRemove(obj),
             });
           }
-  
-          console.log(`Transferred ${validObjects.length} objects and removed them from Firestore.`);
+
+          console.log(
+            `Transferred ${validObjects.length} objects and removed them from Firestore.`
+          );
         } else {
           console.log("No valid data found in TempData.");
         }
@@ -101,21 +142,11 @@ const RailwayUpdateConc = () => {
         setLoading(false);
       }
     };
-  
+
     checkAndTransferTempHistory();
   }, []);
 
-  const storage = getStorage();
-  const fileRef = ref(storage, "RailwayConcession/concessionHistory.json");
-
-  const [pass, setPass] = useState(null);
-  const [searchInput, setSearchInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const [showUpdateCertNum, setShowUpdateCertNum] = useState(false); 
-
   const fetchPass = async (certNo) => {
-    // console.log("Inside FetchPass: ", certNo)
     setLoading(true);
     try {
       const q = query(
@@ -127,9 +158,10 @@ const RailwayUpdateConc = () => {
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         if (!snapshot.empty) {
           const docSnap = snapshot.docs[0];
-          // console.log(docSnap.id)
           const enquiry = docSnap.data();
-          const requestDocSnap = await getDoc(doc(db, "ConcessionRequest", docSnap.id));
+          const requestDocSnap = await getDoc(
+            doc(db, "ConcessionRequest", docSnap.id)
+          );
           if (requestDocSnap.exists()) {
             enquiry.certNo = requestDocSnap.data().passNum;
             enquiry.uid = requestDocSnap.data().uid;
@@ -145,7 +177,6 @@ const RailwayUpdateConc = () => {
             variant: "destructive",
           });
         }
-        // console.log(pass)
         setLoading(false);
       });
     } catch (error) {
@@ -156,22 +187,19 @@ const RailwayUpdateConc = () => {
 
   const handleSearch = () => {
     if (searchInput) {
-      // console.log("UPDATE PASS: ",searchInput)
       fetchPass(searchInput);
     }
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      // console.log(searchInput)  
       handleSearch();
     }
   };
 
   const handleCertNumClick = () => {
-    setShowUpdateCertNum(true); // Toggle visibility
+    setShowUpdateCertNum(true);
   };
-
 
   return (
     <>
@@ -179,18 +207,20 @@ const RailwayUpdateConc = () => {
         <div className="flex justify-center items-center h-screen">
           <Loader className="w-10 h-10 animate-spin" />
         </div>
-      ): showUpdateCertNum ? (
-        <UpdateCertificateNumber setShowUpdateCertNum={setShowUpdateCertNum}/>
+      ) : showUpdateCertNum ? (
+        <UpdateCertificateNumber setShowUpdateCertNum={setShowUpdateCertNum} />
       ) : (
         <div className="flex flex-col items-center justify-start min-h-[80vh] p-4 relative">
-           <h2 className="mb-8 text-lg font-semibold text-center text-gray-700 flex">
-            <span className="text-3xl font-bold">Extend Date, Change Data & Cancel Pass</span>
+          <h2 className="mb-8 text-lg font-semibold text-center text-gray-700 flex">
+            <span className="text-3xl font-bold">
+              Extend Date, Change Data & Cancel Pass
+            </span>
             <button
               onClick={handleCertNumClick}
               className="absolute right-2 flex items-center gap-2 px-5 py-3 font-semibold text-white bg-gray-500 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-sm"
             >
               Update Certificate Number
-              <ArrowRight className="w-4 h-4"/>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </h2>
           <div className="flex items-center w-full max-w-md">
@@ -209,13 +239,18 @@ const RailwayUpdateConc = () => {
             </button>
           </div>
           <div className="flex justify-center items-center mt-4">
-            {pass && <RailwayUpdateCard key={pass.certNo} formSchema={formSchema} passData={pass} />}
+            {pass && (
+              <RailwayUpdateCard
+                key={pass.certNo}
+                formSchema={formSchema}
+                passData={pass}
+              />
+            )}
           </div>
         </div>
       )}
     </>
   );
-  
 };
 
 export default RailwayUpdateConc;
