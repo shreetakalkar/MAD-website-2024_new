@@ -162,7 +162,6 @@ const TTForm: React.FC<TTFormProps> = ({
                   <Input
                     placeholder="Enter title"
                     {...field}
-                    defaultValue=""
                     maxLength={25}
                     disabled={lockTitle}
                   />
