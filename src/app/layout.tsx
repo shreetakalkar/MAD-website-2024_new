@@ -5,6 +5,9 @@ import ClientAppWrapper from "@/components/ClientAppWrapper";
 import { ThemeInitializer } from "@/components/ThemeInitializer";
 import Script from "next/script";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Github, Linkedin } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 
 const inter = Inter({ 
@@ -98,6 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ThemeInitializer />
           <ClientAppWrapper>{children}</ClientAppWrapper>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
