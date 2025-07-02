@@ -15,7 +15,8 @@ import {
   Download,
   Book,
   Cross,
-  Ban
+  Ban,
+  Bug
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
@@ -91,6 +92,13 @@ const MobileHeader = ({ userType }: { userType: string }) => {
                 Past Events
               </Link>
               </>
+            )}
+
+            {userType === "admin" && (
+              <Link href="/dashboard/bugs-report" className={getLinkClasses("/dashboard/bugs-report")}>
+                <Bug className="h-4 w-4" />
+                Bug & FeedBack Report
+              </Link>
             )}
 
             {userType === "railway" && (
