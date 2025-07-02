@@ -35,12 +35,20 @@ import { auth } from "@/config/firebase";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useEffect, useState } from "react";
 
 const MobileHeader = ({ userType }: { userType: string }) => {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme, systemTheme } = useTheme();
+  const [logo, setLogo] = useState(DevsLight);
   const { user, setUser, setLoggedIn } = useUser();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Handle logo based on theme
+  useEffect(() => {
+    const currentTheme = resolvedTheme === 'system' ? systemTheme : resolvedTheme;
+    setLogo(currentTheme === 'dark' ? DevsDark : DevsLight);
+  }, [resolvedTheme, systemTheme]);
 
   const handleLogout = async () => {
     try {
@@ -75,16 +83,17 @@ const MobileHeader = ({ userType }: { userType: string }) => {
         </SheetTrigger>
 
         <SheetContent side="left" className="w-[280px] max-w-full">
-          {/* Added hidden SheetTitle to fix accessibility warning */}
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           
           <div className="flex h-full flex-col">
             <div className="mb-6 mt-4 flex items-center space-x-2">
               <Image
-                src={resolvedTheme === "dark" ? DevsDark : DevsLight}
-                alt="logo"
+                src={logo}
+                alt="TSEC Devs Club Logo"
                 width={40}
                 height={40}
+                priority
+                onError={() => setLogo(resolvedTheme === 'dark' ? DevsDark : DevsLight)}
               />
               <span className="font-semibold">Dashboard</span>
             </div>
