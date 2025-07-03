@@ -12,6 +12,8 @@ import BgImageDark from "@/public/images/landing/app-bg-image-dark.png";
 import AppFeatures from "@/public/images/landing/app-features.png";
 import { useTheme } from "next-themes";
 import AppAnnounce from "@/public/images/landing/app-announcement.png";
+import { Github, Linkedin } from "lucide-react";
+import Link from "next/link";
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
@@ -210,7 +212,12 @@ export default function Page() {
 
         
         <FeaturesSection />
+
+      
       </div>
+
+      
+
     </div>
   );
 }
