@@ -6,12 +6,13 @@ import { Navbar } from "@/components/landing-page/navbar";
 import AppRailway from "@/public/images/landing/app-railway.jpg";
 import { PhoneMockup } from "@/components/landing-page/PhoneMockup";
 import FeaturesSection from "./features";
-import AppApply from "@/public/images/landing/app-apply.png";
+import AppApply from "@/public/images/landing/app-apply.svg";
 import BgImageLight from "@/public/images/landing/app-bg-image-light.png";
 import BgImageDark from "@/public/images/landing/app-bg-image-dark.png";
-import AppFeatures from "@/public/images/landing/app-features.png";
+import AppFeatures1 from "@/public/images/landing/app-features1.svg";
+import AppFeatures2 from "@/public/images/landing/app-features2.svg";
 import { useTheme } from "next-themes";
-import AppAnnounce from "@/public/images/landing/app-announcement.png";
+import AppAnnounce from "@/public/images/landing/app-announcement.svg";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 
@@ -88,12 +89,18 @@ export default function Page() {
             </motion.div>
             <motion.div
               variants={fadeInUp}
-              className="flex justify-center md:justify-start"
+              className="flex flex-col sm:flex-row justify-center md:justify-start items-center gap-4"
             >
               <Image
                 className="py-5"
-                src={AppFeatures}
-                alt="App features"
+                src={AppFeatures1}
+                alt="App features 1"
+                priority
+              />
+              <Image
+                className="py-5"
+                src={AppFeatures2}
+                alt="App features 2"
                 priority
               />
             </motion.div>
