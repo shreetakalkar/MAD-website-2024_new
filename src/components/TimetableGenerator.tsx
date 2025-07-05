@@ -1,3 +1,6 @@
+
+"use client";
+
 import React, { useEffect, useState } from "react";
 import {
   Plus,
@@ -136,39 +139,40 @@ const TimetableGenerator: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!docIdExists) {
+    // Reset state only when year or division is cleared
+    if (!year || !division) {
       setDocIdExists(true);
       setMessage("Enter Passout Year and Branch-Division");
       setPushStatus("idle");
     }
-  }, [year, division]);
+  }, [year, division, docIdExists]); // Added docIdExists to satisfy exhaustive-deps
 
   const fetchDocIds = async () => {
-    if (existingDocIds.length === 0) {
-      try {
+    try {
+      if (existingDocIds.length === 0) {
         const querySnapshot = await getDocs(timeTableRef);
         const DocIds: string[] = [];
         querySnapshot.forEach((doc) => {
           DocIds.push(doc.id);
         });
         setExistingDocIds(DocIds);
-        if (DocIds.includes(`${year}-${division}`)) {
-          setDocIdExists(true);
-          setMessage("Already exists in the database");
-        } else {
-          setDocIdExists(false);
-        }
-      } catch (error) {
-        console.error("Error fetching timetable:", error);
       }
-    } else {
-      if (existingDocIds.includes(`${year}-${division}`)) {
+
+      const docId = `${year}-${division}`;
+      if (existingDocIds.includes(docId) || (!year || !division)) {
         setDocIdExists(true);
-        setMessage("Already exists in the database");
+        setMessage(
+          !year || !division
+            ? "Enter Passout Year and Branch-Division"
+            : "Already exists in the database"
+        );
       } else {
         setDocIdExists(false);
-        setMessage("Enter Passout Year and Branch-Division");
+        setMessage("Ready to add lectures");
       }
+    } catch (error) {
+      console.error("Error fetching timetable:", error);
+      alert("Error fetching timetable. Please try again.");
     }
   };
 
@@ -179,7 +183,9 @@ const TimetableGenerator: React.FC = () => {
       const docRef = doc(timeTableRef, docId);
       await setDoc(docRef, timetable);
       setPushStatus("pushed");
-      setExistingDocIds((prev) => [...prev, `${year}-${division}`]);
+      setExistingDocIds((prev) => [...prev, docId]);
+      setMessage("Timetable saved successfully");
+      setDocIdExists(true); // Prevent re-rendering the lecture interface
     } catch (error) {
       console.error("Error pushing timetable:", error);
       alert("Error pushing timetable. Please try again.");
@@ -275,7 +281,9 @@ const TimetableGenerator: React.FC = () => {
     Object.entries(timetable).forEach(([day, lectures]) => {
       if (lectures.length > 0) {
         // Remove UI-only fields from each lecture
-        const cleanedLectures = lectures.map(({ isLectureNameFocused, isFacultyFocused, ...rest }) => rest);
+        const cleanedLectures = lectures.map(
+          ({ isLectureNameFocused, isFacultyFocused, ...rest }) => rest
+        );
         filteredTimetable[day as DayOfWeek] = cleanedLectures;
       }
     });
@@ -402,12 +410,15 @@ const TimetableGenerator: React.FC = () => {
             {timetable[selectedDay].length === 0 ? (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <p>No lectures scheduled for {selectedDay}</p>
-                <p className="text-sm">Click "Add Lecture" to get started</p>
+                <p className="text-sm">Click &quot;Add Lecture&quot; to get started</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {timetable[selectedDay].map((lecture, index) => (
-                  <div key={index} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-600">
+                  <div
+                    key={index}
+                    className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-600"
+                  >
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {/* Batch Input */}
                       <div>
@@ -694,10 +705,10 @@ const TimetableGenerator: React.FC = () => {
               Copy JSON
             </button>
             <button
-              disabled={pushStatus != "idle"}
+              disabled={pushStatus !== "idle"}
               onClick={pushTimetable}
               className={`flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors ${
-                pushStatus != "idle" ? "opacity-90 cursor-not-allowed" : ""
+                pushStatus !== "idle" ? "opacity-90 cursor-not-allowed" : ""
               }`}
             >
               <ArrowUpFromLine size={16} />
