@@ -56,21 +56,35 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
           ? "flex-wrap" 
           : "overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"
         }`}>
+
+        {/* Common home link */}
         <NavLink href="/dashboard" icon={Home}>Home</NavLink>
 
+        {/* Committee & Admin: Past Events */}
         {(userType === "committee" || userType === "admin") && (
           <NavLink href="/dashboard/history-page" icon={History}>
             Past Events
           </NavLink>
         )}
 
-        {userType === "admin" && user?.name &&
+        {/* Admin-specific links for specific users */}
+        {userType === "admin" &&
+          user?.name &&
           (user.name === "Devs Admin" || user.name === "Testing Admin") && (
-            <NavLink href="/dashboard/bugs-report" icon={Bug}>
-              Bugs and feedback Reports
-            </NavLink>
-        )}
+            <>
+              <NavLink href="/dashboard/bugs-report" icon={Bug}>
+                Bugs and Feedback Reports
+              </NavLink>
+              <NavLink href="/dashboard/timetable-entry" icon={CalendarClock}>
+                Timetable Entry
+              </NavLink>
+              <NavLink href="/dashboard/student-data" icon={Book}>
+                Student Data Entry
+              </NavLink>
+            </>
+          )}
 
+        {/* Railway section */}
         {userType === "railway" && (
           <>
             <NavLink href="/dashboard/create_pass" icon={FilePlus}>
@@ -97,12 +111,14 @@ const LeftSideLinks = ({ userType }: { userType: string }) => {
           </>
         )}
 
+        {/* HOD / Principal / Exam Dept */}
         {(userType === "hod" || userType === "principal" || userType === "examdept") && (
           <NavLink href="/dashboard/history" icon={History}>
             Past Notifications
           </NavLink>
         )}
 
+        {/* Professor Section */}
         {userType === "professor" && (
           <>
             <NavLink href="/dashboard/notification" icon={Bell}>

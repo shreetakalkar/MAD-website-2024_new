@@ -14,7 +14,7 @@ import {
   Download,
   Book,
   Ban,
-  Bug
+  Bug,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -46,8 +46,8 @@ const MobileHeader = ({ userType }: { userType: string }) => {
 
   // Handle logo based on theme
   useEffect(() => {
-    const currentTheme = resolvedTheme === 'system' ? systemTheme : resolvedTheme;
-    setLogo(currentTheme === 'dark' ? DevsDark : DevsLight);
+    const currentTheme = resolvedTheme === "system" ? systemTheme : resolvedTheme;
+    setLogo(currentTheme === "dark" ? DevsDark : DevsLight);
   }, [resolvedTheme, systemTheme]);
 
   const handleLogout = async () => {
@@ -66,25 +66,25 @@ const MobileHeader = ({ userType }: { userType: string }) => {
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path;
     return `flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-      isActive 
+      isActive
         ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100"
-        : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
     }`;
   };
 
   return (
-    <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b bg-background px-4 md:hidden">
+    <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b bg-background dark:bg-slate-900 px-4 md:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0">
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             <VisuallyHidden>Toggle navigation menu</VisuallyHidden>
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="left" className="w-[280px] max-w-full">
+        <SheetContent side="left" className="w-[280px] max-w-full bg-white dark:bg-slate-800">
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-          
+
           <div className="flex h-full flex-col">
             <div className="mb-6 mt-4 flex items-center space-x-2">
               <Image
@@ -93,9 +93,9 @@ const MobileHeader = ({ userType }: { userType: string }) => {
                 width={40}
                 height={40}
                 priority
-                onError={() => setLogo(resolvedTheme === 'dark' ? DevsDark : DevsLight)}
+                onError={() => setLogo(resolvedTheme === "dark" ? DevsDark : DevsLight)}
               />
-              <span className="font-semibold">Dashboard</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">Dashboard</span>
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto">
@@ -105,8 +105,8 @@ const MobileHeader = ({ userType }: { userType: string }) => {
               </Link>
 
               {(userType === "committee" || userType === "admin") && (
-                <Link 
-                  href="/dashboard/history-page" 
+                <Link
+                  href="/dashboard/history-page"
                   className={getLinkClasses("/dashboard/history-page")}
                   prefetch={false}
                 >
@@ -116,14 +116,32 @@ const MobileHeader = ({ userType }: { userType: string }) => {
               )}
 
               {userType === "admin" && (
-                <Link 
-                  href="/dashboard/bugs-report" 
-                  className={getLinkClasses("/dashboard/bugs-report")}
-                  prefetch={false}
-                >
-                  <Bug className="h-4 w-4" />
-                  Bug & Feedback Report
-                </Link>
+                <>
+                  <Link
+                    href="/dashboard/bugs-report"
+                    className={getLinkClasses("/dashboard/bugs-report")}
+                    prefetch={false}
+                  >
+                    <Bug className="h-4 w-4" />
+                    Bug & Feedback Report
+                  </Link>
+                  <Link
+                    href="/dashboard/timetable-entry"
+                    className={getLinkClasses("/dashboard/timetable-entry")}
+                    prefetch={false}
+                  >
+                    <Bug className="h-4 w-4" />
+                    Timetable Entry
+                  </Link>
+                  <Link
+                    href="/dashboard/student-data"
+                    className={getLinkClasses("/dashboard/student-data")}
+                    prefetch={false}
+                  >
+                    <Bug className="h-4 w-4" />
+                    Student Data Entry
+                  </Link>
+                </>
               )}
 
               {userType === "railway" && (
@@ -188,8 +206,8 @@ const MobileHeader = ({ userType }: { userType: string }) => {
               )}
 
               {(userType === "hod" || userType === "principal" || userType === "examdept") && (
-                <Link 
-                  href="/dashboard/history" 
+                <Link
+                  href="/dashboard/history"
                   className={getLinkClasses("/dashboard/history")}
                   prefetch={false}
                 >
@@ -200,24 +218,24 @@ const MobileHeader = ({ userType }: { userType: string }) => {
 
               {userType === "professor" && (
                 <>
-                  <Link 
-                    href="/dashboard/notification" 
+                  <Link
+                    href="/dashboard/notification"
                     className={getLinkClasses("/dashboard/notification")}
                     prefetch={false}
                   >
                     <Bell className="h-4 w-4" />
                     Send Notification
                   </Link>
-                  <Link 
-                    href="/dashboard/notes_history" 
+                  <Link
+                    href="/dashboard/notes_history"
                     className={getLinkClasses("/dashboard/notes_history")}
                     prefetch={false}
                   >
                     <Book className="h-4 w-4" />
                     Past Notes
                   </Link>
-                  <Link 
-                    href="/dashboard/notification_history" 
+                  <Link
+                    href="/dashboard/notification_history"
                     className={getLinkClasses("/dashboard/notification_history")}
                     prefetch={false}
                   >
@@ -231,19 +249,19 @@ const MobileHeader = ({ userType }: { userType: string }) => {
             <div className="mt-auto py-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-start">
+                  <Button variant="ghost" className="w-full justify-start text-gray-900 dark:text-gray-100">
                     <User className="mr-2 h-4 w-4" />
                     {user?.name || "Account"}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuContent className="w-56 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-600" align="end">
                   <DropdownMenuItem asChild>
-                    <Link href="/auth/change-password" className="w-full" prefetch={false}>
+                    <Link href="/auth/change-password" className="w-full text-gray-900 dark:text-gray-100" prefetch={false}>
                       <Lock className="mr-2 h-4 w-4" />
                       Change Password
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout}>
+                  <DropdownMenuItem onClick={handleLogout} className="text-gray-900 dark:text-gray-100">
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>

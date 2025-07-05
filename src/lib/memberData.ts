@@ -168,7 +168,7 @@ export const teamData: TeamSection[] = [
     ],
   },
   {
-    title: "Design & Social Media Team",
+    title: "Design & SMM Team",
     members: [
       {
         name: "Sanika Sawant",
