@@ -13,6 +13,7 @@ import AppFeatures1 from "@/public/images/landing/app-features1.svg";
 import AppFeatures2 from "@/public/images/landing/app-features2.svg";
 import { useTheme } from "next-themes";
 import AppAnnounce from "@/public/images/landing/app-announcement.svg";
+
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 

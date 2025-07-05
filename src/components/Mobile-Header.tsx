@@ -6,7 +6,6 @@ import {
   Home,
   LogOut,
   Menu,
-  ShoppingCart,
   User,
   Bell,
   History,
@@ -14,11 +13,10 @@ import {
   FileBadge,
   Download,
   Book,
-  Cross,
-  Ban
+  Ban,
+  Bug,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/modeToggle";
@@ -36,11 +34,21 @@ import { useUser } from "@/providers/UserProvider";
 import { auth } from "@/config/firebase";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useEffect, useState } from "react";
 
 const MobileHeader = ({ userType }: { userType: string }) => {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme, systemTheme } = useTheme();
+  const [logo, setLogo] = useState(DevsLight);
   const { user, setUser, setLoggedIn } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Handle logo based on theme
+  useEffect(() => {
+    const currentTheme = resolvedTheme === "system" ? systemTheme : resolvedTheme;
+    setLogo(currentTheme === "dark" ? DevsDark : DevsLight);
+  }, [resolvedTheme, systemTheme]);
 
   const handleLogout = async () => {
     try {
@@ -55,163 +63,216 @@ const MobileHeader = ({ userType }: { userType: string }) => {
     }
   };
 
-  const pathname = usePathname();
   const getLinkClasses = (path: string) => {
-    return pathname === path
-      ? "flex items-center gap-2 px-2 py-2 text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-700 shadow-lg dark:shadow-blue-600/50 transition-all duration-300 ease-in-out"
-      : "flex items-center gap-2 px-2 py-2 text-gray-700 dark:text-gray-300 transition-all duration-300 ease-in-out hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-600/50";
+    const isActive = pathname === path;
+    return `flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+      isActive
+        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100"
+        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+    }`;
   };
 
   return (
-    <header className="flex w-screen h-14 items-center justify-between gap-4 border-b  px-4 mt-3 lg:h-[60px] lg:px-6  md:hidden lg:hidden">
+    <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b bg-background dark:bg-slate-900 px-4 md:hidden">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
+          <Button variant="outline" size="icon" className="shrink-0">
+            <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            <VisuallyHidden>Toggle navigation menu</VisuallyHidden>
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="left" className="flex flex-col w-[50%]">
-        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-          {/* Links */}
+        <SheetContent side="left" className="w-[280px] max-w-full bg-white dark:bg-slate-800">
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
 
-          <nav className="grid gap-2 text-sm font-medium mt-[20%] space-y-3">
-            <Link href="/dashboard" className={getLinkClasses("/dashboard")}>
-              <Home className="h-4 w-4" />
-              Home
-            </Link>
+          <div className="flex h-full flex-col">
+            <div className="mb-6 mt-4 flex items-center space-x-2">
+              <Image
+                src={logo}
+                alt="TSEC Devs Club Logo"
+                width={40}
+                height={40}
+                priority
+                onError={() => setLogo(resolvedTheme === "dark" ? DevsDark : DevsLight)}
+              />
+              <span className="font-semibold text-gray-900 dark:text-gray-100">Dashboard</span>
+            </div>
 
-            {/* Conditional Links */}
+            <nav className="flex-1 space-y-1 overflow-y-auto">
+              <Link href="/dashboard" className={getLinkClasses("/dashboard")} prefetch={false}>
+                <Home className="h-4 w-4" />
+                Home
+              </Link>
 
-            {userType === "committee" || userType === "admin" &&(
-              <>
-                <Link href="/dashboard/history-page" className={getLinkClasses("/dashboard/history-page")}>
-                <History className="h-4 w-4" />
-                Past Events
-              </Link>
-              </>
-            )}
+              {(userType === "committee" || userType === "admin") && (
+                <Link
+                  href="/dashboard/history-page"
+                  className={getLinkClasses("/dashboard/history-page")}
+                  prefetch={false}
+                >
+                  <History className="h-4 w-4" />
+                  Past Events
+                </Link>
+              )}
 
-            {userType === "railway" && (
-              <>
-              <Link
-                href="/dashboard/create_pass"
-                className={getLinkClasses("/dashboard/create_pass")}
-              >
-                <FilePlus className="h-4 w-4" />
-                Create New Pass
-              </Link>
-              <Link
-                href="/dashboard/pending_req"
-                className={getLinkClasses("/dashboard/pending_req")}
-              >
-                <FileStack className="h-4 w-4" />
-                Pending Requests
-              </Link>
-              <Link
-                href="/dashboard/collected_pass"
-                className={getLinkClasses("/dashboard/collected_pass")}
-              >
-                <FileBadge className="h-4 w-4" />
-                Collected Pass
-              </Link>
-              <Link
-                href="/dashboard/update_pass"
-                className={getLinkClasses("/dashboard/update_pass")}
-              >
-                <ClipboardEdit className="h-4 w-4" />
-                Update Pass
-              </Link>
-              <Link
-                href="/dashboard/approved_rejected"
-                className={getLinkClasses("/dashboard/approved_rejected")}
-              >
-                <GitPullRequestClosed className="h-4 w-4" />
-                Approved Passes
-              </Link>
-              <Link
-                href="/dashboard/discard_pass"
-                className={getLinkClasses("/dashboard/discard_pass")}
-              >
-                <Ban className="h-4 w-4" />
-                Discard Pass
-              </Link>
-              <Link
-                href="/dashboard/downloads"
-                className={getLinkClasses("/dashboard/downloads")}
-              >
-                <Download className="h-4 w-4" />
-                Download Files
-              </Link>
-            </>
-            )}
-
-            {(userType === "hod" ||
-              userType === "principal" || userType === "examdept") && (
+              {userType === "admin" && (
                 <>
-                  <Link href="/dashboard/history" className={getLinkClasses("/dashboard/history")}>
-                    <History className="h-4 w-4" />
-                    Past Notifications
+                  <Link
+                    href="/dashboard/bugs-report"
+                    className={getLinkClasses("/dashboard/bugs-report")}
+                    prefetch={false}
+                  >
+                    <Bug className="h-4 w-4" />
+                    Bug & Feedback Report
+                  </Link>
+                  <Link
+                    href="/dashboard/timetable-entry"
+                    className={getLinkClasses("/dashboard/timetable-entry")}
+                    prefetch={false}
+                  >
+                    <Bug className="h-4 w-4" />
+                    Timetable Entry
+                  </Link>
+                  <Link
+                    href="/dashboard/student-data"
+                    className={getLinkClasses("/dashboard/student-data")}
+                    prefetch={false}
+                  >
+                    <Bug className="h-4 w-4" />
+                    Student Data Entry
                   </Link>
                 </>
-            )}
+              )}
 
-            {userType === "professor" && (
-              <>
-                <Link href="/dashboard/notification" className={getLinkClasses("/dashboard/notification")}>
-                  <Bell className="h-4 w-4" />
-                  Send Notification
-                </Link>
-                <Link href="/dashboard/notes_history" className={getLinkClasses("/dashboard/notes_history")}>
-                  <Book className="h-4 w-4" />
-                  Past Notes
-                </Link>
-                <Link href="/dashboard/notification_history" className={getLinkClasses("/dashboard/notification_history")}>
-                  <History className="h-4 w-4" />
-                  Past Notification
-                </Link>
-              </>
-            )}
-          </nav>
+              {userType === "railway" && (
+                <>
+                  <Link
+                    href="/dashboard/create_pass"
+                    className={getLinkClasses("/dashboard/create_pass")}
+                    prefetch={false}
+                  >
+                    <FilePlus className="h-4 w-4" />
+                    Create New Pass
+                  </Link>
+                  <Link
+                    href="/dashboard/pending_req"
+                    className={getLinkClasses("/dashboard/pending_req")}
+                    prefetch={false}
+                  >
+                    <FileStack className="h-4 w-4" />
+                    Pending Requests
+                  </Link>
+                  <Link
+                    href="/dashboard/collected_pass"
+                    className={getLinkClasses("/dashboard/collected_pass")}
+                    prefetch={false}
+                  >
+                    <FileBadge className="h-4 w-4" />
+                    Collected Pass
+                  </Link>
+                  <Link
+                    href="/dashboard/update_pass"
+                    className={getLinkClasses("/dashboard/update_pass")}
+                    prefetch={false}
+                  >
+                    <ClipboardEdit className="h-4 w-4" />
+                    Update Pass
+                  </Link>
+                  <Link
+                    href="/dashboard/approved_rejected"
+                    className={getLinkClasses("/dashboard/approved_rejected")}
+                    prefetch={false}
+                  >
+                    <GitPullRequestClosed className="h-4 w-4" />
+                    Approved Passes
+                  </Link>
+                  <Link
+                    href="/dashboard/discard_pass"
+                    className={getLinkClasses("/dashboard/discard_pass")}
+                    prefetch={false}
+                  >
+                    <Ban className="h-4 w-4" />
+                    Discard Pass
+                  </Link>
+                  <Link
+                    href="/dashboard/downloads"
+                    className={getLinkClasses("/dashboard/downloads")}
+                    prefetch={false}
+                  >
+                    <Download className="h-4 w-4" />
+                    Download Files
+                  </Link>
+                </>
+              )}
 
-          {/* Account Dropdown */}
-          <div className="mt-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="link" className="ml-4">
-                  <User className="mr-2 h-4 w-4" />
-                  {`${user?.name}`}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-              <DropdownMenuItem>
+              {(userType === "hod" || userType === "principal" || userType === "examdept") && (
                 <Link
-                  href="/auth/change-password"
-                  className="flex items-center"
+                  href="/dashboard/history"
+                  className={getLinkClasses("/dashboard/history")}
+                  prefetch={false}
                 >
-                  <Lock className="mr-2 h-4 w-4" />
-                  Change Password
+                  <History className="h-4 w-4" />
+                  Past Notifications
                 </Link>
-              </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              )}
+
+              {userType === "professor" && (
+                <>
+                  <Link
+                    href="/dashboard/notification"
+                    className={getLinkClasses("/dashboard/notification")}
+                    prefetch={false}
+                  >
+                    <Bell className="h-4 w-4" />
+                    Send Notification
+                  </Link>
+                  <Link
+                    href="/dashboard/notes_history"
+                    className={getLinkClasses("/dashboard/notes_history")}
+                    prefetch={false}
+                  >
+                    <Book className="h-4 w-4" />
+                    Past Notes
+                  </Link>
+                  <Link
+                    href="/dashboard/notification_history"
+                    className={getLinkClasses("/dashboard/notification_history")}
+                    prefetch={false}
+                  >
+                    <History className="h-4 w-4" />
+                    Past Notification
+                  </Link>
+                </>
+              )}
+            </nav>
+
+            <div className="mt-auto py-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start text-gray-900 dark:text-gray-100">
+                    <User className="mr-2 h-4 w-4" />
+                    {user?.name || "Account"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-600" align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/auth/change-password" className="w-full text-gray-900 dark:text-gray-100" prefetch={false}>
+                      <Lock className="mr-2 h-4 w-4" />
+                      Change Password
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="text-gray-900 dark:text-gray-100">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
 
-      <div className="flex float-right space-x-3">
-        <Image
-          src={resolvedTheme == "dark" ? DevsDark : DevsLight}
-          alt="logo"
-          width={60}
-          height={60}
-          className="justify-end"
-        />
+      <div className="flex items-center gap-2">
         <ModeToggle />
       </div>
     </header>
