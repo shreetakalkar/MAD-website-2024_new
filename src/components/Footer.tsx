@@ -14,16 +14,12 @@ export const Footer = () => {
           © {new Date().getFullYear()} TSEC Dev&apos;s Club. All rights reserved.
         </p>
         
-
         <div className="flex flex-row items-center gap-6">
-
           <Link
             href="https://github.com/TSEC-MAD-Club"
             target="_blank"
             rel="noopener noreferrer"
-
             className="hover:text-[#2262C1] transition-colors"
-
           >
             <FaGithub size={24} />
           </Link>
@@ -31,21 +27,17 @@ export const Footer = () => {
             href="https://www.linkedin.com/company/devs-club-tsec/"
             target="_blank"
             rel="noopener noreferrer"
-
             className="hover:text-[#2262C1] transition-colors"
           >
             <BsLinkedin size={24} />
-
           </Link>
           <Link
             href="https://www.instagram.com/devsclubtsec/"
             target="_blank"
             rel="noopener noreferrer"
-
             className="hover:text-[#2262C1] transition-colors"
           >
             <FaInstagram size={24} />
-
           </Link>
         </div>
       </div>
