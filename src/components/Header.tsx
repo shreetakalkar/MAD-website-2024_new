@@ -18,14 +18,17 @@ import { useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/modeToggle";
 import LeftSideLinks from "@/components/LeftSideLinks";
 import Link from "next/link";
+import { useLoading } from "@/providers/LoadingContext";
 
 const Header = ({ userType }: { userType: string }) => {
   const { resolvedTheme } = useTheme();
   const { user, setUser, setLoggedIn } = useUser();
   const router = useRouter();
+  const { setLoading} = useLoading();
 
   const handleLogout = async () => {
     try {
+      setLoading(true);
       await auth.signOut();
       setUser(null);
       setLoggedIn(false);
@@ -33,6 +36,7 @@ const Header = ({ userType }: { userType: string }) => {
       localStorage.removeItem("isLoggedIn");
       router.push("/auth");
     } catch (error) {
+      setLoading(false);
       console.error("Error signing out: ", error);
     }
   };

@@ -16,6 +16,8 @@ import AppAnnounce from "@/public/images/landing/app-announcement.svg";
 
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+import { useLoading } from "@/providers/LoadingContext";
+import { useEffect } from "react";
 
 const fadeInUp = {
   initial: { y: 20, opacity: 0 },
@@ -34,7 +36,11 @@ const stagger = {
 export default function Page() {
   const { resolvedTheme } = useTheme();
   const BgImage = resolvedTheme === "light" ? BgImageLight : BgImageDark;
-
+  const { setLoading } = useLoading();
+  
+    useEffect(() => {
+      setLoading(false);
+    }, [setLoading]);
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
