@@ -297,6 +297,7 @@ const generateJson = (): string => {
   return JSON.stringify(jsonOutput, null, 2);
 };
 
+
   // Copy JSON to clipboard
   const copyToClipboard = () => {
     const jsonData = generateJson();
