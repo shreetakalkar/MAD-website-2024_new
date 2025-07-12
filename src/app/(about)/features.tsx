@@ -1,21 +1,21 @@
 "use client";
 
 import React from "react";
-import AppTT from "@/public/images/landing/FeaturesCard/TT-phone-1.png";
+import AppTT from "@/public/images/landing/FeaturesCard/TT-phone-1.svg";
 import TTCard1 from "@/public/images/landing/FeaturesCard/TT-card1.png";
-import AppPlacement from "@/public/images/landing/FeaturesCard/placement-phone.png";
+import AppPlacement from "@/public/images/landing/FeaturesCard/placement-phone.svg";
 import PlacementCard1 from "@/public/images/landing/FeaturesCard/placement-card1.svg";
 import PlacementCard2 from "@/public/images/landing/FeaturesCard/placement-card2.svg";
-import AppRailway from "@/public/images/landing/FeaturesCard/railway-phone-1.png";
+import AppRailway from "@/public/images/landing/FeaturesCard/railway-phone-1.svg";
 import RailwayCard1 from "@/public/images/landing/FeaturesCard/railway-card1.svg";
 import RailwayCard2 from "@/public/images/landing/FeaturesCard/railway-card2.svg";
-import AppEvents from "@/public/images/landing/FeaturesCard/event-phone.png";
+import AppEvents from "@/public/images/landing/FeaturesCard/event-phone.svg";
 import EventCard1 from "@/public/images/landing/FeaturesCard/event-card1.svg";
 import EventCard2 from "@/public/images/landing/FeaturesCard/event-card2.png";
-import AppDepartment from "@/public/images/landing/FeaturesCard/departments-phone.png";
+import AppDepartment from "@/public/images/landing/FeaturesCard/departments-phone.svg";
 import DepartmentCard1 from "@/public/images/landing/FeaturesCard/department-card1.svg";
 import DepartmentCard2 from "@/public/images/landing/FeaturesCard/department-card2.svg";
-import AppCommittees from "@/public/images/landing/FeaturesCard/committe-phone.png";
+import AppCommittees from "@/public/images/landing/FeaturesCard/committe-phone.svg";
 import CommitteeCard1 from "@/public/images/landing/FeaturesCard/committee-card1.svg";
 import CommitteeCard2 from "@/public/images/landing/FeaturesCard/committee-card2.svg";
 import PhoneDisplay from "@/components/PhoneDisplay";
@@ -115,7 +115,7 @@ function FeaturesSection() {
           alt: "Department Card",
           style: {
             bottom: "50%",
-            left: "9%",
+            left: "12%",
             width: "40%",
             height: "auto",
             

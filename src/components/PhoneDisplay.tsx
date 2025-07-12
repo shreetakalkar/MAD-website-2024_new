@@ -4,7 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import React, { useRef } from "react";
 import podium from "../public/podium.png";
 import { motion, useInView } from "framer-motion";
-import { M_PLUS_1 } from "next/font/google";
+
 
 interface PhoneDisplayProps {
   phoneImage: string | StaticImageData;
@@ -15,12 +15,14 @@ interface PhoneDisplayProps {
     className?: string;
   }[];
   podiumStyle?: React.CSSProperties;
+  
 }
 
 const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
   phoneImage,
   overlayCards,
   podiumStyle,
+  
 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -48,11 +50,13 @@ const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="absolute z-[2] mb-[70px]"
         >
-          <Image
-            src={phoneImage}
-            alt="Phone"
-            className="w-[220px] sm:w-[240px] md:w-[260px]"
-          />
+         
+            <Image
+              src={phoneImage}
+              alt="Phone"
+              className="w-[220px] sm:w-[240px] md:w-[260px]"
+            />
+
         </motion.div>
 
         {/* Overlay Cards */}
