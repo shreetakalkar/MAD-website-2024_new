@@ -275,11 +275,11 @@ const TimetableGenerator: React.FC = () => {
   };
 
 const generateJson = (): string => {
-  // Filter out days with no lectures
+
   const filteredTimetable: Partial<TimetableData> = {};
   Object.entries(timetable).forEach(([day, lectures]) => {
     if (lectures.length > 0) {
-      // Remove UI-only fields from each lecture
+     
       const cleanedLectures = lectures.map(
         ({ isLectureNameFocused, isFacultyFocused, ...rest }) => ({
           ...rest,
