@@ -1,42 +1,40 @@
+"use client"
 
-"use client";
-
-import React, { useEffect, useState } from "react";
+import type React from "react"
+import { useEffect, useState } from "react"
+import { Plus, Trash2, Eye, Copy, ArrowUpFromLine } from "lucide-react"
 import {
-  Plus,
-  Trash2,
-  Eye,
-  Copy,
-  ArrowUpFromLine,
-} from "lucide-react";
-import { db } from "../config/firebase";
-import { getDocs, collection, setDoc, doc } from "firebase/firestore";
+  pushTimetableServerAction,
+  fetchExistingDocIdsServerAction,
+  fetchProfessorsServerAction,
+  fetchSubjectsServerAction,
+} from "@/app/actions" // Import the server actions
 
 interface Lecture {
-  lectureBatch: string;
-  lectureStartTime: string;
-  lectureEndTime: string;
-  lectureFacultyName: string;
-  lectureName: string;
-  lectureRoomNo: string | null;
+  lectureBatch: string
+  lectureStartTime: string
+  lectureEndTime: string
+  lectureFacultyName: string
+  lectureName: string
+  lectureRoomNo: string | null
 }
 
 // UI-only fields for lecture rendering
 interface UILecture extends Lecture {
-  isFacultyFocused?: boolean;
-  isLectureNameFocused?: boolean;
+  isFacultyFocused?: boolean
+  isLectureNameFocused?: boolean
 }
 
 interface TimetableData {
-  Monday: Lecture[];
-  Tuesday: Lecture[];
-  Wednesday: Lecture[];
-  Thursday: Lecture[];
-  Friday: Lecture[];
+  Monday: Lecture[]
+  Tuesday: Lecture[]
+  Wednesday: Lecture[]
+  Thursday: Lecture[]
+  Friday: Lecture[]
 }
 
-type DayOfWeek = keyof TimetableData;
-type PushStatus = "idle" | "loading" | "pushed";
+type DayOfWeek = keyof TimetableData
+type PushStatus = "idle" | "loading" | "pushed" | "error"
 
 const TimetableGenerator: React.FC = () => {
   const divisions: string[] = [
@@ -66,14 +64,9 @@ const TimetableGenerator: React.FC = () => {
     "It-I",
     "It-S1",
     "It-S2",
-  ];
-  const days: DayOfWeek[] = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-  ];
+  ]
+
+  const days: DayOfWeek[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
   const [timetable, setTimetable] = useState<Record<DayOfWeek, UILecture[]>>({
     Monday: [],
@@ -81,132 +74,117 @@ const TimetableGenerator: React.FC = () => {
     Wednesday: [],
     Thursday: [],
     Friday: [],
-  });
+  })
 
-  const [selectedDay, setSelectedDay] = useState<DayOfWeek>("Monday");
-  const [showJson, setShowJson] = useState<boolean>(false);
-  const [year, setYear] = useState<string>("");
-  const [division, setDivision] = useState<string>("");
-  const [isDivisionFocused, setIsDivisionFocused] = useState<boolean>(false);
-  const [existingDocIds, setExistingDocIds] = useState<string[]>([]);
-  const [docIdExists, setDocIdExists] = useState<boolean>(true);
-  const [message, setMessage] = useState<string>(
-    "Enter Passout Year and Branch-Division"
-  );
-  const [professors, setProfessors] = useState<string[]>([]);
-  const [subjects, setSubjects] = useState<string[]>([]);
-  const [pushStatus, setPushStatus] = useState<PushStatus>("idle");
-
-  const timeTableRef = collection(db, "TimeTable");
-
-  const fetchProfessors = async (): Promise<void> => {
-    const professorsRef = collection(db, "Professors");
-    try {
-      const querySnapshot = await getDocs(professorsRef);
-      const professorsList: string[] = [];
-      querySnapshot.forEach((doc) => {
-        professorsList.push(doc.data().name);
-      });
-
-      setProfessors(professorsList);
-    } catch (error) {
-      console.error("Error fetching professors:", error);
-      alert("Error fetching professors. Please try again.");
-    }
-  };
-
-  const fetchSubjects = async () => {
-    const subjectsRef = collection(db, "Subjects");
-    try {
-      const querySnapshot = await getDocs(subjectsRef);
-      let subjectsList: string[] = [];
-      querySnapshot.forEach((doc) => {
-        subjectsList = [
-          ...subjectsList,
-          ...doc.data().even_sem,
-          ...doc.data().odd_sem,
-        ];
-      });
-      setSubjects([...new Set(subjectsList)]); // Remove duplicates using Set
-    } catch (error) {
-      console.error("Error fetching subjects:", error);
-    }
-  };
+  const [selectedDay, setSelectedDay] = useState<DayOfWeek>("Monday")
+  const [showJson, setShowJson] = useState<boolean>(false)
+  const [year, setYear] = useState<string>("")
+  const [division, setDivision] = useState<string>("")
+  const [isDivisionFocused, setIsDivisionFocused] = useState<boolean>(false)
+  const [existingDocIds, setExistingDocIds] = useState<string[]>([])
+  const [docIdExists, setDocIdExists] = useState<boolean>(true)
+  const [message, setMessage] = useState<string>("Enter Passout Year and Branch-Division")
+  const [professors, setProfessors] = useState<string[]>([])
+  const [subjects, setSubjects] = useState<string[]>([])
+  const [pushStatus, setPushStatus] = useState<PushStatus>("idle")
+  const [errorMessage, setErrorMessage] = useState<string>("")
 
   useEffect(() => {
-    fetchProfessors();
-    fetchSubjects();
-  }, []);
+    const loadInitialData = async () => {
+      setErrorMessage("")
+      const [profRes, subjRes] = await Promise.all([fetchProfessorsServerAction(), fetchSubjectsServerAction()])
+
+      if (profRes.success) {
+        setProfessors(profRes.professors)
+      } else {
+        setErrorMessage(profRes.message || "Failed to load professors.")
+      }
+
+      if (subjRes.success) {
+        setSubjects(subjRes.subjects)
+      } else {
+        setErrorMessage(subjRes.message || "Failed to load subjects.")
+      }
+    }
+    loadInitialData()
+  }, [])
 
   useEffect(() => {
-    // Reset state only when year or division is cleared
     if (!year || !division) {
-      setDocIdExists(true);
-      setMessage("Enter Passout Year and Branch-Division");
-      setPushStatus("idle");
+      setDocIdExists(true)
+      setMessage("Enter Passout Year and Branch-Division")
+      setPushStatus("idle")
+      setErrorMessage("")
     }
-  }, [year, division, docIdExists]); // Added docIdExists to satisfy exhaustive-deps
+  }, [year, division])
 
   const fetchDocIds = async () => {
-    try {
-      if (existingDocIds.length === 0) {
-        const querySnapshot = await getDocs(timeTableRef);
-        const DocIds: string[] = [];
-        querySnapshot.forEach((doc) => {
-          DocIds.push(doc.id);
-        });
-        setExistingDocIds(DocIds);
-      }
-
-      const docId = `${year}-${division}`;
-      if (existingDocIds.includes(docId) || (!year || !division)) {
-        setDocIdExists(true);
-        setMessage(
-          !year || !division
-            ? "Enter Passout Year and Branch-Division"
-            : "Already exists in the database"
-        );
-      } else {
-        setDocIdExists(false);
-        setMessage("Ready to add lectures");
-      }
-    } catch (error) {
-      console.error("Error fetching timetable:", error);
-      alert("Error fetching timetable. Please try again.");
+    setErrorMessage("")
+    if (!year || !division) {
+      setDocIdExists(true)
+      setMessage("Enter Passout Year and Branch-Division")
+      return
     }
-  };
+
+    try {
+      const res: { success: boolean; docIds: string[]; message?: string } = await fetchExistingDocIdsServerAction()
+      if (res.success) {
+        setExistingDocIds(res.docIds)
+        const docId = `${year}-${division}`
+        if (res.docIds.includes(docId)) {
+          setDocIdExists(true)
+          setMessage("Already exists in the database")
+        } else {
+          setDocIdExists(false)
+          setMessage("Ready to add lectures")
+        }
+      } else {
+        setErrorMessage(res.message || "Failed to fetch existing document IDs.")
+      }
+    } catch (error: any) {
+      console.error("Error fetching timetable:", error)
+      setErrorMessage(`Failed to check existing timetables: ${error.message}`)
+    }
+  }
 
   const pushTimetable = async (): Promise<void> => {
-    setPushStatus("loading");
+    setPushStatus("loading")
+    setErrorMessage("")
+
     try {
-      const docId = `${year}-${division}`;
-      const docRef = doc(timeTableRef, docId);
-      await setDoc(docRef, timetable);
-      setPushStatus("pushed");
-      setExistingDocIds((prev) => [...prev, docId]);
-      setMessage("Timetable saved successfully");
-      setDocIdExists(true); // Prevent re-rendering the lecture interface
-    } catch (error) {
-      console.error("Error pushing timetable:", error);
-      alert("Error pushing timetable. Please try again.");
-      setPushStatus("idle");
+      const res = await pushTimetableServerAction(year, division, timetable)
+      if (res.success) {
+        setPushStatus("pushed")
+        setExistingDocIds((prev) => [...prev, `${year}-${division}`])
+        alert("Timetable saved successfully!") // Changed to alert
+        setDocIdExists(true)
+      } else {
+        setPushStatus("error")
+        setErrorMessage(res.message || "Failed to save timetable.")
+      }
+    } catch (error: any) {
+      console.error("Error pushing timetable:", error)
+      setPushStatus("error")
+      setErrorMessage(`An unexpected error occurred: ${error.message}`)
+    } finally {
+      setTimeout(() => setPushStatus("idle"), 3000)
     }
-  };
+  }
 
   // Utility function to capitalize first letter of each word
   const capitalizeWords = (str: string) => {
-    return str.replace(/\b\w/g, (l) => l.toUpperCase());
-  };
+    return str.replace(/\b\w/g, (l) => l.toUpperCase())
+  }
 
   // Convert 24-hour time to 12-hour format
   const formatTime = (time: string): string => {
-    if (!time) return "";
-    const [hours, minutes] = time.split(":");
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? "pm" : "am";
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${displayHour}:${minutes} ${ampm}`;
-  };
+    if (!time) return ""
+    const [hours, minutes] = time.split(":")
+    const hour = Number.parseInt(hours)
+    const ampm = hour >= 12 ? "pm" : "am"
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+    return `${displayHour}:${minutes} ${ampm}`
+  }
 
   // Add new lecture
   const addLecture = (): void => {
@@ -217,114 +195,99 @@ const TimetableGenerator: React.FC = () => {
       lectureFacultyName: "",
       lectureName: "",
       lectureRoomNo: null,
-    };
-
+    }
     setTimetable((prev) => ({
       ...prev,
       [selectedDay]: [...prev[selectedDay], newLecture],
-    }));
-  };
+    }))
+  }
 
   // Update lecture field
-  const updateLecture = (
-    dayIndex: number,
-    field: keyof Lecture,
-    value: string
-  ): void => {
+  const updateLecture = (dayIndex: number, field: keyof Lecture, value: string): void => {
     setTimetable((prev) => ({
       ...prev,
       [selectedDay]: prev[selectedDay].map((lecture, index) => {
         if (index === dayIndex) {
-          let updatedValue: string | null = value;
-
+          let updatedValue: string | null = value
           // Apply capitalization for faculty name, lecture name, and batch
-          if (
-            field === "lectureFacultyName" ||
-            field === "lectureName" ||
-            field === "lectureBatch"
-          ) {
-            updatedValue = capitalizeWords(value);
+          if (field === "lectureFacultyName" || field === "lectureName" || field === "lectureBatch") {
+            updatedValue = capitalizeWords(value)
           }
-
           // Convert time format for start and end times
           if (field === "lectureStartTime" || field === "lectureEndTime") {
-            updatedValue = formatTime(value);
+            updatedValue = formatTime(value)
           }
-
           // Handle room number - convert empty string to null
           if (field === "lectureRoomNo") {
-            updatedValue = value.trim() === "" ? null : value;
+            updatedValue = value.trim() === "" ? null : value
           }
-
           return {
             ...lecture,
             [field]: updatedValue,
-          } as UILecture;
+          } as UILecture
         }
-        return lecture;
+        return lecture
       }),
-    }));
-  };
+    }))
+  }
 
   // Delete lecture
   const deleteLecture = (dayIndex: number): void => {
     setTimetable((prev) => ({
       ...prev,
       [selectedDay]: prev[selectedDay].filter((_, index) => index !== dayIndex),
-    }));
-  };
+    }))
+  }
 
-const generateJson = (): string => {
-
-  const filteredTimetable: Partial<TimetableData> = {};
-  Object.entries(timetable).forEach(([day, lectures]) => {
-    if (lectures.length > 0) {
-     
-      const cleanedLectures = lectures.map(
-        ({ isLectureNameFocused, isFacultyFocused, ...rest }) => ({
+  // Generate JSON output
+  const generateJson = (): string => {
+    // Filter out days with no lectures
+    const filteredTimetable: Partial<TimetableData> = {}
+    Object.entries(timetable).forEach(([day, lectures]) => {
+      if (lectures.length > 0) {
+        // Remove UI-only fields from each lecture
+        const cleanedLectures = lectures.map(({ isLectureNameFocused, isFacultyFocused, ...rest }) => ({
           ...rest,
           lectureBatch: rest.lectureBatch?.trim() === "" ? "All" : rest.lectureBatch,
-        })
-      );
-      filteredTimetable[day as DayOfWeek] = cleanedLectures;
-    }
-  });
-
-  const jsonOutput = {
-    timetable: filteredTimetable,
-  };
-
-  return JSON.stringify(jsonOutput, null, 2);
-};
-
+        }))
+        filteredTimetable[day as DayOfWeek] = cleanedLectures
+      }
+    })
+    return JSON.stringify(filteredTimetable, null, 2)
+  }
 
   // Copy JSON to clipboard
   const copyToClipboard = () => {
-    const jsonData = generateJson();
+    const jsonData = generateJson()
     navigator.clipboard.writeText(jsonData).then(() => {
-      alert("JSON copied to clipboard!");
-    });
-  };
+      alert("JSON copied to clipboard!")
+    })
+  }
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="max-w-6xl mx-auto px-7 py-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <strong>Error:</strong> {errorMessage}
+          </div>
+        </div>
+      )}
+
       <div className="max-w-6xl flex gap-10 px-7 py-4 mx-auto">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Year
-          </label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year</label>
           <input
             type="text"
             value={year}
             onChange={(e) => setYear(e.target.value)}
             placeholder="Enter Year"
-            className="w-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            className="w-40 p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Division
-          </label>
+        <div className="relative">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Division</label>
           <input
             type="text"
             value={division}
@@ -332,48 +295,46 @@ const generateJson = (): string => {
             onBlur={() => setTimeout(() => setIsDivisionFocused(false), 200)}
             onChange={(e) => setDivision(e.target.value)}
             placeholder="Enter Division"
-            className="w-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            className="w-40 p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           />
-          <div className="suggestions">
-            <ul className="bg-white dark:bg-gray-800 border dark:border-gray-600 absolute z-10 rounded-md mt-1 max-h-40 overflow-y-auto text-gray-900 dark:text-gray-200">
-              {isDivisionFocused &&
-                divisions
+          {isDivisionFocused && (
+            <div className="suggestions">
+              <ul className="bg-white dark:bg-gray-800 border absolute border-gray-300 dark:border-gray-700 rounded-md mt-1 max-h-40 overflow-y-auto w-full z-10 text-gray-900 dark:text-gray-200">
+                {divisions
                   .filter(
                     (d) =>
-                      d.toLowerCase().includes(division.toLowerCase()) &&
-                      d.toLowerCase() !== division.toLowerCase()
+                      d.toLowerCase().includes(division.toLowerCase()) && d.toLowerCase() !== division.toLowerCase(),
                   )
                   .map((d) => (
                     <li
                       key={d}
                       className="px-3 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700"
                       onMouseDown={(e) => {
-                        e.preventDefault();
-                        setDivision(d);
-                        setIsDivisionFocused(false);
+                        e.preventDefault()
+                        setDivision(d)
+                        setIsDivisionFocused(false)
                       }}
                     >
                       {d}
                     </li>
                   ))}
-            </ul>
-          </div>
+              </ul>
+            </div>
+          )}
         </div>
-
         <div className="mt-auto">
           <button
             onClick={fetchDocIds}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+            disabled={!year || !division}
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit
           </button>
         </div>
       </div>
-      {docIdExists && (
-        <div className="text-center text-2xl mt-10 text-gray-700 dark:text-gray-300">
-          {message}
-        </div>
-      )}
+
+      {docIdExists && <div className="text-center text-2xl mt-10 text-gray-700 dark:text-gray-300">{message}</div>}
+
       {!docIdExists && (
         <div className="max-w-6xl mx-auto p-6 bg-white dark:bg-gray-900">
           {/* Day Selection */}
@@ -403,9 +364,7 @@ const generateJson = (): string => {
           {/* Current Day Lectures */}
           <div className="mb-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                {selectedDay} Lectures
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">{selectedDay} Lectures</h2>
               <button
                 onClick={addLecture}
                 className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
@@ -423,24 +382,17 @@ const generateJson = (): string => {
             ) : (
               <div className="space-y-4">
                 {timetable[selectedDay].map((lecture, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-600"
-                  >
+                  <div key={index} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {/* Batch Input */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Batch
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Batch</label>
                         <input
                           type="text"
                           value={lecture.lectureBatch}
-                          onChange={(e) =>
-                            updateLecture(index, "lectureBatch", e.target.value)
-                          }
+                          onChange={(e) => updateLecture(index, "lectureBatch", e.target.value)}
                           placeholder="Enter batch"
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         />
                       </div>
 
@@ -451,14 +403,8 @@ const generateJson = (): string => {
                         </label>
                         <input
                           type="time"
-                          onChange={(e) =>
-                            updateLecture(
-                              index,
-                              "lectureStartTime",
-                              e.target.value
-                            )
-                          }
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          onChange={(e) => updateLecture(index, "lectureStartTime", e.target.value)}
+                          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         />
                         {lecture.lectureStartTime && (
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -474,14 +420,8 @@ const generateJson = (): string => {
                         </label>
                         <input
                           type="time"
-                          onChange={(e) =>
-                            updateLecture(
-                              index,
-                              "lectureEndTime",
-                              e.target.value
-                            )
-                          }
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          onChange={(e) => updateLecture(index, "lectureEndTime", e.target.value)}
+                          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         />
                         {lecture.lectureEndTime && (
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -502,76 +442,51 @@ const generateJson = (): string => {
                             setTimetable((prev) => ({
                               ...prev,
                               [selectedDay]: prev[selectedDay].map((lec, idx) =>
-                                idx === index
-                                  ? { ...lec, isFacultyFocused: true }
-                                  : lec
+                                idx === index ? { ...lec, isFacultyFocused: true } : lec,
                               ),
-                            }));
+                            }))
                           }}
                           onBlur={() => {
                             setTimeout(() => {
                               setTimetable((prev) => ({
                                 ...prev,
-                                [selectedDay]: prev[selectedDay].map(
-                                  (lec, idx) =>
-                                    idx === index
-                                      ? { ...lec, isFacultyFocused: false }
-                                      : lec
+                                [selectedDay]: prev[selectedDay].map((lec, idx) =>
+                                  idx === index ? { ...lec, isFacultyFocused: false } : lec,
                                 ),
-                              }));
-                            }, 200);
+                              }))
+                            }, 200)
                           }}
-                          onChange={(e) =>
-                            updateLecture(
-                              index,
-                              "lectureFacultyName",
-                              e.target.value
-                            )
-                          }
+                          onChange={(e) => updateLecture(index, "lectureFacultyName", e.target.value)}
                           placeholder="Enter faculty name"
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                           autoComplete="off"
                         />
                         {lecture.isFacultyFocused && (
-                          <ul className="bg-white dark:bg-gray-800 border dark:border-gray-600 absolute z-10 rounded-md mt-1 max-h-24 overflow-y-auto w-full text-gray-900 dark:text-gray-200">
+                          <ul className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 absolute z-10 rounded-md mt-1 max-h-24 overflow-y-auto w-full text-gray-900 dark:text-gray-200">
                             {professors
                               .filter(
                                 (prof) =>
-                                  prof
-                                    .toLowerCase()
-                                    .includes(
-                                      (
-                                        lecture.lectureFacultyName || ""
-                                      ).toLowerCase()
-                                    ) &&
-                                  prof.toLowerCase() !==
-                                    (
-                                      lecture.lectureFacultyName || ""
-                                    ).toLowerCase()
+                                  prof.toLowerCase().includes((lecture.lectureFacultyName || "").toLowerCase()) &&
+                                  prof.toLowerCase() !== (lecture.lectureFacultyName || "").toLowerCase(),
                               )
                               .map((prof) => (
                                 <li
                                   key={prof}
                                   className="px-3 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700"
                                   onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    updateLecture(
-                                      index,
-                                      "lectureFacultyName",
-                                      prof
-                                    );
+                                    e.preventDefault()
+                                    updateLecture(index, "lectureFacultyName", prof)
                                     setTimetable((prev) => ({
                                       ...prev,
-                                      [selectedDay]: prev[selectedDay].map(
-                                        (lec, idx) =>
-                                          idx === index
-                                            ? {
-                                                ...lec,
-                                                isFacultyFocused: false,
-                                              }
-                                            : lec
+                                      [selectedDay]: prev[selectedDay].map((lec, idx) =>
+                                        idx === index
+                                          ? {
+                                              ...lec,
+                                              isFacultyFocused: false,
+                                            }
+                                          : lec,
                                       ),
-                                    }));
+                                    }))
                                   }}
                                 >
                                   {prof}
@@ -580,6 +495,8 @@ const generateJson = (): string => {
                           </ul>
                         )}
                       </div>
+
+                      {/* Lecture Name */}
                       <div className="relative">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Lecture Name
@@ -591,64 +508,51 @@ const generateJson = (): string => {
                             setTimetable((prev) => ({
                               ...prev,
                               [selectedDay]: prev[selectedDay].map((lec, idx) =>
-                                idx === index
-                                  ? { ...lec, isLectureNameFocused: true }
-                                  : lec
+                                idx === index ? { ...lec, isLectureNameFocused: true } : lec,
                               ),
-                            }));
+                            }))
                           }}
                           onBlur={() => {
                             setTimeout(() => {
                               setTimetable((prev) => ({
                                 ...prev,
-                                [selectedDay]: prev[selectedDay].map(
-                                  (lec, idx) =>
-                                    idx === index
-                                      ? { ...lec, isLectureNameFocused: false }
-                                      : lec
+                                [selectedDay]: prev[selectedDay].map((lec, idx) =>
+                                  idx === index ? { ...lec, isLectureNameFocused: false } : lec,
                                 ),
-                              }));
-                            }, 200);
+                              }))
+                            }, 200)
                           }}
-                          onChange={(e) =>
-                            updateLecture(index, "lectureName", e.target.value)
-                          }
+                          onChange={(e) => updateLecture(index, "lectureName", e.target.value)}
                           placeholder="Enter lecture name"
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                           autoComplete="off"
                         />
                         {lecture.isLectureNameFocused && (
-                          <ul className="bg-white dark:bg-gray-800 border dark:border-gray-600 absolute z-10 rounded-md mt-1 max-h-24 overflow-y-auto w-full text-gray-900 dark:text-gray-200">
+                          <ul className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 absolute z-10 rounded-md mt-1 max-h-24 overflow-y-auto w-full text-gray-900 dark:text-gray-200">
                             {subjects
                               .filter(
                                 (subj) =>
-                                  subj
-                                    .toLowerCase()
-                                    .includes(
-                                      (lecture.lectureName || "").toLowerCase()
-                                    ) &&
-                                  subj.toLowerCase() !==
-                                    (lecture.lectureName || "").toLowerCase()
+                                  subj.toLowerCase().includes((lecture.lectureName || "").toLowerCase()) &&
+                                  subj.toLowerCase() !== (lecture.lectureName || "").toLowerCase(),
                               )
                               .map((subj) => (
                                 <li
                                   key={subj}
                                   className="px-3 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700"
                                   onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    updateLecture(index, "lectureName", subj);
+                                    e.preventDefault()
+                                    updateLecture(index, "lectureName", subj)
                                     setTimetable((prev) => ({
                                       ...prev,
-                                      [selectedDay]: prev[selectedDay].map(
-                                        (lec, idx) =>
-                                          idx === index
-                                            ? {
-                                                ...lec,
-                                                isLectureNameFocused: false,
-                                              }
-                                            : lec
+                                      [selectedDay]: prev[selectedDay].map((lec, idx) =>
+                                        idx === index
+                                          ? {
+                                              ...lec,
+                                              isLectureNameFocused: false,
+                                            }
+                                          : lec,
                                       ),
-                                    }));
+                                    }))
                                   }}
                                 >
                                   {subj}
@@ -657,6 +561,8 @@ const generateJson = (): string => {
                           </ul>
                         )}
                       </div>
+
+                      {/* Room Number */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Room Number (Optional)
@@ -664,19 +570,11 @@ const generateJson = (): string => {
                         <input
                           type="text"
                           value={lecture.lectureRoomNo || ""}
-                          onChange={(e) =>
-                            updateLecture(
-                              index,
-                              "lectureRoomNo",
-                              e.target.value
-                            )
-                          }
+                          onChange={(e) => updateLecture(index, "lectureRoomNo", e.target.value)}
                           placeholder="Enter room number or leave empty"
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Leave empty for null value
-                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty for null value</p>
                       </div>
                     </div>
 
@@ -713,36 +611,40 @@ const generateJson = (): string => {
               Copy JSON
             </button>
             <button
-              disabled={pushStatus !== "idle"}
+              disabled={pushStatus === "loading"}
               onClick={pushTimetable}
-              className={`flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors ${
-                pushStatus !== "idle" ? "opacity-90 cursor-not-allowed" : ""
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                pushStatus === "loading"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : pushStatus === "pushed"
+                    ? "bg-green-600"
+                    : pushStatus === "error"
+                      ? "bg-red-500"
+                      : "bg-green-500 hover:bg-green-600"
+              } text-white`}
             >
               <ArrowUpFromLine size={16} />
               {pushStatus === "loading"
                 ? "Pushing..."
                 : pushStatus === "pushed"
-                ? "Pushed"
-                : "Push"}
+                  ? "Pushed ✓"
+                  : pushStatus === "error"
+                    ? "Error ✗"
+                    : "Push"}
             </button>
           </div>
 
           {/* JSON Preview */}
           {showJson && (
             <div className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-auto">
-              <h3 className="text-lg font-semibold mb-2 text-white">
-                Generated JSON:
-              </h3>
-              <pre className="text-sm font-mono whitespace-pre-wrap">
-                {generateJson()}
-              </pre>
+              <h3 className="text-lg font-semibold mb-2 text-white">Generated JSON:</h3>
+              <pre className="text-sm font-mono whitespace-pre-wrap">{generateJson()}</pre>
             </div>
           )}
         </div>
       )}
-    </>
-  );
-};
+    </div>
+  )
+}
 
-export default TimetableGenerator;
+export default TimetableGenerator
