@@ -274,21 +274,28 @@ const TimetableGenerator: React.FC = () => {
     }));
   };
 
-  // Generate JSON output
-  const generateJson = (): string => {
-    // Filter out days with no lectures
-    const filteredTimetable: Partial<TimetableData> = {};
-    Object.entries(timetable).forEach(([day, lectures]) => {
-      if (lectures.length > 0) {
-        // Remove UI-only fields from each lecture
-        const cleanedLectures = lectures.map(
-          ({ isLectureNameFocused, isFacultyFocused, ...rest }) => rest
-        );
-        filteredTimetable[day as DayOfWeek] = cleanedLectures;
-      }
-    });
-    return JSON.stringify(filteredTimetable, null, 2);
+const generateJson = (): string => {
+  // Filter out days with no lectures
+  const filteredTimetable: Partial<TimetableData> = {};
+  Object.entries(timetable).forEach(([day, lectures]) => {
+    if (lectures.length > 0) {
+      // Remove UI-only fields from each lecture
+      const cleanedLectures = lectures.map(
+        ({ isLectureNameFocused, isFacultyFocused, ...rest }) => ({
+          ...rest,
+          lectureBatch: rest.lectureBatch?.trim() === "" ? "All" : rest.lectureBatch,
+        })
+      );
+      filteredTimetable[day as DayOfWeek] = cleanedLectures;
+    }
+  });
+
+  const jsonOutput = {
+    timetable: filteredTimetable,
   };
+
+  return JSON.stringify(jsonOutput, null, 2);
+};
 
   // Copy JSON to clipboard
   const copyToClipboard = () => {
