@@ -349,7 +349,6 @@ const Downloads: React.FC = () => {
     }
   };
 
-  // function to transfer data from Firestore to JSON file and clean ConcessionTempHistory
   useEffect(() => {
     const requiredFields = [
       "address", "ageMonths", "ageYears", "branch", "certificateNumber", "class",

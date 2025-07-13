@@ -3,7 +3,14 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from "react"
 import { db } from "@/config/firebase"
-import { collection, getDocs, updateDoc, doc, type DocumentData } from "firebase/firestore"
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  type DocumentData,
+} from "firebase/firestore"
 import Image from "next/image"
 
 interface Report {
@@ -13,6 +20,8 @@ interface Report {
   title: string
   description: string
   userUid: string
+  userName: string
+  userEmail: string
   isResolved: boolean
   reportTime: string
   attachments?: string[]
@@ -28,18 +37,22 @@ const BugReports = () => {
     const fetchReports = async () => {
       try {
         const snapshot = await getDocs(collection(db, "Reports"))
-        const data: Report[] = []
+        const tempReports: Omit<Report, "userName" | "userEmail">[] = []
+
+        const userUidsSet = new Set<string>()
 
         snapshot.forEach((docSnap) => {
           const allReports = docSnap.data().allReports || []
           allReports.forEach((r: DocumentData, index: number) => {
-            data.push({
+            const userUid = r.userUid || "Unknown"
+            userUidsSet.add(userUid)
+            tempReports.push({
               docId: docSnap.id,
               index,
               id: `${docSnap.id}-${index}`,
               title: r.title || "Untitled",
               description: r.description || "",
-              userUid: r.userUid || "Unknown",
+              userUid,
               isResolved: r.isResolved ?? false,
               reportTime: r.reportTime || "",
               attachments: r.attachments || [],
@@ -47,7 +60,36 @@ const BugReports = () => {
           })
         })
 
-        setReports(data)
+        const userUidArray = Array.from(userUidsSet)
+        const userDetailsMap: Record<string, { name: string; email: string }> = {}
+
+        // Fetch each user's details from "Students "
+        await Promise.all(
+          userUidArray.map(async (uid) => {
+            try {
+              const userDoc = await getDoc(doc(db, "Students ", uid))
+              const userData = userDoc.data()
+              if (userData) {
+                userDetailsMap[uid] = {
+                  name: userData.Name || "Unknown",
+                  email: userData.email || "Unknown",
+                }
+              } else {
+                userDetailsMap[uid] = { name: "Unknown", email: "Unknown" }
+              }
+            } catch {
+              userDetailsMap[uid] = { name: "Unknown", email: "Unknown" }
+            }
+          })
+        )
+
+        const finalReports: Report[] = tempReports.map((r) => ({
+          ...r,
+          userName: userDetailsMap[r.userUid]?.name || "Unknown",
+          userEmail: userDetailsMap[r.userUid]?.email || "Unknown",
+        }))
+
+        setReports(finalReports)
       } catch (error) {
         console.error("❌ Error fetching reports:", error)
       }
@@ -78,10 +120,13 @@ const BugReports = () => {
       currentReports[report.index].isResolved = !report.isResolved
       await updateDoc(ref, { allReports: currentReports })
 
-      setReports((prev) => prev.map((r) => (r.id === report.id ? { ...r, isResolved: !r.isResolved } : r)))
+      setReports((prev) =>
+        prev.map((r) =>
+          r.id === report.id ? { ...r, isResolved: !r.isResolved } : r
+        )
+      )
     } catch (error) {
       console.error("❌ Failed to update resolved status:", error)
-  
     }
   }
 
@@ -91,7 +136,7 @@ const BugReports = () => {
       return
     }
 
-    console.log("Opening image:", url) // Debug log
+    console.log("Opening image:", url)
     setSelectedImage(url)
     setIsImageLoaded(false)
     setImageError(false)
@@ -113,12 +158,14 @@ const BugReports = () => {
 
   return (
     <div className="p-6">
+      {/* Image Loader */}
       {selectedImage && !isImageLoaded && !imageError && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
         </div>
       )}
 
+      {/* Image Modal */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-4xl max-h-[90vh] overflow-auto">
@@ -129,16 +176,13 @@ const BugReports = () => {
               ✕
             </button>
 
-            {imageError && (
+            {imageError ? (
               <div className="w-full max-w-md mx-auto text-center py-8">
                 <div className="text-red-500 text-6xl mb-4">⚠️</div>
                 <h3 className="text-lg font-semibold mb-2">Failed to load image</h3>
                 <div className="bg-gray-100 p-3 rounded mb-4 overflow-x-auto">
                   <code className="text-sm text-gray-800 break-all">{selectedImage}</code>
                 </div>
-                <p className="text-gray-600 mb-4 text-sm">
-                  The image could not be loaded. Check the URL above for issues.
-                </p>
                 <div className="flex gap-2 justify-center">
                   <button
                     onClick={handleRetryLoad}
@@ -148,9 +192,7 @@ const BugReports = () => {
                   </button>
                 </div>
               </div>
-            )}
-
-            {!imageError && (
+            ) : (
               <div className="relative w-full h-auto max-h-[80vh]">
                 <Image
                   src={selectedImage || "/placeholder.svg"}
@@ -159,14 +201,14 @@ const BugReports = () => {
                   height={600}
                   className="rounded object-contain w-full h-auto max-h-[80vh]"
                   unoptimized={true}
-                  priority={true} 
+                  priority={true}
                   onLoadingComplete={() => {
-                    console.log("Image loaded successfully:", selectedImage) // Debug log
+                    console.log("Image loaded successfully:", selectedImage)
                     setIsImageLoaded(true)
                     setImageError(false)
                   }}
                   onError={(e) => {
-                    console.error("Image failed to load:", selectedImage, e) // Debug log
+                    console.error("Image failed to load:", selectedImage, e)
                     setImageError(true)
                     setIsImageLoaded(false)
                   }}
@@ -177,12 +219,15 @@ const BugReports = () => {
         </div>
       )}
 
+      {/* Table */}
       <div className="overflow-x-auto rounded-lg border shadow">
         <table className="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
               <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Title</th>
               <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Description</th>
+              <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Name</th>
+              <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Email</th>
               <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Time</th>
               <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Resolved</th>
               <th className="px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-100">Attachments</th>
@@ -195,6 +240,8 @@ const BugReports = () => {
                 <td className="px-4 py-2 max-w-sm whitespace-pre-wrap text-gray-900 dark:text-gray-100">
                   {report.description}
                 </td>
+                <td className="px-4 py-2 text-gray-900 dark:text-gray-100">{report.userName}</td>
+                <td className="px-4 py-2 text-gray-900 dark:text-gray-100">{report.userEmail}</td>
                 <td className="px-4 py-2 text-gray-900 dark:text-gray-100">{formatDate(report.reportTime)}</td>
                 <td className="px-4 py-2">
                   <button
@@ -212,7 +259,6 @@ const BugReports = () => {
                     <div className="flex flex-col gap-2">
                       {report.attachments.map((url, i) => {
                         const isValidUrl = url && (url.startsWith("http://") || url.startsWith("https://"))
-
                         return isValidUrl ? (
                           <button
                             key={i}
@@ -222,9 +268,7 @@ const BugReports = () => {
                             📎 Attachment {i + 1}
                           </button>
                         ) : (
-                          <span key={i} className="text-red-500 text-xs">
-                            Invalid URL
-                          </span>
+                          <span key={i} className="text-red-500 text-xs">Invalid URL</span>
                         )
                       })}
                     </div>
@@ -236,7 +280,7 @@ const BugReports = () => {
             ))}
             {reports.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center py-8 text-gray-500">
+                <td colSpan={7} className="text-center py-8 text-gray-500">
                   No reports found.
                 </td>
               </tr>

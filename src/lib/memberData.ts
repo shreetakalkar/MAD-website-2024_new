@@ -133,8 +133,8 @@ export const teamData: TeamSection[] = [
         role: "Mobile App Developer",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fritesh.jpg?alt=media&token=aded8e4b-51f4-43e4-be9f-584163ec8f28",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/ritesh-yadav-2a5a03289/",
+        github: "https://github.com/riteshy1802",
       },
       {
         name: "Dhairya Jani",
@@ -162,13 +162,13 @@ export const teamData: TeamSection[] = [
         role: "DevOps",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fkavya.jpg?alt=media&token=3fa148ca-f569-4c0f-b429-0e5531a13e4a",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/kavyachetwani?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BKPY%2F8BkvSte0KpArv5xMkA%3D%3D",
+        github: "https://github.com/kavyachetwani",
       },
     ],
   },
   {
-    title: "Design & Social Media Team",
+    title: "Design & SMM Team",
     members: [
       {
         name: "Sanika Sawant",
@@ -184,8 +184,8 @@ export const teamData: TeamSection[] = [
         role: "UI/UX Designer",
         image: "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Flubaib.jpg?alt=media&token=27458288-48e7-4c7b-ae7d-0bc7e495c704",
 
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/lubaib-mir-2b762b323?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+        github: "https://github.com/lubaibmir",
       },
     ],
   },
@@ -197,8 +197,8 @@ export const teamData: TeamSection[] = [
         role: "PM Head",
         image:
           "https://firebasestorage.googleapis.com/v0/b/tsec-app.appspot.com/o/DevsMember%2F2025%2Fvaibhav.jpg?alt=media&token=cced8c71-05e2-4aa2-8ee7-3d007882acf1",
-        linkedin: "",
-        github: "",
+        linkedin: "https://www.linkedin.com/in/vaibhav-sharma-36b39628b?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3B3BDYNDYPQc%2BHKJ2go75d4A%3D%3D",
+        github: "https://github.com/vaiibbbhav",
       },
       {
         name: "Richa Sharangdhar",

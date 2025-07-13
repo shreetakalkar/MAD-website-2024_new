@@ -5,6 +5,10 @@ import ClientAppWrapper from "@/components/ClientAppWrapper";
 import { ThemeInitializer } from "@/components/ThemeInitializer";
 import Script from "next/script";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Github, Linkedin } from "lucide-react";
+import { Footer } from "@/components/Footer";
+import { LoadingProvider } from "@/providers/LoadingContext";
 
 
 const inter = Inter({ 
@@ -95,10 +99,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`${inter.className} bg-white dark:bg-gray-900 transition-colors duration-200`}>
+        <LoadingProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ThemeInitializer />
           <ClientAppWrapper>{children}</ClientAppWrapper>
+          <Footer />
         </ThemeProvider>
+        </LoadingProvider>
       </body>
     </html>
   );
