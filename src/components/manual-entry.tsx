@@ -114,18 +114,17 @@ export default function ManualEntry() {
   const [availableDivisions, setAvailableDivisions] = useState<string[]>([])
   const { toast } = useToast()
 
- useEffect(() => {
-  if (form.gradyear && form.branch) {
-    const divisions = calcDivisionList(form.gradyear, form.branch)
-    setAvailableDivisions(divisions)
-    if (form.division && !divisions.includes(form.division)) {
-      setForm((prev) => ({ ...prev, division: "", batch: "" }))
+  useEffect(() => {
+    if (form.gradyear && form.branch) {
+      const divisions = calcDivisionList(form.gradyear, form.branch)
+      setAvailableDivisions(divisions)
+      if (form.division && !divisions.includes(form.division)) {
+        setForm((prev) => ({ ...prev, division: "", batch: "" }))
+      }
+    } else {
+      setAvailableDivisions([])
     }
-  } else {
-    setAvailableDivisions([])
-  }
-}, [form.gradyear, form.branch, form.division]) 
-
+  }, [form.gradyear, form.branch, form.division])
 
   const handleInputChange = (field: keyof StudentForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -195,12 +194,18 @@ export default function ManualEntry() {
       }
 
       if (result.success > 0) {
+        // Display native alert for success
+        window.alert(
+          `${studentData.name} has been added successfully! Login credentials have been sent via email.`
+        )
+        // Display toast notification
         toast({
           title: "Student Added",
           description: `${studentData.name} has been added and login credentials sent via email.`,
           variant: "success",
           duration: 5000,
         })
+        // Clear form fields and reset components
         setForm(initialForm)
         setAvailableDivisions([])
       } else {
@@ -247,6 +252,7 @@ export default function ManualEntry() {
                 value={form.firstName}
                 onChange={(e) => handleInputChange("firstName", e.target.value)}
                 required
+                disabled={isSubmitting}
               />
             </div>
             <div>
@@ -255,6 +261,7 @@ export default function ManualEntry() {
                 id="middleName"
                 value={form.middleName}
                 onChange={(e) => handleInputChange("middleName", e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
             <div>
@@ -264,6 +271,7 @@ export default function ManualEntry() {
                 value={form.lastName}
                 onChange={(e) => handleInputChange("lastName", e.target.value)}
                 required
+                disabled={isSubmitting}
               />
             </div>
             <div>
@@ -274,6 +282,7 @@ export default function ManualEntry() {
                 value={form.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 required
+                disabled={isSubmitting}
               />
             </div>
             <div>
@@ -281,6 +290,7 @@ export default function ManualEntry() {
               <Select
                 value={form.branch}
                 onValueChange={(value) => handleInputChange("branch", value)}
+                disabled={isSubmitting}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Branch" />
@@ -299,6 +309,7 @@ export default function ManualEntry() {
               <Select
                 value={form.gradyear}
                 onValueChange={(value) => handleInputChange("gradyear", value)}
+                disabled={isSubmitting}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Year" />
@@ -317,7 +328,7 @@ export default function ManualEntry() {
               <Select
                 value={form.division}
                 onValueChange={(value) => handleInputChange("division", value)}
-                disabled={!form.branch || !form.gradyear}
+                disabled={!form.branch || !form.gradyear || isSubmitting}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Division" />
@@ -337,7 +348,7 @@ export default function ManualEntry() {
                 id="batch"
                 value={form.batch}
                 onChange={(e) => handleInputChange("batch", e.target.value)}
-                disabled={!form.division}
+                disabled={!form.division || isSubmitting}
               />
             </div>
             <div>
@@ -346,6 +357,7 @@ export default function ManualEntry() {
                 id="rollNumber"
                 value={form.rollNumber}
                 onChange={(e) => handleInputChange("rollNumber", e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
             <div>
@@ -355,6 +367,7 @@ export default function ManualEntry() {
                 type="tel"
                 value={form.phoneNo}
                 onChange={(e) => handleInputChange("phoneNo", e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
             <div>
@@ -362,6 +375,7 @@ export default function ManualEntry() {
               <Select
                 value={form.gender}
                 onValueChange={(value) => handleInputChange("gender", value)}
+                disabled={isSubmitting}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Gender" />
@@ -375,7 +389,12 @@ export default function ManualEntry() {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={handleReset}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleReset}
+              disabled={isSubmitting}
+            >
               Reset
             </Button>
             <Button type="submit" disabled={isSubmitting}>
