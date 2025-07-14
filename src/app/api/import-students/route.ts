@@ -4,7 +4,10 @@ import { getAuth } from "firebase-admin/auth"
 import { getFirestore } from "firebase-admin/firestore"
 import nodemailer from "nodemailer"
 
-// Initialize Firebase Admin if not already initialized
+
+const STUDENTS_COLLECTION = "Students "
+
+
 if (!getApps().length) {
   try {
     initializeApp({
@@ -19,7 +22,6 @@ if (!getApps().length) {
     throw new Error("Failed to initialize Firebase")
   }
 }
-
 
 const auth = getAuth()
 const db = getFirestore()
@@ -48,7 +50,7 @@ function generatePassword(): string {
 
 async function ensureCollectionsExist() {
   try {
-    const studentsRef = db.collection("Students ")
+    const studentsRef = db.collection(STUDENTS_COLLECTION)
     const studentsSnapshot = await studentsRef.limit(1).get()
 
     if (studentsSnapshot.empty) {
@@ -187,7 +189,7 @@ export async function POST(request: NextRequest) {
 
         // Store student data in Firestore
         await db
-          .collection("Students")
+          .collection(STUDENTS_COLLECTION)
           .doc(userRecord.uid)
           .set({
             Name: fullName,
