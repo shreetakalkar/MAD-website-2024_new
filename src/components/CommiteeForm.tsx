@@ -56,7 +56,7 @@ const CommiteeForm: React.FC<CommiteeFormProps> = ({
         field.onChange(file);
       } else {
         setImageError("Invalid image dimensions. Please upload an image with dimensions 1080x1350, 1080x680, or 1080x1080.");
-        e.target.value = ""; // Clear the input
+        e.target.value = ""; 
       }
     }
   };

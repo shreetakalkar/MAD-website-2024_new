@@ -194,7 +194,7 @@ export default function ManualEntry() {
       }
 
       if (result.success > 0) {
-        // Display native alert for success
+       
         window.alert(
           `${studentData.name} has been added successfully! Login credentials have been sent via email.`
         )
